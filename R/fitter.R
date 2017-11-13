@@ -20,6 +20,8 @@ x<-cbind(x, matrix(c(0,1), nrow=nrow(x), ncol=2, byrow=TRUE))
     testbran<-which(x[,8]==x[apicindex[l], 8] & x[,9]==x[apicindex[l], 9] & x[,10]==x[apicindex[l], 10]) #Is it a crossing?
     testbran<-testbran[which(x[testbran,3]==root | x[testbran,21]==root)] #Select segments based on root and parentroot
     
+    ######YOU ARE HERE!
+    
     if (length(testbran)>=2){#We are at a crossing
       
       segment1<-which(x[,11]==x[apicindex[l], 8] & x[,12]==x[apicindex[l], 9] & x[,13]==x[apicindex[l], 10])
