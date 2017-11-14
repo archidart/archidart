@@ -504,31 +504,35 @@ if (algo=="tables"){
         
         if (nrow(xt)>1){
         
-            for (l in 1:length(branindex)){
+          for (l in 1:length(branindex)){ #For each root
+            
+            root<-xt$root[branindex[l]]
+            
+            testbran<-which(xt$x1==xt$x2[branindex[l]] & xt$y1==xt$y2[branindex[l]] & xt$z1==xt$z2[branindex[l]]) #Is it a crossing?
+            if (length(testbran)>1) {testbran<-testbran[which(xt$root[testbran]==root | xt$parentroot[testbran]==root)]} #Select segments based on root ID and parentroot ID
+            
+            if (length(testbran)==0) {} else {
               
-              testbran<-which(xt$x1==xt$x2[branindex[l]] & xt$y1==xt$y2[branindex[l]] & xt$z1==xt$z2[branindex[l]])
-
-              if (length(testbran)==0) {} else {
-                
-                if (length(testbran)>=2) {
-                  xt$pathlength[testbran]<-xt$pathlength[branindex[l]]+1
-                  index<-which(xt$bran[testbran]=="false")
-                  suiv<-testbran[index]}
-                else {
-                  xt$pathlength[testbran]<-xt$pathlength[branindex[l]]
-                  suiv<-testbran}}
+              if (length(testbran)>=2) {
+                xt$pathlength[testbran]<-xt$pathlength[branindex[l]]+1
+                index<-which(xt$bran[testbran]=="false")
+                suiv<-testbran[index]}
+              else {
+                xt$pathlength[testbran]<-xt$pathlength[branindex[l]]
+                suiv<-testbran}}
+            
+            while(xt$apic[suiv]=="false"){
               
-              while(xt$apic[suiv]=="false"){
-                
-                testbran<-which(xt$x1==xt$x2[suiv] & xt$y1==xt$y2[suiv] & xt$z1==xt$z2[suiv])
-                
-                if (length(testbran)>=2) {
-                  xt$pathlength[testbran]<-xt$pathlength[suiv]+1
-                  index<-which(xt$bran[testbran]=="false")
-                  suiv<-testbran[index]}
-                else {
-                  xt$pathlength[testbran]<-xt$pathlength[suiv]
-                  suiv<-testbran}}}
+              testbran<-which(xt$x1==xt$x2[suiv] & xt$y1==xt$y2[suiv] & xt$z1==xt$z2[suiv]) #Is it a crossing?
+              if (length(testbran)>1) {testbran<-testbran[which(xt$root[testbran]==root | xt$parentroot[testbran]==root)]} #Select segments based on root ID and parentroot ID
+              
+              if (length(testbran)>=2) {
+                xt$pathlength[testbran]<-xt$pathlength[suiv]+1
+                index<-which(xt$bran[testbran]=="false")
+                suiv<-testbran[index]}
+              else {
+                xt$pathlength[testbran]<-xt$pathlength[suiv]
+                suiv<-testbran}}}
         
         datadart$Altitude[k]<-max(xt$pathlength)
         datadart$ExtPathLength[k]<-sum(xt$pathlength[xt$apic=="true"])}
@@ -691,7 +695,7 @@ if (algo=="tables"){
               root<-xt$root[branindex[l]]
               
               testbran<-which(xt$x1==xt$x2[branindex[l]] & xt$y1==xt$y2[branindex[l]] & xt$z1==xt$z2[branindex[l]]) #Is it a crossing?
-              testbran<-testbran[which(xt$root[testbran]==root | xt$parentroot[testbran]==root)] #Select segments based on root ID and parentrootID
+              if (length(testbran)>1) {testbran<-testbran[which(xt$root[testbran]==root | xt$parentroot[testbran]==root)]} #Select segments based on root ID and parentroot ID
 
               if (length(testbran)==0) {} else {
                 
@@ -706,7 +710,7 @@ if (algo=="tables"){
               while(xt$apic[suiv]=="false"){
                 
                 testbran<-which(xt$x1==xt$x2[suiv] & xt$y1==xt$y2[suiv] & xt$z1==xt$z2[suiv]) #Is it a crossing?
-                testbran<-testbran[which(xt$root[testbran]==root | xt$parentroot[testbran]==root)] #Select segments based on root ID and parentrootID
+                if (length(testbran)>1) {testbran<-testbran[which(xt$root[testbran]==root | xt$parentroot[testbran]==root)]} #Select segments based on root ID and parentroot ID
 
                 if (length(testbran)>=2) {
                   xt$pathlength[testbran]<-xt$pathlength[suiv]+1
@@ -725,7 +729,7 @@ if (algo=="tables"){
             datarsml$ExtPathLength[k]<-1}}}}}
         
         # Results in a dataframe
-    
+        
         diameter<-as.data.frame(diameter)
         colnames(diameter)<-c(paste(rep("MD", maxord), c(1:maxord), sep=""), "MDLR")
         
