@@ -34,6 +34,8 @@ Returns a dartToTable object. Each line of the data frame gives the attributes o
 
 \bold{order}: the root branching order.
 
+\bold{parentroot}: the identification number of the parent root.
+
 \bold{time}: the date of apparition.
 
 \bold{bran}: the branching state (\sQuote{true} denotes a branching link while \sQuote{false} denotes a continuing link).

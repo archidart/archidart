@@ -14,8 +14,9 @@ rsmlToDART <- function(rsml.path, final.date, connect){
     property<-rsml$metadata$'property-definition'
     
     if (is.null(property)==FALSE){
-      for (i in 1:length(property)){if (property[[i]]$label==final.date){unittime1<-as.character(property[[i]]$unit)}}
-      if (is.null(unittime1)==TRUE){stop(paste("No", final.date, "label in rsml metadata (property-definition)", sep=" "))}}}
+      for (i in 1:length(property)){if (property[[i]]$label==final.date){unittime1<-as.character(property[[i]]$unit)}}}
+    
+    if (is.null(unittime1)==TRUE){message("No time unit found in rsml metadata (property-definition)")}}
   
   # Create LIE and RAC files for each root system 
   

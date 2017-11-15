@@ -187,7 +187,12 @@ dartToTable<-function(inputrac, inputlie, inputtps, res=NULL, unitlength="px", u
             dirsegment<-c(lie$X[r]-lie$X[prec], lie$Y[r]-lie$Y[prec])*cunit
             table$orientation[rowsintable+s]<-acos(as.numeric(dirvert%*%dirsegment)/table$length[rowsintable+s])*cunitangle}}
       
-      rowsintable<-rowsintable+s}
+      rowsintable<-rowsintable+s
+      
+      #Add parentroot column and reorder table
+      index<-which(table$file==filenamesrac[i])
+      table[index, "parentroot"]<-rac$Mother[table$root[index]]+1
+      table<-table[,c("file", "root", "dbase", "dbasecum", "order", "parentroot", "time", "deltaage", "bran", "apic", "x1", "y1", "z1", "x2", "y2", "z2", "length", "blength", "orientation", "growth", "geodesic")]}
   
   index<-which(is.na(table$file)==TRUE)
   table<-table[-index,] #Remove lines with NA values
@@ -204,7 +209,7 @@ dartToTable<-function(inputrac, inputlie, inputtps, res=NULL, unitlength="px", u
   length1<-sum$length[index]
   table$growth<-length1/table$deltaage
   
-  table<-table[,-c(3,4,7)]
+  table<-table[,-c(3,4,8)]
   
   if (fitter==TRUE){
   
@@ -213,7 +218,7 @@ dartToTable<-function(inputrac, inputlie, inputtps, res=NULL, unitlength="px", u
   table$magnitude<-rep(0, nrow(table))
   table$pathlength<-rep(1, nrow(table))
   
-  RSlevels<-levels(as.factor(table$file))
+  RSlevels<-unique(table$file)
   n<-length(RSlevels)
   
   for (i in 1:n){#For each root system in the table
@@ -228,60 +233,51 @@ dartToTable<-function(inputrac, inputlie, inputtps, res=NULL, unitlength="px", u
       #Magnitude
       subtable$magnitude[apicindex[l]]<-1
       
-      if (subtable$order[apicindex[l]]==1 & subtable$bran[apicindex[l]]=="true") {break}
+      root<-subtable$root[apicindex[l]]
+      parentroot<-subtable$parentroot[apicindex[l]]
       
-      testbran<-which(subtable$x1==subtable$x1[apicindex[l]] & subtable$y1==subtable$y1[apicindex[l]] & subtable$z1==subtable$z1[apicindex[l]])
+      indexprec<-which(subtable$x2==subtable$x1[apicindex[l]] & subtable$y2==subtable$y1[apicindex[l]] & subtable$z2==subtable$z1[apicindex[l]])
+      if (length(indexprec)>1) {indexprec<-indexprec[which(subtable$root[indexprec]==root | subtable$root[indexprec]==parentroot)]}
       
-      if (length(testbran)==2){#We are at a crossing
+      if (length(indexprec)>0){
         
-        segment1<-which(subtable$x2==subtable$x1[apicindex[l]] & subtable$y2==subtable$y1[apicindex[l]] & subtable$z2==subtable$z1[apicindex[l]])
-        segment2<-testbran[testbran!=apicindex[l]]
-        geo1<-subtable$geodesic[segment1]
-        geo2<-subtable$geodesic[segment2]
-        if (geo1>geo2){indexprec<-segment2}
-        if (geo1<geo2){indexprec<-segment1}}
-      
-      else {indexprec<-which(subtable$x2==subtable$x1[apicindex[l]] & subtable$y2==subtable$y1[apicindex[l]] & subtable$z2==subtable$z1[apicindex[l]])}
-      
-      subtable$magnitude[indexprec]<-subtable$magnitude[indexprec]+1
-      
-      while(subtable$order[indexprec]>=1){
+        root<-subtable$root[indexprec]
+        parentroot<-subtable$parentroot[indexprec]
         
-        if (subtable$order[indexprec]==1 & subtable$bran[indexprec]=="true") {break}
+        subtable$magnitude[indexprec]<-subtable$magnitude[indexprec]+1
         
-        testbran<-which(subtable$x1==subtable$x1[indexprec] & subtable$y1==subtable$y1[indexprec] & subtable$z1==subtable$z1[indexprec])
-
-        if (length(testbran)==2){#We are at a crossing
+        while(subtable$order[indexprec]>=1){
           
           segment1<-which(subtable$x2==subtable$x1[indexprec] & subtable$y2==subtable$y1[indexprec] & subtable$z2==subtable$z1[indexprec])
-          segment2<-testbran[testbran!=indexprec]
-          geo1<-subtable$geodesic[segment1]
-          geo2<-subtable$geodesic[segment2]
-          if (geo1>geo2){indexprec<-segment2}
-          if (geo1<geo2){indexprec<-segment1}}
-        
-        else {indexprec<-which(subtable$x2==subtable$x1[indexprec] & subtable$y2==subtable$y1[indexprec] & subtable$z2==subtable$z1[indexprec])}
-        
-        subtable$magnitude[indexprec]<-subtable$magnitude[indexprec]+1}
+          if (length(segment1)>1) {indexprec<-segment1[which(subtable$root[segment1]==root | subtable$root[segment1]==parentroot)]} else {indexprec<-segment1}
+          if (length(indexprec)==0){break}
+          root<-subtable$root[indexprec]
+          parentroot<-subtable$parentroot[indexprec]
+          
+          subtable$magnitude[indexprec]<-subtable$magnitude[indexprec]+1}}
     
       #Path length
       
-      testbran<-which(subtable$x1==subtable$x2[branindex[l]] & subtable$y1==subtable$y2[branindex[l]] & subtable$z1==subtable$z2[branindex[l]])
+      root<-subtable$root[branindex[l]]
       
-      if (length(testbran)==0) {} else {
+      testbran<-which(subtable$x1==subtable$x2[branindex[l]] & subtable$y1==subtable$y2[branindex[l]] & subtable$z1==subtable$z2[branindex[l]]) #Is it a crossing?
+      if (length(testbran)>1) {testbran<-testbran[which(subtable$root[testbran]==root | subtable$parentroot[testbran]==root)]} #Select segments based on root ID and parentroot ID
       
-      if (length(testbran)>=2) {
-        subtable$pathlength[testbran]<-subtable$pathlength[branindex[l]]+1
-        index<-which(subtable$bran[testbran]=="false")
-        suiv<-testbran[index]}
-      else {
-        subtable$pathlength[testbran]<-subtable$pathlength[branindex[l]]
-        suiv<-testbran}}
+      if (length(testbran)==0) {} else{
+        
+        if (length(testbran)>=2) {
+          subtable$pathlength[testbran]<-subtable$pathlength[branindex[l]]+1
+          index<-which(subtable$bran[testbran]=="false")
+          suiv<-testbran[index]}
+        else {
+          subtable$pathlength[testbran]<-subtable$pathlength[branindex[l]]
+          suiv<-testbran}}
       
       while(subtable$apic[suiv]=="false"){
         
-        testbran<-which(subtable$x1==subtable$x2[suiv] & subtable$y1==subtable$y2[suiv] & subtable$z1==subtable$z2[suiv])
-
+        testbran<-which(subtable$x1==subtable$x2[suiv] & subtable$y1==subtable$y2[suiv] & subtable$z1==subtable$z2[suiv]) #Is it a crossing?
+        if (length(testbran)>1) {testbran<-testbran[which(subtable$root[testbran]==root | subtable$parentroot[testbran]==root)]} #Select segments based on root ID and parentroot ID
+        
         if (length(testbran)>=2) {
           subtable$pathlength[testbran]<-subtable$pathlength[suiv]+1
           index<-which(subtable$bran[testbran]=="false")
