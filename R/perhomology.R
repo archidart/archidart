@@ -1,15 +1,17 @@
-perhomology<-function(x, FUN="geodesic", show.progress=FALSE){
+perhomology<-function(x, FUN="geodesic", vertical3d="y", show.progress=FALSE){
   
   #x must be an object of class "rsmlToTable" or "dartToTable"
   if ("rsmlToTable" %in% class(x) | "dartToTable" %in% class(x)) {} else {stop("x must be a rsmlToTable or dartToTable object")}
   
   if (FUN=="geodesic"|FUN=="depth") {} else {stop("FUN must be either geodesic or depth")}
   
+  if (vertical3d=="x"|vertical3d=="y"|vertical3d=="z") {} else {stop("vertical3d must be x, y, or z")}
+  
   if (mode(show.progress)!="logical"){stop("show.progress must be logical")}
   
   if ("dartToTable" %in% class(x)) {x$rootsystem<-x$file}
   if ("rsmlToTable" %in% class(x)) {x$rootsystem<-paste(x$file, x$plant, sep="_")}
-  RSlevels<-levels(as.factor(x$rootsystem))
+  RSlevels<-unique(x$rootsystem)
   
   n<-length(RSlevels) #Number of root systems in x
   
@@ -36,46 +38,33 @@ perhomology<-function(x, FUN="geodesic", show.progress=FALSE){
     
     for (l in 1:length(apicindex)){#For each apic point of a root system
       
+      root<-table$root[apicindex[l]]
+      parentroot<-table$parentroot[apicindex[l]]
+      
       table$hzero[apicindex[l]]<-l
       
       results[[i]][l,2]<-table$geodesic[apicindex[l]]
       results[[i]][l,3]<-table$geodesic[apicindex[l]]-table$length[apicindex[l]]
+      
+      indexprec<-which(table$x2==table$x1[apicindex[l]] & table$y2==table$y1[apicindex[l]] & table$z2==table$z1[apicindex[l]])
+      if (length(indexprec)>1) {indexprec<-indexprec[which(table$root[indexprec]==root | table$root[indexprec]==parentroot)]}
 
-      if (table$order[apicindex[l]]==1 & table$bran[apicindex[l]]=="true") {break}
+      if (length(indexprec)>0){
+        
+        root<-table$root[indexprec]
+        parentroot<-table$parentroot[indexprec]
       
-      testbran<-which(table$x1==table$x1[apicindex[l]] & table$y1==table$y1[apicindex[l]] & table$z1==table$z1[apicindex[l]])
-      
-      if (length(testbran)==2){#We are at a crossing
-        
-        segment1<-which(table$x2==table$x1[apicindex[l]] & table$y2==table$y1[apicindex[l]] & table$z2==table$z1[apicindex[l]])
-        segment2<-testbran[testbran!=apicindex[l]]
-        geo1<-table$geodesic[segment1]
-        geo2<-table$geodesic[segment2]
-        if (geo1>geo2){indexprec<-segment2}
-        if (geo1<geo2){indexprec<-segment1}}
-      
-      else {indexprec<-which(table$x2==table$x1[apicindex[l]] & table$y2==table$y1[apicindex[l]] & table$z2==table$z1[apicindex[l]])}
-      
-      while(is.na(table$hzero[indexprec])==TRUE){
-        
-        table$hzero[indexprec]<-l
-        
-        results[[i]][l,3]<-table$geodesic[indexprec]-table$length[indexprec]
-        
-        if (table$order[indexprec]==1 & table$bran[indexprec]=="true") {break}
-
-        testbran<-which(table$x1==table$x1[indexprec] & table$y1==table$y1[indexprec] & table$z1==table$z1[indexprec])
-        
-        if (length(testbran)==2){#We are at a crossing
-          
-          segment1<-which(table$x2==table$x1[indexprec] & table$y2==table$y1[indexprec] & table$z2==table$z1[indexprec])
-          segment2<-testbran[testbran!=indexprec]
-          geo1<-table$geodesic[segment1]
-          geo2<-table$geodesic[segment2]
-          if (geo1>geo2){indexprec<-segment2}
-          if (geo1<geo2){indexprec<-segment1}}
-        
-        else {indexprec<-which(table$x2==table$x1[indexprec] & table$y2==table$y1[indexprec] & table$z2==table$z1[indexprec])}}}
+          while(is.na(table$hzero[indexprec])==TRUE){
+            
+            table$hzero[indexprec]<-l
+            
+            results[[i]][l,3]<-table$geodesic[indexprec]-table$length[indexprec]
+            
+            segment1<-which(table$x2==table$x1[indexprec] & table$y2==table$y1[indexprec] & table$z2==table$z1[indexprec])
+            if (length(segment1)>1) {indexprec<-segment1[which(table$root[segment1]==root | table$root[segment1]==parentroot)]} else {indexprec<-segment1}
+            if (length(indexprec)==0){break}
+            root<-table$root[indexprec]
+            parentroot<-table$parentroot[indexprec]}}}
     
     results[[i]]<-results[[i]][order(results[[i]][,3], decreasing=FALSE),]
     class(results[[i]])<-c("matrix", "barcode")}}
@@ -101,46 +90,44 @@ perhomology<-function(x, FUN="geodesic", show.progress=FALSE){
       
       for (l in 1:length(apicindex)){#For each apic point of a root system
         
+        root<-table$root[apicindex[l]]
+        parentroot<-table$parentroot[apicindex[l]]
+        
         table$hzero[apicindex[l]]<-l
         
-        results[[i]][l,2]<-table$y2[apicindex[l]] #birth
-        results[[i]][l,3]<-table$y1[apicindex[l]] #death
-
-        if (table$order[apicindex[l]]==1 & table$bran[apicindex[l]]=="true") {break}
+        if (vertical3d=="x"){
+          results[[i]][l,2]<-table$x2[apicindex[l]]
+          results[[i]][l,3]<-table$x1[apicindex[l]]}
         
-        testbran<-which(table$x1==table$x1[apicindex[l]] & table$y1==table$y1[apicindex[l]] & table$z1==table$z1[apicindex[l]])
+        if (vertical3d=="y"){
+          results[[i]][l,2]<-table$y2[apicindex[l]]
+          results[[i]][l,3]<-table$y1[apicindex[l]]}
         
-        if (length(testbran)==2){#We are at a crossing
-          
-          segment1<-which(table$x2==table$x1[apicindex[l]] & table$y2==table$y1[apicindex[l]] & table$z2==table$z1[apicindex[l]])
-          segment2<-testbran[testbran!=apicindex[l]]
-          depth1<-table$y2[segment1]
-          depth2<-table$y2[segment2]
-          if (depth1>depth2){indexprec<-segment2}
-          if (depth1<depth2){indexprec<-segment1}}
+        if (vertical3d=="z"){
+          results[[i]][l,2]<-table$z2[apicindex[l]]
+          results[[i]][l,3]<-table$z1[apicindex[l]]}
         
-        else {indexprec<-which(table$x2==table$x1[apicindex[l]] & table$y2==table$y1[apicindex[l]] & table$z2==table$z1[apicindex[l]])}
+        indexprec<-which(table$x2==table$x1[apicindex[l]] & table$y2==table$y1[apicindex[l]] & table$z2==table$z1[apicindex[l]])
+        if (length(indexprec)>1) {indexprec<-indexprec[which(table$root[indexprec]==root | table$root[indexprec]==parentroot)]}
         
-        while(is.na(table$hzero[indexprec])==TRUE){
+        if (length(indexprec)>0){
           
-          table$hzero[indexprec]<-l
+          root<-table$root[indexprec]
+          parentroot<-table$parentroot[indexprec]
           
-          results[[i]][l,3]<-table$y1[indexprec]
-          
-          if (table$order[indexprec]==1 & table$bran[indexprec]=="true") {break}
-          
-          testbran<-which(table$x1==table$x1[indexprec] & table$y1==table$y1[indexprec] & table$z1==table$z1[indexprec])
-          
-          if (length(testbran)==2){#We are at a crossing
+          while(is.na(table$hzero[indexprec])==TRUE){
+            
+            table$hzero[indexprec]<-l
+            
+            if (vertical3d=="x") {results[[i]][l,3]<-table$x1[indexprec]}
+            if (vertical3d=="y") {results[[i]][l,3]<-table$y1[indexprec]}
+            if (vertical3d=="z") {results[[i]][l,3]<-table$z1[indexprec]}
             
             segment1<-which(table$x2==table$x1[indexprec] & table$y2==table$y1[indexprec] & table$z2==table$z1[indexprec])
-            segment2<-testbran[testbran!=indexprec]
-            depth1<-table$y2[segment1]
-            depth2<-table$y2[segment2]
-            if (depth1>depth2){indexprec<-segment2}
-            if (depth1<depth2){indexprec<-segment1}}
-          
-          else {indexprec<-which(table$x2==table$x1[indexprec] & table$y2==table$y1[indexprec] & table$z2==table$z1[indexprec])}}}
+            if (length(segment1)>1) {indexprec<-segment1[which(table$root[segment1]==root | table$root[segment1]==parentroot)]} else {indexprec<-segment1}
+            if (length(indexprec)==0){break}
+            root<-table$root[indexprec]
+            parentroot<-table$parentroot[indexprec]}}}
       
       results[[i]]<-results[[i]][order(results[[i]][,3], decreasing=FALSE),]
       class(results[[i]])<-c("matrix", "barcode")}}
