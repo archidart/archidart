@@ -4,17 +4,16 @@
 \description{Computing the birth and death of homology group components (path-connected components) using root system architecture data encoded with the Root System Markup Language (RSML) or exported by Data Analysis of Root Tracings (DART). More information can be found in \cite{Le Bot et al (2010)}, \cite{Lobet et al (2015)} and \cite{Li et al (2017)}.  
 }
 \usage{
-perhomology(x, FUN="geodesic", show.progress=FALSE)
+perhomology(x, show.progress=FALSE)
 }
 \arguments{
   \item{x}{A rsmlToTable or dartToTable object. Mandatory.}
-  \item{FUN}{A distance function. Could be either "geodesic" or "depth".}
   \item{show.progress}{A logical value. Should a progress bar be shown in the R console? Yes is TRUE, No is FALSE.}
 }
 \details{
 In mathematics, homology refers to homology groups. Because roots are path-connected components, only zero order homology (H0) branches are considered here.
 
-The persistence of each H0 branch is computed using a geodesic or a depth distance function. More information can be found in \cite{Li et al (2017)}. 
+The persistence of each H0 branch is computed using a geodesic distance function. More information can be found in \cite{Li et al (2017)}. 
 }
 \value{
 Returns a list of matrices. The list is a perhomology object. Each matrix of the list is a barcode object. Each element of the list is named as its corresponding RSML/DART file. Each matrix is associated with one root system only and possesses the following columns: 
@@ -42,11 +41,7 @@ path <- system.file("extdata", package="archiDART")
 table<-rsmlToTable(inputrsml=path, unitlength="cm", rsml.date="age")
 
 #Persistent homology
-ph1<-perhomology(table, FUN="geodesic")
+ph1<-perhomology(table)
 plot(ph1$'monocot-archisimple_1', las=1, xlab="Geodesic distance (cm)",
-ylab=expression(H[0]))
-
-ph2<-perhomology(table, FUN="depth")
-plot(ph2$'monocot-archisimple_1', las=1, xlab="Depth (cm)",
 ylab=expression(H[0]))
 }

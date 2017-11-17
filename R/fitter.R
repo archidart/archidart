@@ -51,7 +51,7 @@ x<-cbind(x, matrix(c(0,1), nrow=nrow(x), ncol=2, byrow=TRUE))
       suiv<-testbran[index]}
     else {
       x[testbran, 23]<-x[branindex[l], 23]
-      suiv<-testbran}}
+      suiv<-testbran}
     
     while(x[suiv, 7]==0){
       
@@ -64,6 +64,6 @@ x<-cbind(x, matrix(c(0,1), nrow=nrow(x), ncol=2, byrow=TRUE))
         suiv<-testbran[index]}
       else {
         x[testbran, 23]<-x[suiv, 23]
-        suiv<-testbran}}}
+        suiv<-testbran}}}}
 
   return(x)}

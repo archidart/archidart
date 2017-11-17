@@ -519,7 +519,7 @@ if (algo=="tables"){
                 suiv<-testbran[index]}
               else {
                 xt$pathlength[testbran]<-xt$pathlength[branindex[l]]
-                suiv<-testbran}}
+                suiv<-testbran}
             
             while(xt$apic[suiv]=="false"){
               
@@ -532,7 +532,7 @@ if (algo=="tables"){
                 suiv<-testbran[index]}
               else {
                 xt$pathlength[testbran]<-xt$pathlength[suiv]
-                suiv<-testbran}}}
+                suiv<-testbran}}}}
         
         datadart$Altitude[k]<-max(xt$pathlength)
         datadart$ExtPathLength[k]<-sum(xt$pathlength[xt$apic=="true"])}
@@ -690,13 +690,13 @@ if (algo=="tables"){
           
           if (nrow(xt)>1){
             
-            for (l in 1:length(branindex)){ #For each root
+            for (l in 1:length(branindex)){#For each root
               
               root<-xt$root[branindex[l]]
               
               testbran<-which(xt$x1==xt$x2[branindex[l]] & xt$y1==xt$y2[branindex[l]] & xt$z1==xt$z2[branindex[l]]) #Is it a crossing?
               if (length(testbran)>1) {testbran<-testbran[which(xt$root[testbran]==root | xt$parentroot[testbran]==root)]} #Select segments based on root ID and parentroot ID
-
+              
               if (length(testbran)==0) {} else {
                 
                 if (length(testbran)>=2) {
@@ -705,7 +705,7 @@ if (algo=="tables"){
                   suiv<-testbran[index]}
                 else {
                   xt$pathlength[testbran]<-xt$pathlength[branindex[l]]
-                  suiv<-testbran}}
+                  suiv<-testbran}
               
               while(xt$apic[suiv]=="false"){
                 
@@ -718,7 +718,7 @@ if (algo=="tables"){
                   suiv<-testbran[index]}
                 else {
                   xt$pathlength[testbran]<-xt$pathlength[suiv]
-                  suiv<-testbran}}}
+                  suiv<-testbran}}}}
             
             datarsml$Altitude[k]<-max(xt$pathlength)
             datarsml$ExtPathLength[k]<-sum(xt$pathlength[xt$apic=="true"])}
