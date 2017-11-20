@@ -31,7 +31,7 @@ path <- system.file("extdata", package="archiDART")
 table<-rsmlToTable(inputrsml=path, unitlength="cm", rsml.date="age")
 
 #Persistent homology
-ph<-perhomology(table, FUN="geodesic")
+ph<-perhomology(table)
 
 #Compute pairwise distance matrix
 distance<-bottleneckdist(ph)

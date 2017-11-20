@@ -1,5 +1,5 @@
 plot.barcode<-function(x, xlab=NULL, ylab=NULL, ...){
-  if (is.null(xlab)==TRUE){xlab<-"Distance function"}
+  if (is.null(xlab)==TRUE){xlab<-"Geodesic distance"}
   if (is.null(ylab)==TRUE){ylab<-expression(H[0])}
   xcoord<-c(min(x[,2:3]), max(x[,2:3]))
   ycoord<-c(0, nrow(x))
