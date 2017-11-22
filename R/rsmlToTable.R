@@ -95,22 +95,19 @@ rsmlToTable<-function(inputrsml, unitlength="px", rsml.date=NULL, rsml.connect=T
       
       n<-n+1
       lie<-RSML$lie[[j]]
-      if (rsml.connect==TRUE) {rac<-RSML$rac[[j]]}
+      rac<-RSML$rac[[j]]
       tps<-RSML$tps[[j]]
       
       if ("Z" %in% colnames(lie)) {} else {dirvert<-c(0,1)}
       
       #Add dbasecum column in rac file
       
-      if (rsml.connect==TRUE){
+      rac$CumDBase<-rep(NA, nrow(rac))
+    
+      for (l in 1:nrow(rac)){
       
-        rac$CumDBase<-rep(NA, nrow(rac))
-      
-        for (l in 1:nrow(rac)){
-        
-          if (rac$Ord[l]==1) {rac$CumDBase[l]<-0}
-          else {rac$CumDBase[l]<-rac$CumDBase[rac$Mother[l]+1]+rac$DBase[l]}}}
-      
+        if (rac$Ord[l]==1) {rac$CumDBase[l]<-0}
+        else {rac$CumDBase[l]<-rac$CumDBase[rac$Mother[l]+1]+rac$DBase[l]}}
       
       s<-0 #Count number of segments added to table
       
@@ -123,7 +120,7 @@ rsmlToTable<-function(inputrsml, unitlength="px", rsml.date=NULL, rsml.connect=T
           table[rowsintable+s, 1]<-f #file
           table[rowsintable+s, 2]<-j #plant
           table[rowsintable+s, 3]<-lie$root[l] #root
-          if (rsml.connect==TRUE) {table[rowsintable+s, 4]<-rac$CumDBase[lie$root[l]]*cunit1[n]} else{table[rowsintable+s, 4]<-NA} #dbasecum
+          table[rowsintable+s, 4]<-rac$CumDBase[lie$root[l]]*cunit1[n] #dbasecum
           table[rowsintable+s, 5]<-lie$ord[l] #order
           table[rowsintable+s, 6]<-tps$Date[lie$Date[l]] #time
           
