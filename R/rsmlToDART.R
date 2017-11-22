@@ -730,6 +730,8 @@ rsmlToDART <- function(rsml.path, final.date, connect){
     
     lie$Date<-match(lie$Date, tps$Date)
     
+    lie$Date[which(is.na(lie$Date)==TRUE)]<-0
+
     #Make RAC file for time series
     
     rac$Root<-rac$Root-1
