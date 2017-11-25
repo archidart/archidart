@@ -86,7 +86,7 @@ rsmlToTable<-function(inputrsml, unitlength="px", rsml.date=NULL, rsml.connect=T
   
   #Construct rsml table (1 line per segment)
   
-  table<-matrix(nrow=nodes, ncol=22)
+  table<-matrix(nrow=nodes, ncol=23)
   
   rowsintable<-0
   n<-0 #n is the number of lie files
@@ -148,8 +148,9 @@ rsmlToTable<-function(inputrsml, unitlength="px", rsml.date=NULL, rsml.connect=T
           if ("Z" %in% colnames(lie)) {table[rowsintable+s, 18]<-distance3D(x1=lie$X[prec], y1=lie$Y[prec], z1=lie$Z[prec], x2=lie$X[l], y2=lie$Y[l], z2=lie$Z[l])*cunit1[n]} else {table[rowsintable+s, 18]<-distance2D(x1=lie$X[prec], y1=lie$Y[prec], x2=lie$X[l], y2=lie$Y[l])*cunit1[n]} #length
           table[rowsintable+s, 19]<-lie$dist[l]*cunit1[n] #blength
           dirsegment<-c(lie$X[l]-lie$X[prec], lie$Y[l]-lie$Y[prec], lie$Z[l]-lie$Z[prec])*cunit1[n]
-          table[rowsintable+s, 20]<-acos(as.numeric(dirvert%*%dirsegment)/table[rowsintable+s, 18])*cunitangle}} #orientation
-      
+          table[rowsintable+s, 20]<-acos(as.numeric(dirvert%*%dirsegment)/table[rowsintable+s, 18])*cunitangle #orientation
+          table[rowsintable+s, 23]<-rac$Mother[table[rowsintable+s,3]]+1}} #parentroot
+
       rowsintable<-rowsintable+s}
   
   index<-which(is.na(table[,1])==TRUE)
@@ -185,10 +186,6 @@ rsmlToTable<-function(inputrsml, unitlength="px", rsml.date=NULL, rsml.connect=T
     rownames(table)<-c(1:nrow(table))}
   
   table<-table[,-c(4,7)] #Remove dbasecum and deltaage
-  
-  #Add parentroot column
-  parentroot<-rac$Mother[table[,3]]+1
-  table<-cbind(table, parentroot)
 
   #Fitter
   if (rsml.connect==TRUE & fitter==TRUE) {table<-fitter(table)}

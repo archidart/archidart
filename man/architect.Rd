@@ -4,7 +4,7 @@
 \description{Calculation of common root system architecture (RSA) traits from Data Analysis of Root Tracings (DART) output files and RSA data encoded with the Root System Markup Language (RSML). More information can be found in \cite{Delory et al (2016)}, \cite{Le Bot et al (2010)}, and \cite{Lobet et al (2015)}.}
 \usage{
 architect(inputrac=NULL, inputtps=NULL, inputrsml=NULL, res=NULL, unitlength="px",
-          rsml.date=NULL, rsml.connect=FALSE, vertical3d="y", fitter=TRUE)}
+          rsml.date=NULL, rsml.connect=FALSE, vertical3d="y", fitter=FALSE)}
 \arguments{
   \item{inputrac}{A dartToTable object or a character string specifying the path to the folder containing the rac files created by DART. If \code{inputrac} is a character string, it can be the same as \code{inputtps}/\code{inputrsml}.}
   \item{inputtps}{A character string specifying the path to the folder containing the tps files created by DART. This argument can be the same as \code{inputrac}/\code{inputrsml}. This argument will not be used if \code{inputrac} is a dartToTable object.}

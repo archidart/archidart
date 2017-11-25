@@ -1,4 +1,4 @@
-architect<-function(inputrac=NULL, inputtps=NULL, inputrsml=NULL, res=NULL, unitlength="px", rsml.date=NULL, rsml.connect=FALSE, vertical3d="y", fitter=TRUE){
+architect<-function(inputrac=NULL, inputtps=NULL, inputrsml=NULL, res=NULL, unitlength="px", rsml.date=NULL, rsml.connect=FALSE, vertical3d="y", fitter=FALSE){
   
   # Find out what kind of data input we have
   
