@@ -244,8 +244,8 @@ rsmlToDART <- function(rsml.path, final.date, connect){
               lie[pos, 2]<-lie[lie[pos, 6], 2]
               lie[pos+1, 5]<-pos
               lie[pos-1, 6]<-pos
-              lie[is.na(lie[1:(lie.lines),5])==TRUE, 5]<-0
-              lie[is.na(lie[1:(lie.lines),6])==TRUE, 6]<-0
+              lie[which(is.na(lie[1:(lie.lines),5])==TRUE), 5]<-0
+              lie[which(is.na(lie[1:(lie.lines),6])==TRUE), 6]<-0
               lie[1:(lie.lines+length2),1]<-match(lie[1:(lie.lines+length2),1], lie[1:(lie.lines+length2),1])
               lie[lie.lines+1,5]<-pos
               
@@ -379,8 +379,8 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                           lie[pos, 2]<-lie[lie[pos, 6], 2]
                           lie[pos+1, 5]<-pos
                           lie[pos-1, 6]<-pos
-                          lie[is.na(lie[1:(lie.lines),5])==TRUE, 5]<-0
-                          lie[is.na(lie[1:(lie.lines),6])==TRUE, 6]<-0
+                          lie[which(is.na(lie[1:(lie.lines),5])==TRUE), 5]<-0
+                          lie[which(is.na(lie[1:(lie.lines),6])==TRUE), 6]<-0
                           lie[1:(lie.lines+length3),1]<-match(lie[1:(lie.lines+length3),1], lie[1:(lie.lines+length3),1])
                           lie[lie.lines+1,5]<-pos
                           
@@ -514,8 +514,8 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                 lie[pos, 2]<-lie[lie[pos, 6], 2]
                                 lie[pos+1, 5]<-pos
                                 lie[pos-1, 6]<-pos
-                                lie[is.na(lie[1:(lie.lines),5])==TRUE, 5]<-0
-                                lie[is.na(lie[1:(lie.lines),6])==TRUE, 6]<-0
+                                lie[which(is.na(lie[1:(lie.lines),5])==TRUE), 5]<-0
+                                lie[which(is.na(lie[1:(lie.lines),6])==TRUE), 6]<-0
                                 lie[1:(lie.lines+length4),1]<-match(lie[1:(lie.lines+length4),1], lie[1:(lie.lines+length4),1])
                                 lie[lie.lines+1,5]<-pos
                                 
@@ -649,8 +649,8 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                       lie[pos, 2]<-lie[lie[pos, 6], 2]
                                       lie[pos+1, 5]<-pos
                                       lie[pos-1, 6]<-pos
-                                      lie[is.na(lie[1:(lie.lines),5])==TRUE, 5]<-0
-                                      lie[is.na(lie[1:(lie.lines),6])==TRUE, 6]<-0
+                                      lie[which(is.na(lie[1:(lie.lines),5])==TRUE), 5]<-0
+                                      lie[which(is.na(lie[1:(lie.lines),6])==TRUE), 6]<-0
                                       lie[1:(lie.lines+length5),1]<-match(lie[1:(lie.lines+length5),1], lie[1:(lie.lines+length5),1])
                                       lie[lie.lines+1,5]<-pos
                                       

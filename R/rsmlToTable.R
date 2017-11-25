@@ -220,5 +220,6 @@ rsmlToTable<-function(inputrsml, unitlength="px", rsml.date=NULL, rsml.connect=T
   TABLE$apic[which(TABLE$apic==0)]<-"false"
   TABLE$apic[which(TABLE$apic==1)]<-"true"
 
+rownames(TABLE)<-c(1:nrow(TABLE))
 class(TABLE)<-c("data.frame", "rsmlToTable")
 return(TABLE)}

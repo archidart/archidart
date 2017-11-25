@@ -640,13 +640,13 @@ if (algo=="tables"){
     
         #Diameter
         
-        if (t==length(dates)){#Dianeter in rsml file is for the last observation date
+        if (t==length(dates)){#Diameter in rsml file is for the last observation date
         
-        maxordfile<-max(inputrsml$order[inputrsml$file==files[i]])
+        maxordfile<-max(xt$order)
         
-        for (l in 1:maxordfile){diameter[k,l]<-sum(inputrsml$diameter3[inputrsml$file==files[i] & inputrsml$order==l])/(nrow(inputrsml[inputrsml$file==files[i] & inputrsml$order==l,])+sum(inputrsml$apic[inputrsml$file==files[i] & inputrsml$order==l]=="true"))}
+        for (l in 1:maxordfile){diameter[k,l]<-sum(xt$diameter3[xt$order==l])/(nrow(xt[xt$order==l,])+sum(xt$apic[xt$order==l]=="true"))}
         
-        diameter[k, ncol(diameter)]<-sum(inputrsml$diameter3[inputrsml$file==files[i] & inputrsml$order>1])/(nrow(inputrsml[inputrsml$file==files[i] & inputrsml$order>1,])+sum(inputrsml$apic[inputrsml$file==files[i] & inputrsml$order>1]=="true"))} #Mean diameter for all lateral roots
+        if (maxordfile>1) {diameter[k, ncol(diameter)]<-sum(xt$diameter3[xt$order>1])/(nrow(xt[xt$order>1,])+sum(xt$apic[xt$order>1]=="true"))} else {diameter[k, ncol(diameter)]<-NA}} #Mean diameter for all lateral roots
         
         #Height
         if (vertical3d=="y") {datarsml$Height[k]<-abs(max(xt$y2[xt$time<=dates[t]])-min(xt$y1[xt$time<=dates[t]]))}
