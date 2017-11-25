@@ -269,7 +269,7 @@ latdist<-function(inputrac=NULL, inputrsml=NULL, output=c("lrd","dtp"), res=NULL
   
     else {
       
-      # Calculating lateral root length and density distributions alons each mother root with interpolation
+      # Calculating lateral root length and density distributions along each mother root with interpolation
     
       for (i in 1:length(DATA)){
         
