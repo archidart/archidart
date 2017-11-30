@@ -4,8 +4,8 @@ x1<-x  #Make a copy
 
 #x is a matrix (for 1 RSML, can contain several plants)
 #Add 2 columns to x (magnitude and pathlength)
-x<-cbind(x, matrix(c(0,1), nrow=nrow(x), ncol=2, byrow=TRUE))  
-plants<-unique(x[,2]) #Find all plants in RSML
+x1<-cbind(x, matrix(c(0,1), nrow=nrow(x), ncol=2, byrow=TRUE))  
+plants<-unique(x1[,2]) #Find all plants in RSML
 
 for (n in 1:length(plants)){#For each plant in RSML
   
