@@ -69,6 +69,10 @@ Returns a rsmlToTable object. Each line of the data frame gives the attributes o
 
 \bold{blength}: the cumulative length measured along each root (expressed in \code{unitlength}).
 
+\bold{surface}: the surface area of the root segment (expressed in \code{unitlength^2}).
+
+\bold{volume}: the volume of the root segment (expressed in \code{unitlength^3}).
+
 \bold{orientation}: the angle between each segment and a vertical direction vector (expressed in \code{unitangle}).
 
 \bold{growth}: the growth rate value of each segment (expressed in \code{unitlength}).

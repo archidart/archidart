@@ -4,13 +4,13 @@ x1<-x  #Make a copy
 
 #x is a matrix (for 1 RSML, can contain several plants)
 #Add 2 columns to x (magnitude and pathlength)
-x1<-cbind(x, matrix(c(0,1), nrow=nrow(x), ncol=2, byrow=TRUE))  
+x1<-cbind(x1, matrix(c(0,1), nrow=nrow(x1), ncol=2, byrow=TRUE))  
 plants<-unique(x1[,2]) #Find all plants in RSML
 
 for (n in 1:length(plants)){#For each plant in RSML
   
-  x<-x1[x1[,2]==plants[n],] #Subset for each plant
-
+  x<-x1[which(x1[,2]==plants[n]),] #Subset for each plant
+  if (is.null(dim(x))==TRUE){x<-matrix(x, ncol=23)}
   apicindex<-which(x[,7]==1) #apicindex and branindex should have the same length
   branindex<-which(x[,6]==1)
 

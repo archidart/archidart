@@ -1,4 +1,4 @@
-architect<-function(inputrac=NULL, inputtps=NULL, inputrsml=NULL, res=NULL, unitlength="px", rsml.date=NULL, rsml.connect=FALSE, vertical3d="y", fitter=FALSE){
+architect<-function(inputrac=NULL, inputtps=NULL, inputrsml=NULL, res=NULL, unitlength="px", rsml.date=NULL, rsml.connect=FALSE, vertical3d="y", chull=c("x", "y"), fitter=FALSE){
   
   # Find out what kind of data input we have
   
@@ -383,11 +383,20 @@ if (algo=="rawfiles"){
   
   
 if (algo=="tables"){
+  
+  if (is.null(inputrsml)==FALSE & fitter==TRUE){
+    
+    if ("geodesic" %in% colnames(inputrsml)) {} else {stop("No connection found between parent and daughter roots. Consider using rsml.connect=TRUE in rsmlToTable.")}}
 
   if (vertical3d=="x"|vertical3d=="y"|vertical3d=="z") {} else {stop("vertical3d must be x, y, or z")}
   
   if (mode(fitter)!="logical"){stop("fitter must be logical")}
   
+  if (mode(chull)!="character"){stop("mode(chull) must be character")}
+  if (length(chull)!=2){stop("chull must be a vector of 2 character elements")}
+  chull<-sort(chull)
+  if (all.equal(chull, c("x", "y"))==TRUE|all.equal(chull, c("x", "z"))==TRUE|all.equal(chull, c("y", "z"))==TRUE) {} else {stop("chull must be c(x,y), c(x,z), or c(y,z)")}
+
   if (is.null(inputrac)==TRUE & is.null(inputrsml)==FALSE) {maxord<-max(inputrsml$order)}
   if (is.null(inputrac)==FALSE & is.null(inputrsml)==TRUE) {maxord<-max(inputrac$order)}
   if (is.null(inputrac)==FALSE & is.null(inputrsml)==FALSE) {maxord<-max(c(inputrac$order, inputrsml$order))}
@@ -398,13 +407,15 @@ if (algo=="tables"){
     
     n<-length(unique(paste(inputrac$file, inputrac$time, sep="")))
     
-    if (fitter==TRUE){datadart<-data.frame(FileName=rep(NA, n), Time=rep(NA, n), TRL=rep(NA, n), GRTR=rep(NA, n), L1R=rep(NA, n), GR1R=rep(NA, n), TN1R=rep(NA, n), TNLR=rep(NA, n), TLRL=rep(NA, n), D2LR=rep(NA, n), Height=rep(NA, n), Width=rep(NA, n), Magnitude=rep(NA, n), Altitude=rep(NA, n), ExtPathLength=rep(NA, n))}
+    if (fitter==TRUE){datadart<-data.frame(FileName=rep(NA, n), Time=rep(NA, n), TRL=rep(NA, n), GRTR=rep(NA, n), L1R=rep(NA, n), GR1R=rep(NA, n), TN1R=rep(NA, n), TNLR=rep(NA, n), TLRL=rep(NA, n), D2LR=rep(NA, n), Height=rep(NA, n), Width=rep(NA, n), Convexhull=rep(NA, n), Magnitude=rep(NA, n), Altitude=rep(NA, n), ExtPathLength=rep(NA, n))}
     
-    else {datadart<-data.frame(FileName=rep(NA, n), Time=rep(NA, n), TRL=rep(NA, n), GRTR=rep(NA, n), L1R=rep(NA, n), GR1R=rep(NA, n), TN1R=rep(NA, n), TNLR=rep(NA, n), TLRL=rep(NA, n), D2LR=rep(NA, n), Height=rep(NA, n), Width=rep(NA, n))}
+    else {datadart<-data.frame(FileName=rep(NA, n), Time=rep(NA, n), TRL=rep(NA, n), GRTR=rep(NA, n), L1R=rep(NA, n), GR1R=rep(NA, n), TN1R=rep(NA, n), TNLR=rep(NA, n), TLRL=rep(NA, n), D2LR=rep(NA, n), Height=rep(NA, n), Width=rep(NA, n), Convexhull=rep(NA, n))}
     
     if (maxord>1){latroot<-matrix(ncol=4*(maxord-1), nrow=n)}
     
     diameter<-matrix(ncol=maxord+1, nrow=n)
+    surface<-matrix(ncol=maxord+1, nrow=n)
+    volume<-matrix(ncol=maxord+1, nrow=n)
     
     files<-unique(inputrac$file)
     
@@ -463,29 +474,26 @@ if (algo=="tables"){
             latroot[k, l+3*(maxord-1)]<-sum(GR$x[GR$time==dates[t] & GR$order==(l+1)])}}
     
         #Height
-        if (vertical3d=="y") {datadart$Height[k]<-abs(max(xt$y2[xt$time<=dates[t]])-min(xt$y1[xt$time<=dates[t]]))}
-        if (vertical3d=="x") {datadart$Height[k]<-abs(max(xt$x2[xt$time<=dates[t]])-min(xt$x1[xt$time<=dates[t]]))}
-        if (vertical3d=="z") {datadart$Height[k]<-abs(max(xt$z2[xt$time<=dates[t]])-min(xt$z1[xt$time<=dates[t]]))}
-    
+        datadart$Height[k]<-abs(max(xt$y2[xt$time<=dates[t]])-min(xt$y1[xt$time<=dates[t]]))
+
         #Width
-        if (vertical3d=="y") {
           
-          widthx<-abs(max(xt$x2[xt$time<=dates[t]])-min(xt$x2[xt$time<=dates[t]]))
-          widthz<-abs(max(xt$z2[xt$time<=dates[t]])-min(xt$z2[xt$time<=dates[t]]))
-          datadart$Width[k]<-max(c(widthx, widthz))}
-    
-        if (vertical3d=="x") {
-          
-          widthy<-abs(max(xt$y2[xt$time<=dates[t]])-min(xt$y2[xt$time<=dates[t]]))
-          widthz<-abs(max(xt$z2[xt$time<=dates[t]])-min(xt$z2[xt$time<=dates[t]]))
-          datadart$Width[k]<-max(c(widthy, widthz))}
-    
-        if (vertical3d=="z") {
-          
-          widthy<-abs(max(xt$y2[xt$time<=dates[t]])-min(xt$y2[xt$time<=dates[t]]))
-          widthx<-abs(max(xt$x2[xt$time<=dates[t]])-min(xt$x2[xt$time<=dates[t]]))
-          datadart$Width[k]<-max(c(widthy, widthx))}
+        datadart$Width[k]<-abs(max(xt$x2[xt$time<=dates[t]])-min(xt$x2[xt$time<=dates[t]]))
         
+        #Convex hull
+        
+        x<-c(xt$x1[xt$time<=dates[t]], xt$x2[xt$time<=dates[t]])
+        y<-c(xt$y1[xt$time<=dates[t]], xt$y2[xt$time<=dates[t]])
+        root.coords<-cbind(x,y)
+        boxhull<-chull(x=x, y=y)
+        
+        if (length(boxhull)<3){datadart$Convexhull[k]<-0}
+        else {
+        boxhull<-c(boxhull, boxhull[1])
+        boxhull.coords<-root.coords[boxhull,]
+        chull.poly<-Polygon(boxhull.coords, hole=F)
+        datadart$Convexhull[k]<-chull.poly@area}
+
         #Fitter topological indices
         
         if (fitter==TRUE){
@@ -547,6 +555,12 @@ if (algo=="tables"){
         diameter<-as.data.frame(diameter)
         colnames(diameter)<-c(paste(rep("MD", maxord), c(1:maxord), sep=""), "MDLR")
         
+        surface<-as.data.frame(surface)
+        colnames(surface)<-c(paste(rep("S", maxord), c(1:maxord), sep=""), "Stot")
+        
+        volume<-as.data.frame(volume)
+        colnames(volume)<-c(paste(rep("V", maxord), c(1:maxord), sep=""), "Vtot")
+        
         if (maxord>1){
           
           latroot<-as.data.frame(latroot)
@@ -557,9 +571,9 @@ if (algo=="tables"){
           colnames(latroot)[l+2*(maxord-1)]<-paste("ML", l+1, "LR", sep="")
           colnames(latroot)[l+3*(maxord-1)]<-paste("GR", l+1, "L", sep="")}
         
-        if (fitter==TRUE){datadart<-data.frame(datadart[,1:9], as.data.frame(latroot), as.data.frame(diameter), datadart[,10:15])}  
+        if (fitter==TRUE){datadart<-data.frame(datadart[,1:9], as.data.frame(latroot), datadart[,10:16], as.data.frame(diameter), as.data.frame(surface), as.data.frame(volume))}  
             
-        else {datadart<-data.frame(datadart[,1:9], as.data.frame(latroot), as.data.frame(diameter), datadart[,10:12])}}}
+        else {datadart<-data.frame(datadart[,1:9], as.data.frame(latroot), datadart[,10:13], as.data.frame(diameter), as.data.frame(surface), as.data.frame(volume))}}}
   
   #Processing RSML files
   
@@ -570,13 +584,15 @@ if (algo=="tables"){
     
     n<-length(unique(paste(inputrsml$file, inputrsml$plant, inputrsml$time, sep="")))
     
-    if (fitter==TRUE){datarsml<-data.frame(FileName=rep(NA, n), Time=rep(NA, n), TRL=rep(NA, n), GRTR=rep(NA, n), L1R=rep(NA, n), GR1R=rep(NA, n), TN1R=rep(NA, n), TNLR=rep(NA, n), TLRL=rep(NA, n), D2LR=rep(NA, n), Height=rep(NA, n), Width=rep(NA, n), Magnitude=rep(NA, n), Altitude=rep(NA, n), ExtPathLength=rep(NA, n))}
+    if (fitter==TRUE){datarsml<-data.frame(FileName=rep(NA, n), Time=rep(NA, n), TRL=rep(NA, n), GRTR=rep(NA, n), L1R=rep(NA, n), GR1R=rep(NA, n), TN1R=rep(NA, n), TNLR=rep(NA, n), TLRL=rep(NA, n), D2LR=rep(NA, n), Height=rep(NA, n), Width=rep(NA, n), Convexhull=rep(NA, n), Magnitude=rep(NA, n), Altitude=rep(NA, n), ExtPathLength=rep(NA, n))}
     
-    else {datarsml<-data.frame(FileName=rep(NA, n), Time=rep(NA, n), TRL=rep(NA, n), GRTR=rep(NA, n), L1R=rep(NA, n), GR1R=rep(NA, n), TN1R=rep(NA, n), TNLR=rep(NA, n), TLRL=rep(NA, n), D2LR=rep(NA, n), Height=rep(NA, n), Width=rep(NA, n))}
+    else {datarsml<-data.frame(FileName=rep(NA, n), Time=rep(NA, n), TRL=rep(NA, n), GRTR=rep(NA, n), L1R=rep(NA, n), GR1R=rep(NA, n), TN1R=rep(NA, n), TNLR=rep(NA, n), TLRL=rep(NA, n), D2LR=rep(NA, n), Height=rep(NA, n), Width=rep(NA, n), Convexhull=rep(NA, n))}
     
     if (maxord>1){latroot<-matrix(ncol=4*(maxord-1), nrow=n)}
     
     diameter<-matrix(ncol=maxord+1, nrow=n)
+    surface<-matrix(ncol=maxord+1, nrow=n)
+    volume<-matrix(ncol=maxord+1, nrow=n)
     
     files<-unique(inputrsml$file)
     
@@ -638,15 +654,21 @@ if (algo=="tables"){
             if (latroot[k,l]==0) {latroot[k, l+2*(maxord-1)]<-0} else {latroot[k, l+2*(maxord-1)]<-latroot[k, l+(maxord-1)]/latroot[k, l]} #Mean lateral root length
             latroot[k, l+3*(maxord-1)]<-sum(GR$x[GR$time==dates[t] & GR$order==(l+1)])}}
     
-        #Diameter
+        #Diameter, surface and volume
         
-        if (t==length(dates)){#Diameter in rsml file is for the last observation date
+        if (t==length(dates)){#Diameter, surface, and volume in rsml file is for the last observation date
         
         maxordfile<-max(xt$order)
         
-        for (l in 1:maxordfile){diameter[k,l]<-sum(xt$diameter3[xt$order==l])/(nrow(xt[xt$order==l,])+sum(xt$apic[xt$order==l]=="true"))}
+        for (l in 1:maxordfile){ #Calculate for each root order
+          diameter[k,l]<-sum(xt$diameter3[xt$order==l])/(nrow(xt[xt$order==l,])+sum(xt$apic[xt$order==l]=="true"))
+          surface[k,l]<-sum(xt$surface[xt$order==l])
+          volume[k,l]<-sum(xt$volume[xt$order==l])}
         
-        if (maxordfile>1) {diameter[k, ncol(diameter)]<-sum(xt$diameter3[xt$order>1])/(nrow(xt[xt$order>1,])+sum(xt$apic[xt$order>1]=="true"))} else {diameter[k, ncol(diameter)]<-NA}} #Mean diameter for all lateral roots
+        if (maxordfile>1) {diameter[k, ncol(diameter)]<-sum(xt$diameter3[xt$order>1])/(nrow(xt[xt$order>1,])+sum(xt$apic[xt$order>1]=="true"))} else {diameter[k, ncol(diameter)]<-NA} #Mean diameter for all lateral roots
+        
+        surface[k, ncol(surface)]<-sum(xt$surface)
+        volume[k, ncol(volume)]<-sum(xt$volume)}
         
         #Height
         if (vertical3d=="y") {datarsml$Height[k]<-abs(max(xt$y2[xt$time<=dates[t]])-min(xt$y1[xt$time<=dates[t]]))}
@@ -671,6 +693,50 @@ if (algo=="tables"){
           widthy<-abs(max(xt$y2[xt$time<=dates[t]])-min(xt$y2[xt$time<=dates[t]]))
           widthx<-abs(max(xt$x2[xt$time<=dates[t]])-min(xt$x2[xt$time<=dates[t]]))
           datarsml$Width[k]<-max(c(widthy, widthx))}
+        
+        #Convex hull
+        
+        if (all.equal(chull, c("x", "y"))==TRUE) {
+          
+          x<-c(xt$x1[xt$time<=dates[t]], xt$x2[xt$time<=dates[t]])
+          y<-c(xt$y1[xt$time<=dates[t]], xt$y2[xt$time<=dates[t]])
+          root.coords<-cbind(x,y)
+          boxhull<-chull(x=x, y=y)
+          
+          if (length(boxhull)<3) {datarsml$Convexhull[k]<-0}
+          else {
+          boxhull<-c(boxhull, boxhull[1])
+          boxhull.coords<-root.coords[boxhull,]
+          chull.poly<-Polygon(boxhull.coords, hole=F)
+          datarsml$Convexhull[k]<-chull.poly@area}}
+        
+        if (all.equal(chull, c("y", "z"))==TRUE) {
+          
+          y<-c(xt$y1[xt$time<=dates[t]], xt$y2[xt$time<=dates[t]])
+          z<-c(xt$z1[xt$time<=dates[t]], xt$z2[xt$time<=dates[t]])
+          root.coords<-cbind(y,z)
+          boxhull<-chull(x=y, y=z)
+          
+          if (length(boxhull)<3) {datarsml$Convexhull[k]<-0}
+          else{
+          boxhull<-c(boxhull, boxhull[1])
+          boxhull.coords<-root.coords[boxhull,]
+          chull.poly<-Polygon(boxhull.coords, hole=F)
+          datarsml$Convexhull[k]<-chull.poly@area}}
+        
+        if (all.equal(chull, c("x", "z"))==TRUE) {
+          
+          x<-c(xt$x1[xt$time<=dates[t]], xt$x2[xt$time<=dates[t]])
+          z<-c(xt$z1[xt$time<=dates[t]], xt$z2[xt$time<=dates[t]])
+          root.coords<-cbind(x,z)
+          boxhull<-chull(x=x, y=z)
+          
+          if (length(boxhull)<3) {datarsml$Convexhull[k]<-0}
+          else{
+          boxhull<-c(boxhull, boxhull[1])
+          boxhull.coords<-root.coords[boxhull,]
+          chull.poly<-Polygon(boxhull.coords, hole=F)
+          datarsml$Convexhull[k]<-chull.poly@area}}
         
         #Fitter topological indices
         
@@ -733,6 +799,12 @@ if (algo=="tables"){
         diameter<-as.data.frame(diameter)
         colnames(diameter)<-c(paste(rep("MD", maxord), c(1:maxord), sep=""), "MDLR")
         
+        surface<-as.data.frame(surface)
+        colnames(surface)<-c(paste(rep("S", maxord), c(1:maxord), sep=""), "Stot")
+        
+        volume<-as.data.frame(volume)
+        colnames(volume)<-c(paste(rep("V", maxord), c(1:maxord), sep=""), "Vtot")
+        
         if (maxord>1){
           
           latroot<-as.data.frame(latroot)
@@ -743,21 +815,10 @@ if (algo=="tables"){
             colnames(latroot)[l+2*(maxord-1)]<-paste("ML", l+1, "LR", sep="")
             colnames(latroot)[l+3*(maxord-1)]<-paste("GR", l+1, "L", sep="")}
           
-          if (fitter==TRUE) {datarsml<-data.frame(datarsml[,1:9], as.data.frame(latroot), as.data.frame(diameter), datarsml[,10:15])}
+          if (fitter==TRUE) {datarsml<-data.frame(datarsml[,1:9], as.data.frame(latroot), datarsml[,10:16], as.data.frame(diameter), as.data.frame(surface), as.data.frame(volume))}
           
-          else {datarsml<-data.frame(datarsml[,1:9], as.data.frame(latroot), as.data.frame(diameter), datarsml[,10:12])}}}
+          else {datarsml<-data.frame(datarsml[,1:9], as.data.frame(latroot), datarsml[,10:13], as.data.frame(diameter), as.data.frame(surface), as.data.frame(volume))}}}
   
   if (is.null(inputrac)==TRUE & is.null(inputrsml)==FALSE) {return(datarsml)}
   if (is.null(inputrsml)==TRUE & is.null(inputrac)==FALSE) {return(datadart)}
-  
-  if (is.null(inputrsml)==FALSE & is.null(inputrac)==FALSE){
-    
-    if (ncol(datadart)==ncol(datarsml)){return(rbind(datadart, datarsml))}
-    
-    else{
-      
-      if (ncol(datadart)>ncol(datarsml)){datarsml<-data.frame(datarsml, Magnitude=rep(NA, nrow(datarsml)), Altitude=rep(NA, nrow(datarsml)), ExtPathLength=rep(NA, nrow(datarsml)))}
-      
-      if (ncol(datadart)<ncol(datarsml)){datadart<-data.frame(datadart, Magnitude=rep(NA, nrow(datadart)), Altitude=rep(NA, nrow(datadart)), ExtPathLength=rep(NA, nrow(datadart)))}
-      
-      return(rbind(datadart, datarsml))}}}}
+  if (is.null(inputrsml)==FALSE & is.null(inputrac)==FALSE){return(rbind(datadart, datarsml))}}}

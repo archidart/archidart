@@ -165,7 +165,7 @@ rsmlToTable<-function(inputrsml, unitlength="px", rsml.date=NULL, rsml.connect=T
   length1<-sum$length[index]
   table[,21]<-length1/table[,7]
   
-  #Geodesic distance
+  #Geodesic distance (no geodesic distance if rsml.connect=FALSE)
   if (rsml.connect==TRUE) {table[,22]<-table[,4]+table[,19]} else {table<-table[,-22]}
   
   #Check if segments have length=0
@@ -190,11 +190,19 @@ rsmlToTable<-function(inputrsml, unitlength="px", rsml.date=NULL, rsml.connect=T
   #Fitter
   if (rsml.connect==TRUE & fitter==TRUE) {table<-fitter(table)}
   
+  #Add surface and volume for each segment
+  
+  surface<-pi*((table[,14]/2)+(table[,15]/2))*sqrt((table[,16])^2+((table[,14]/2)-(table[,15]/2))^2)
+  
+  volume<-(1/3)*pi*table[,16]*((table[,14]/2)^2+(table[,15]/2)^2+(table[,14]/2)*(table[,15]/2))
+  
+  table<-cbind(table, surface, volume)
+  
   #Reorder columns
   if (rsml.connect==TRUE){
-    if (fitter==FALSE){table<-table[,c(1:4, 21, 5:20)]}
-    else {table<-table[,c(1:4, 21, 5:20, 22:23)]}}
-  else{table<-table[,c(1:4, 20, 5:19)]}
+    if (fitter==FALSE){table<-table[,c(1:4, 21, 5:17, 22:23, 18:20)]}
+    else {table<-table[,c(1:4, 21, 5:17, 24:25, 18:20, 22:23)]}}
+  else{table<-table[,c(1:4, 20, 5:17, 21:22, 18:19)]}
   
   #Store table in a list
   TABLE[[f]]<-table
@@ -204,10 +212,10 @@ rsmlToTable<-function(inputrsml, unitlength="px", rsml.date=NULL, rsml.connect=T
   TABLE<-as.data.frame(do.call(rbind, TABLE))
   
   if (rsml.connect==TRUE) {
-    if (fitter==FALSE) {colnames(TABLE)<-c("file", "plant", "root", "order", "parentroot", "time", "bran", "apic", "x1", "y1", "z1", "x2", "y2", "z2", "diameter1", "diameter2", "length", "blength", "orientation", "growth", "geodesic")}
-    else {colnames(TABLE)<-c("file", "plant", "root", "order", "parentroot", "time", "bran", "apic", "x1", "y1", "z1", "x2", "y2", "z2", "diameter1", "diameter2", "length", "blength", "orientation", "growth", "geodesic", "magnitude", "pathlength")}}
+    if (fitter==FALSE) {colnames(TABLE)<-c("file", "plant", "root", "order", "parentroot", "time", "bran", "apic", "x1", "y1", "z1", "x2", "y2", "z2", "diameter1", "diameter2", "length", "blength", "surface", "volume", "orientation", "growth", "geodesic")}
+    else {colnames(TABLE)<-c("file", "plant", "root", "order", "parentroot", "time", "bran", "apic", "x1", "y1", "z1", "x2", "y2", "z2", "diameter1", "diameter2", "length", "blength", "surface", "volume", "orientation", "growth", "geodesic", "magnitude", "pathlength")}}
   
-  else {colnames(TABLE)<-c("file", "plant", "root", "order", "parentroot", "time", "bran", "apic", "x1", "y1", "z1", "x2", "y2", "z2", "diameter1", "diameter2", "length", "blength", "orientation", "growth")}
+  else {colnames(TABLE)<-c("file", "plant", "root", "order", "parentroot", "time", "bran", "apic", "x1", "y1", "z1", "x2", "y2", "z2", "diameter1", "diameter2", "length", "blength", "surface", "volume", "orientation", "growth")}
   
   TABLE$file<-filenamesrsml[TABLE$file]
   
