@@ -6,7 +6,7 @@
 trajectory(inputrac=NULL, inputlie=NULL, inputtps=NULL, inputrsml=NULL, res=NULL,
           unitlength="px", unitangle="d", rotation=0, l.brangle, l.curv, l.tipangle,
           rsml.date=NULL, vertical3d="y", plot=NULL, twod=NULL, colangle=NULL,
-          export.colors=NULL, BRscale=NULL, main=NULL, xlim=NULL, ylim=NULL,
+          export.colors=FALSE, BRscale=NULL, main=NULL, xlim=NULL, ylim=NULL,
           zlim=NULL, xlab=NULL, ylab=NULL, zlab=NULL, ...)}
 \arguments{
   \item{inputrac}{A character string specifying the path to the folder containing the rac files created by DART. This argument could be the same as \code{inputlie}/\code{inputtps}/\code{inputrsml}.}
