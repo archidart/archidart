@@ -1,7 +1,7 @@
 \name{dartToTable}
 \alias{dartToTable}
 \title{Import DART Files Into a Single Data Frame}
-\description{Import DART files located in a folder into a single data frame. More information about DART files can be found in \cite{Le Bot et al (2010)}.  
+\description{Import DART files located in a folder into a single data frame. More information about DART files can be found in \cite{Le Bot et al (2010)} and \cite{Delory et al (2018)}.  
 }
 \usage{
 dartToTable(inputrac, inputlie, inputtps, res=NULL, unitlength="px",
@@ -70,6 +70,8 @@ Returns a dartToTable object. Each line of the data frame gives the attributes o
 }
 \references{
 Delory B.M., Baudson C., Brostaux Y., Lobet G., du Jardin P., Pages L., Delaplace P. (2016) archiDART: an R package for the automated computation of plant root architectural traits, \emph{Plant and Soil}, DOI: 10.1007/s11104-015-2673-4.
+
+Delory B.M., Li M., Topp C.N., Lobet G. (2018). archiDART v3.0: a new data analysis pipeline allowing the topological analysis of plant root systems, \emph{F1000Research}, 7:22, DOI: \url{http://dx.doi.org/10.12688/f1000research.13541.1}
 
 Fitter A.H. (1986) The topology and geometry of plant root systems: influence of watering rate on root system topology in \emph{Trifolium pratense}, \emph{Annals of Botany}, 58, 91-101. 
 

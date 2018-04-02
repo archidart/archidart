@@ -1,7 +1,7 @@
 \name{rsmlToTable}
 \alias{rsmlToTable}
 \title{Import RSML Files Into a Single Data Frame}
-\description{Import RSML files located in a folder into a single data frame. More information about RSML files can be found in \cite{Lobet et al (2015)}.   
+\description{Import RSML files located in a folder into a single data frame. More information about RSML files can be found in \cite{Lobet et al (2015)} and \cite{Delory et al (2018)}.   
 }
 \usage{
 rsmlToTable(inputrsml, unitlength="px", rsml.date=NULL, rsml.connect=TRUE,
@@ -23,6 +23,8 @@ To run \code{rsmlToTable} efficiently, RSML (.rsml) files must have been saved w
 The argument \code{rsml.date} is used to create a tps file for each root system located in \code{inputrsml}.  If the root system age is stored as a continuous function along the root segments, the \code{rsml.date} argument can be a character string specifying the name/label of the function.  For instance, the root system age at the first apparition of each node is stored as a continuous function called \dQuote{age} in RSML files containing RSA data simulated with the ArchiSimple model (\cite{Pages et al (2013)}).  The \dQuote{age} function attaches the root system age along the root segments, so that each node is associated with one age value.  An RSML library containing 3D RSA data simulated with ArchiSimple is available here: \url{https://doi.org/10.5281/zenodo.208214}.
 
 The \code{rsml.connect} argument can be used to connect the lateral roots to their corresponding mother root.  If \code{rsml.connect=TRUE}, each point starting a lateral root is connected to the nearest point located on its mother root.  DBase is approximated by the distance between the parent root base and the point located on the mother root that is closest to the point starting a lateral root.  Using RSML files, only RSA data associated with roots possessing a branching order lower or equal to 5 are used for the computation of RSA traits.
+
+\code{show.progress=TRUE} can only be used if more than one RSML file is stored in \code{inputrsml}.
 
 If \code{fitter=TRUE}, topological indices described in \cite{Fitter (1986, 1987)} will be calculated. Here, we define each topological index as in \cite{Fitter (1986, 1987)}. We recommend the reading of these papers for more information.
 
@@ -85,6 +87,8 @@ Returns a rsmlToTable object. Each line of the data frame gives the attributes o
 }
 \references{
 Delory B.M., Baudson C., Brostaux Y., Lobet G., du Jardin P., Pages L., Delaplace P. (2016) archiDART: an R package for the automated computation of plant root architectural traits, \emph{Plant and Soil}, DOI: 10.1007/s11104-015-2673-4.
+
+Delory B.M., Li M., Topp C.N., Lobet G. (2018). archiDART v3.0: a new data analysis pipeline allowing the topological analysis of plant root systems, \emph{F1000Research}, 7:22, DOI: \url{http://dx.doi.org/10.12688/f1000research.13541.1}
 
 Fitter A.H. (1986) The topology and geometry of plant root systems: influence of watering rate on root system topology in \emph{Trifolium pratense}, \emph{Annals of Botany}, 58, 91-101. 
 
