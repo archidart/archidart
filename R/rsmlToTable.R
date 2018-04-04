@@ -75,11 +75,7 @@ rsmlToTable<-function(inputrsml, unitlength="px", rsml.date=NULL, rsml.connect=T
     
     if (unitlength=="px"){cunit1[i]<-1}}
   
-  # Vertical direction vector
-  
-  if (vertical3d=="x") {dirvert<-c(1,0,0)}
-  if (vertical3d=="y") {dirvert<-c(0,1,0)}
-  if (vertical3d=="z") {dirvert<-c(0,0,1)}
+  #Convertion unit angles
   
   if (unitangle=="r") {cunitangle<-1}
   if (unitangle=="d") {cunitangle<-180/pi}
@@ -98,7 +94,16 @@ rsmlToTable<-function(inputrsml, unitlength="px", rsml.date=NULL, rsml.connect=T
       rac<-RSML$rac[[j]]
       tps<-RSML$tps[[j]]
       
-      if ("Z" %in% colnames(lie)) {} else {dirvert<-c(0,1)}
+      if ("Z" %in% colnames(lie)) {
+      
+          if (vertical3d=="x") {
+            if (max(lie$X)+min(lie$X)>0) {dirvert<-c(1,0,0)} else {dirvert<-c(-1,0,0)}}
+          if (vertical3d=="y") {
+            if (max(lie$Y)+min(lie$Y)>0) {dirvert<-c(0,1,0)} else {dirvert<-c(0,-1,0)}}
+          if (vertical3d=="z") {
+            if (max(lie$Z)+min(lie$Z)>0) {dirvert<-c(0,0,1)} else {dirvert<-c(0,0,-1)}}}
+      
+      else {if (max(lie$Y)+min(lie$Y)>0) {dirvert<-c(0,1)} else {dirvert<-c(0,-1)}}
       
       #Add dbasecum column in rac file
       

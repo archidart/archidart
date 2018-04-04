@@ -293,9 +293,14 @@ trajectory<-function(inputrac=NULL, inputlie=NULL, inputtps=NULL, inputrsml=NULL
     
   # Vertical direction vector
   
-  if (vertical3d=="x") {dirvert<-c(1,0,0)}
-  if (vertical3d=="y") {dirvert<-c(0,1,0)}
-  if (vertical3d=="z") {dirvert<-c(0,0,1)}
+  if ("Z" %in% colnames(LIE[[i]])) {
+    
+    if (vertical3d=="x") {
+      if (max(LIE[[i]]$X)+min(LIE[[i]]$X)>0) {dirvert<-c(1,0,0)} else {dirvert<-c(-1,0,0)}}
+    if (vertical3d=="y") {
+      if (max(LIE[[i]]$Y)+min(LIE[[i]]$Y)>0) {dirvert<-c(0,1,0)} else {dirvert<-c(0,-1,0)}}
+    if (vertical3d=="z") {
+      if (max(LIE[[i]]$Z)+min(LIE[[i]]$Z)>0) {dirvert<-c(0,0,1)} else {dirvert<-c(0,0,-1)}}}
   
   # Creating vectors and matrices for root architecture parameters calculation
   

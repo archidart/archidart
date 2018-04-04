@@ -18,22 +18,25 @@ root<-function(x, unitangle="d", vertical3d="y", last=TRUE, show.progress=FALSE)
   
   n<-length(RSlevels) #Number of root systems in x
   
+  if (show.progress==TRUE & last==FALSE) {
+    tot<-sum(aggregate(x$root, by=list(rootsystem), function(x){length(unique(x))})$x*aggregate(x$time, by=list(rootsystem), function(x){length(unique(x))})$x)
+    count<-0} #Total number of lines in final table
+  
+  if (show.progress==TRUE & last==TRUE) {
+    tot<-sum(aggregate(x$root, by=list(rootsystem), function(x){length(unique(x))})$x)
+    count<-0} #Total number of lines in final table
+  
   # Unit conversion angles
   
   if (unitangle=="r") {cunitangle<-1}
   if (unitangle=="d") {cunitangle<-180/pi}
   
-  # Vertical direction vector
-  
-  if (vertical3d=="x") {dirvert<-c(1,0,0)}
-  if (vertical3d=="y") {dirvert<-c(0,1,0)}
-  if (vertical3d=="z") {dirvert<-c(0,0,1)}
   
   if (last==FALSE){
   
       #Compute root parameters
       
-      if (show.progress==TRUE) {pb<-txtProgressBar(min=1, max=n, style=3)}
+      if (show.progress==TRUE) {pb<-txtProgressBar(min=1, max=tot, style=3)}
       
       results<-list()
       filenames<-c()
@@ -59,6 +62,15 @@ root<-function(x, unitangle="d", vertical3d="y", last=TRUE, show.progress=FALSE)
         allroots<-unique(table[,"root"]) #Search for all roots in root system
         filenames<-append(filenames, rep(unique(allfiles[which(rootsystem==RSlevels[i])]), length(allroots)*length(dates)))
         
+        # Vertical direction vector
+        if (vertical3d=="x") {
+          if (max(table[,c("x1", "x2")])+min(table[,c("x1", "x2")])>0) {dirvert<-c(1,0,0)} else {dirvert<-c(-1,0,0)}}
+        if (vertical3d=="y") {
+          if (max(table[,c("y1", "y2")])+min(table[,c("y1", "y2")])>0) {dirvert<-c(0,1,0)} else {dirvert<-c(0,-1,0)}}
+        if (vertical3d=="z") {
+          if (max(table[,c("z1", "z2")])+min(table[,c("z1", "z2")])>0) {dirvert<-c(0,0,1)} else {dirvert<-c(0,0,-1)}}
+        
+        #Create result matrix
         if ("rsmlToTable" %in% class(x)){
           results[[i]]<-matrix(nrow=length(allroots)*length(dates), ncol=16)} #Create matrix to store the results
 
@@ -66,8 +78,6 @@ root<-function(x, unitangle="d", vertical3d="y", last=TRUE, show.progress=FALSE)
           results[[i]]<-matrix(nrow=length(allroots)*length(dates), ncol=15)} #Create matrix to store the results
 
         line<-0 #Count line number in matrix storing the results
-        
-        if (show.progress==TRUE) {setTxtProgressBar(pb, i)}
         
         for (root in 1:length(allroots)){#For each root
           
@@ -146,6 +156,10 @@ root<-function(x, unitangle="d", vertical3d="y", last=TRUE, show.progress=FALSE)
           
             for (t in 1:length(dates)){#For each observation dates
               
+                if (show.progress==TRUE) {
+                  count<-count+1
+                  setTxtProgressBar(pb, count)}
+              
                 line<-line+1
                 length<-sum(table[which(table[,"root"]==allroots[root] & table[,"time"]<=dates[t]),"length"])
                 nlat<-length(unique(table[which(table[,"parentroot"]==allroots[root] & table[,"time"]<=dates[t]),"root"]))
@@ -191,7 +205,7 @@ root<-function(x, unitangle="d", vertical3d="y", last=TRUE, show.progress=FALSE)
                     laterals<-table[which(table[,"parentroot"]==allroots[root] & table[,"time"]<=dates[t] & table[,"bran"]==1), c("x1", "y1", "z1")]
                     if (is.matrix(laterals)==FALSE){laterals<-matrix(laterals, ncol=3)}
                     index<-apply(laterals, 1, function(x){which(table[,"root"]==allroots[root] & table[,"x1"]==x[1] & table[,"y1"]==x[2] & table[,"z1"]==x[3])})
-                    if (length(index)>0) {luaz<-length-max(table[index, "blength"]-table[index, "length"])} else {luaz<-NA}}}
+                    if (is.list(index)==FALSE & length(index)>0) {luaz<-length-max(table[index, "blength"]-table[index, "length"])} else {luaz<-NA}}}
                 
                 #Fill matrix
                 if  ("rsmlToTable" %in% class(x)) {results[[i]][line, c(1:16)]<-c(allroots[root], dates[t], order, parent, dbase, length, meandiam, sddiam, nlat, angle, tortuosity, growth, surface, volume, luaz, plant)}
@@ -201,7 +215,7 @@ root<-function(x, unitangle="d", vertical3d="y", last=TRUE, show.progress=FALSE)
     
     #Compute root parameters for last observation date only
     
-    if (show.progress==TRUE) {pb<-txtProgressBar(min=1, max=n, style=3)}
+    if (show.progress==TRUE) {pb<-txtProgressBar(min=1, max=tot, style=3)}
     
     results<-list()
     filenames<-c()
@@ -225,7 +239,16 @@ root<-function(x, unitangle="d", vertical3d="y", last=TRUE, show.progress=FALSE)
       table<-x[which(rootsystem==RSlevels[i]),] #Create a matrix subset for computing root stats
       allroots<-unique(table[,"root"]) #Search for all roots in root system
       filenames<-append(filenames, rep(unique(allfiles[which(rootsystem==RSlevels[i])]), length(allroots)))
-
+      
+      # Vertical direction vector
+      if (vertical3d=="x") {
+        if (max(table[,c("x1", "x2")])+min(table[,c("x1", "x2")])>0) {dirvert<-c(1,0,0)} else {dirvert<-c(-1,0,0)}}
+      if (vertical3d=="y") {
+        if (max(table[,c("y1", "y2")])+min(table[,c("y1", "y2")])>0) {dirvert<-c(0,1,0)} else {dirvert<-c(0,-1,0)}}
+      if (vertical3d=="z") {
+        if (max(table[,c("z1", "z2")])+min(table[,c("z1", "z2")])>0) {dirvert<-c(0,0,1)} else {dirvert<-c(0,0,-1)}}
+      
+      #Create result matrix
     if ("rsmlToTable" %in% class(x)){
       results[[i]]<-matrix(nrow=length(allroots), ncol=16)} #Create matrix to store the results
       
@@ -234,9 +257,11 @@ root<-function(x, unitangle="d", vertical3d="y", last=TRUE, show.progress=FALSE)
       
       line<-0 #Count line number in matrix storing the results
       
-      if (show.progress==TRUE) {setTxtProgressBar(pb, i)}
-      
       for (root in 1:length(allroots)){#For each root
+        
+        if (show.progress==TRUE) {
+          count<-count+1
+          setTxtProgressBar(pb, count)}
         
         #Branching angle (Just once, does not depend on time!)
         
@@ -354,7 +379,7 @@ root<-function(x, unitangle="d", vertical3d="y", last=TRUE, show.progress=FALSE)
               laterals<-table[which(table[,"parentroot"]==allroots[root] & table[,"bran"]==1), c("x1", "y1", "z1")]
               if (is.matrix(laterals)==FALSE){laterals<-matrix(laterals, ncol=3)}
               index<-apply(laterals, 1, function(x){which(table[,"root"]==allroots[root] & table[,"x1"]==x[1] & table[,"y1"]==x[2] & table[,"z1"]==x[3])})
-              if (length(index)>0) {luaz<-length-max(table[index, "blength"]-table[index, "length"])} else {luaz<-NA}}}
+              if (is.list(index)==FALSE & length(index)>0) {luaz<-length-max(table[index, "blength"]-table[index, "length"])} else {luaz<-NA}}}
           
           #Fill matrix
           if ("rsmlToTable" %in% class(x)) {results[[i]][line, c(1:16)]<-c(allroots[root], max(table[,"time"]), order, parent, dbase, length, meandiam, sddiam, nlat, angle, tortuosity, growth, surface, volume, luaz, plant)}
