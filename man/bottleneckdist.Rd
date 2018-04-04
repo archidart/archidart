@@ -11,7 +11,7 @@ bottleneckdist(x, show.progress=FALSE)
   \item{show.progress}{A logical value. Should a progress bar be shown in the R console? Yes is TRUE, No is FALSE.}
 }
 \details{
-The bottleneck distance between two persistence barcodes is calculated with the \code{bottleneck} function of the TDA package (\cite{Fasy et al (2017)}). \bold{This package is now listed in the \dQuote{Suggests} field of the description file and must be available in your R session (see CRAN archives)}. An error message will be returned if TDA is not available.
+The bottleneck distance between two persistence barcodes is calculated with the \code{bottleneck} function of the TDA package (\cite{Fasy et al (2017)}). \bold{This package is now listed in the \dQuote{Suggests} field of the description file and must be available in your R session (see \url{https://archidart.github.io/drat})}. An error message will be returned if TDA is not available.
 
 \code{show.progress=TRUE} can only be used if \code{x} contains more than one element.
 }

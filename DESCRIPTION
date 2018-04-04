@@ -1,7 +1,7 @@
 Package: archiDART
 Type: Package
 Title: Plant Root System Architecture Analysis Using DART and RSML Files
-Version: 3.1
+Version: 3.3
 Date: 2018-04-02
 Author: Benjamin M Delory, Caroline Baudson, Yves Brostaux, Guillaume Lobet, Patrick du Jardin, Loic Pages, Pierre Delaplace 
 Maintainer: Benjamin M Delory <Benjamin.Delory@leuphana.de>
@@ -9,5 +9,6 @@ Description: Analysis of complex plant root system architectures (RSA) using the
 License: GPL-2
 Imports: stats, utils, graphics, grDevices, XML, rgl, sp
 Suggests: TDA
+Additional_repositories: https://archidart.github.io/drat
 URL: https://archidart.github.io/
 BugReports: https://github.com/archiDART/archidart/issues
