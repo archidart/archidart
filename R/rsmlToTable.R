@@ -152,7 +152,7 @@ rsmlToTable<-function(inputrsml, unitlength="px", rsml.date=NULL, rsml.connect=T
           table[rowsintable+s, 17]<-lie$diameter[l]*cunit1[n] #diameter2
           if ("Z" %in% colnames(lie)) {table[rowsintable+s, 18]<-distance3D(x1=lie$X[prec], y1=lie$Y[prec], z1=lie$Z[prec], x2=lie$X[l], y2=lie$Y[l], z2=lie$Z[l])*cunit1[n]} else {table[rowsintable+s, 18]<-distance2D(x1=lie$X[prec], y1=lie$Y[prec], x2=lie$X[l], y2=lie$Y[l])*cunit1[n]} #length
           table[rowsintable+s, 19]<-lie$dist[l]*cunit1[n] #blength
-          dirsegment<-c(lie$X[l]-lie$X[prec], lie$Y[l]-lie$Y[prec], lie$Z[l]-lie$Z[prec])*cunit1[n]
+          if ("Z" %in% colnames(lie)) {dirsegment<-c(lie$X[l]-lie$X[prec], lie$Y[l]-lie$Y[prec], lie$Z[l]-lie$Z[prec])*cunit1[n]} else {dirsegment<-c(lie$X[l]-lie$X[prec], lie$Y[l]-lie$Y[prec])*cunit1[n]}
           table[rowsintable+s, 20]<-acos(as.numeric(dirvert%*%dirsegment)/table[rowsintable+s, 18])*cunitangle #orientation
           table[rowsintable+s, 23]<-rac$Mother[table[rowsintable+s,3]]+1}} #parentroot
 
