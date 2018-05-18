@@ -159,7 +159,11 @@ rsmlToTable<-function(inputrsml, unitlength="px", rsml.date=NULL, rsml.connect=T
       rowsintable<-rowsintable+s}
   
   index<-which(is.na(table[,1])==TRUE)
-  table<-table[-index,] #Remove lines with NA values
+  
+  if (nrow(table)-length(index)==1) {
+    table<-table[-index,]
+    table<-matrix(table, ncol=length(table), nrow=1)}
+  else {table<-table[-index,]} #Remove lines with NA values
   
   #Calculate growth rate of each segment and fill growth column
 
@@ -169,9 +173,15 @@ rsmlToTable<-function(inputrsml, unitlength="px", rsml.date=NULL, rsml.connect=T
   index<-as.vector(apply(table, 1, function(x){which(sum$plant==as.numeric(x[2]) & sum$time==as.numeric(x[6]) & sum$root==as.numeric(x[3]))}))
   length1<-sum$length[index]
   table[,21]<-length1/table[,7]
-  
+
   #Geodesic distance (no geodesic distance if rsml.connect=FALSE)
-  if (rsml.connect==TRUE) {table[,22]<-table[,4]+table[,19]} else {table<-table[,-22]}
+  if (rsml.connect==TRUE) {table[,22]<-table[,4]+table[,19]} else {
+    
+    if (nrow(table)==1){
+      table<-table[,-22]
+      table<-matrix(table, ncol=length(table), nrow=1)}
+    
+    else {table<-table[,-22]}}
   
   #Check if segments have length=0
   
@@ -190,8 +200,12 @@ rsmlToTable<-function(inputrsml, unitlength="px", rsml.date=NULL, rsml.connect=T
     
     rownames(table)<-c(1:nrow(table))}
   
-  table<-table[,-c(4,7)] #Remove dbasecum and deltaage
-
+  if (nrow(table)==1) { #Remove dbasecum and deltaage
+    table<-table[,-c(4,7)]
+    table<-matrix(table, ncol=length(table), nrow=1)}
+  
+  else {table<-table[,-c(4,7)]} #Remove dbasecum and deltaage
+  
   #Fitter
   if (rsml.connect==TRUE & fitter==TRUE) {table<-fitter(table)}
   
