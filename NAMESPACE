@@ -7,3 +7,4 @@ importFrom(grDevices, palette, colorRamp, colorRampPalette, rgb, as.raster, cm, 
 importFrom(XML, xmlToList, xmlParse)
 importFrom(rgl, open3d, plot3d, lines3d)
 importFrom(sp, Polygon)
+importFrom(TDA, bottleneck)

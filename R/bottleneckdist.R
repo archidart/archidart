@@ -2,8 +2,6 @@ bottleneckdist<-function(x, show.progress=FALSE){
   
   #x is a list created with the perhomology function
   
-  message("bottleneckdist requires the TDA package to be installed")
-  
   if ("perhomology" %in% class(x)) {} else {stop("x must be a perhomology object")}
   
   if (mode(show.progress)!="logical"){stop("show.progress must be logical")}

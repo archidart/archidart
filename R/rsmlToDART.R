@@ -194,7 +194,9 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                   lie[lie.lines+1,5]<-lie[start1+parentnode[1]-1, 1]
                   dist1<-0}}
               
-              else {
+              else { #If no physical connection between parent and daughter root. Interpolate new point or find closest point.
+                
+              alldist<-sqrt((lie[start1:(stop1-1), 7]-lie[lie.lines+1, 7])^2+(lie[start1:(stop1-1), 8]-lie[lie.lines+1, 8])^2+(lie[start1:(stop1-1), 9]-lie[lie.lines+1, 9])^2)
               
               scalx<-diff(lie[start1:stop1, 7])*(lie[start1:(stop1-1), 7]-lie[lie.lines+1, 7])
               scaly<-diff(lie[start1:stop1, 8])*(lie[start1:(stop1-1), 8]-lie[lie.lines+1, 8])
@@ -204,14 +206,13 @@ rsmlToDART <- function(rsml.path, final.date, connect){
 
               if (length(which(t>=0 & t<=1))==0){
                 
-                index<-min(which(t<0))
+                index<-which(alldist==min(alldist))
                 dbase<-lie[start1+index-1, 10]
                 if (connect==TRUE){
-                  lie[lie.lines+1,5]<-lie[start1+index-1, 1]
-                  dist1<-sqrt((lie[start1+index-1, 7]-lie[lie.lines+1, 7])^2+(lie[start1+index-1, 8]-lie[lie.lines+1, 8])^2+(lie[start1+index-1, 9]-lie[lie.lines+1, 9])^2)
+                  lie[lie.lines+1,5]<-lie[start1+index-1, 1] #Update Prec
+                  dist1<-min(alldist)
                   lie[(lie.lines+1):(lie.lines+length2), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length2), 10]}}
-                     
-              
+
               else {
               
               t[t<0]<-NA
@@ -221,17 +222,25 @@ rsmlToDART <- function(rsml.path, final.date, connect){
               zn<-diff(lie[start1:stop1, 9])*t+lie[start1:(stop1-1), 9]
               dist1<-sqrt((xn-lie[lie.lines+1, 7])^2+(yn-lie[lie.lines+1, 8])^2+(zn-lie[lie.lines+1, 9])^2)
               
-              if (sum(is.na(dist1)==T)>0) {
-                index<-as.numeric(match(min(dist1, na.rm=T), dist1))
-                dist1<-min(dist1, na.rm=T)}
-              else {
-                index<-as.numeric(match(min(dist1), dist1))
-                dist1<-min(dist1)}
+              if (sum(is.na(dist1)==T)>0) {dist1<-min(dist1, na.rm=T)} else {dist1<-min(dist1)}
               
-              lie[(lie.lines+1):(lie.lines+length2), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length2), 10]
+              if (dist1>min(alldist)){
+                index<-which(alldist==min(alldist))
+                dist1<-min(alldist)
+                dbase<-lie[start1+index-1, 10]
+                if (connect==TRUE){
+                  lie[lie.lines+1,5]<-lie[start1+index-1, 1] #Update Prec
+                  dist1<-min(alldist)
+                  lie[(lie.lines+1):(lie.lines+length2), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length2), 10]}}
               
-              dbase<-lie[start1+index-1, 10]+distance3D(x1=lie[start1+index-1, 7], x2=xn[index], y1=lie[start1+index-1, 8], y2=yn[index], z1=lie[start1+index-1, 9], z2=zn[index])
-
+              else{
+                
+                if (sum(is.na(dist1)==T)>0) {index<-as.numeric(match(min(dist1, na.rm=T), dist1))}
+                else {index<-as.numeric(match(min(dist1), dist1))}
+                
+                lie[(lie.lines+1):(lie.lines+length2), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length2), 10]
+                dbase<-lie[start1+index-1, 10]+distance3D(x1=lie[start1+index-1, 7], x2=xn[index], y1=lie[start1+index-1, 8], y2=yn[index], z1=lie[start1+index-1, 9], z2=zn[index])
+    
               if (connect==TRUE){
                 
               lie[lie.lines+length2+1,1:13]<-c(NA, NA, 0, 0, NA, NA, xn[index], yn[index], zn[index], dbase, lie[start1+index-1, 11], NA, 1)
@@ -258,7 +267,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                 suiv<-lie[pos, 6]
                 slope<-(lie[suiv, 12]-lie[prec, 12])/distance3D(x1=lie[prec, 7], y1=lie[prec, 8], z1=lie[prec, 9], x2=lie[suiv, 7], y2=lie[suiv, 8], z2=lie[suiv, 9])
                 intercept<-lie[prec, 12]
-                lie[pos, 12]<-intercept+slope*distance3D(x1=lie[prec, 7], y1=lie[prec, 8], z1=lie[prec, 9], x2=lie[pos, 7], y2=lie[pos, 8], z2=lie[pos, 9])}}}}
+                lie[pos, 12]<-intercept+slope*distance3D(x1=lie[prec, 7], y1=lie[prec, 8], z1=lie[prec, 9], x2=lie[pos, 7], y2=lie[pos, 8], z2=lie[pos, 9])}}}}}
               
               if (connect==FALSE) {lie[lie.lines+1,5]<-lie.lines+1}
               
@@ -331,7 +340,9 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                         lie[lie.lines+1,5]<-lie[start2+parentnode[1]-1, 1]
                         dist1<-0}}
                     
-                    else {
+                    else { #If no physical connection between parent and daughter root. Interpolate new point or find closest point.
+                      
+                      alldist<-sqrt((lie[start2:(stop2-1), 7]-lie[lie.lines+1, 7])^2+(lie[start2:(stop2-1), 8]-lie[lie.lines+1, 8])^2+(lie[start2:(stop2-1), 9]-lie[lie.lines+1, 9])^2)
                       
                       scalx<-diff(lie[start2:stop2, 7])*(lie[start2:(stop2-1), 7]-lie[lie.lines+1, 7])
                       scaly<-diff(lie[start2:stop2, 8])*(lie[start2:(stop2-1), 8]-lie[lie.lines+1, 8])
@@ -341,13 +352,12 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                       
                       if (length(which(t>=0 & t<=1))==0){
                         
-                        index<-min(which(t<0))
+                        index<-which(alldist==min(alldist))
                         dbase<-lie[start2+index-1, 10]
                         if (connect==TRUE){
-                          lie[lie.lines+1,5]<-lie[start2+index-1, 1]
-                          dist1<-sqrt((lie[start2+index-1, 7]-lie[lie.lines+1, 7])^2+(lie[start2+index-1, 8]-lie[lie.lines+1, 8])^2+(lie[start2+index-1, 9]-lie[lie.lines+1, 9])^2)
-                          lie[(lie.lines+1):(lie.lines+length3), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length3), 10]}}
-                      
+                          lie[lie.lines+1,5]<-lie[start2+index-1, 1] #Update Prec
+                          dist1<-min(alldist)
+                          lie[(lie.lines+1):(lie.lines+length2), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length2), 10]}}
                       
                       else {
                         
@@ -358,44 +368,52 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                         zn<-diff(lie[start2:stop2, 9])*t+lie[start2:(stop2-1), 9]
                         dist1<-sqrt((xn-lie[lie.lines+1, 7])^2+(yn-lie[lie.lines+1, 8])^2+(zn-lie[lie.lines+1, 9])^2)
                         
-                        if (sum(is.na(dist1)==T)>0) {
-                          index<-as.numeric(match(min(dist1, na.rm=T), dist1))
-                          dist1<-min(dist1, na.rm=T)}
-                        else {
-                          index<-as.numeric(match(min(dist1), dist1))
-                          dist1<-min(dist1)}
+                        if (sum(is.na(dist1)==T)>0) {dist1<-min(dist1, na.rm=T)} else {dist1<-min(dist1)}
                         
-                        lie[(lie.lines+1):(lie.lines+length3), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length3), 10]
+                        if (dist1>min(alldist)){
+                          index<-which(alldist==min(alldist))
+                          dist1<-min(alldist)
+                          dbase<-lie[start2+index-1, 10]
+                          if (connect==TRUE){
+                            lie[lie.lines+1,5]<-lie[start2+index-1, 1] #Update Prec
+                            dist1<-min(alldist)
+                            lie[(lie.lines+1):(lie.lines+length2), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length2), 10]}}
                         
-                        dbase<-lie[start2+index-1, 10]+distance3D(x1=lie[start2+index-1, 7], x2=xn[index], y1=lie[start2+index-1, 8], y2=yn[index], z1=lie[start2+index-1, 9], z2=zn[index])
-                        
-                        if (connect==TRUE){
+                        else{
                           
-                          lie[lie.lines+length3+1,1:13]<-c(NA, NA, 0, 0, NA, NA, xn[index], yn[index], zn[index], dbase, lie[start2+index-1, 11], NA, 2)
-                          lie<-lie[order(lie[, 11], lie[, 10]),]
-                          length1<-length1+1
-                          lie.lines<-lie.lines+1
-                          stop2<-stop2+1
-                          pos<-match(NA, lie[1:(lie.lines),1])
-                          lie[1:(lie.lines+length3),5]<-match(lie[1:(lie.lines+length3),5], lie[1:(lie.lines+length3),1])
-                          lie[1:(lie.lines+length3),6]<-match(lie[1:(lie.lines+length3),6], lie[1:(lie.lines+length3),1])
-                          lie[pos, 5]<-pos-1
-                          lie[pos, 6]<-pos+1
-                          lie[pos, 2]<-lie[lie[pos, 6], 2]
-                          lie[pos+1, 5]<-pos
-                          lie[pos-1, 6]<-pos
-                          lie[which(is.na(lie[1:(lie.lines),5])==TRUE), 5]<-0
-                          lie[which(is.na(lie[1:(lie.lines),6])==TRUE), 6]<-0
-                          lie[1:(lie.lines+length3),1]<-match(lie[1:(lie.lines+length3),1], lie[1:(lie.lines+length3),1])
-                          lie[lie.lines+1,5]<-pos
+                          if (sum(is.na(dist1)==T)>0) {index<-as.numeric(match(min(dist1, na.rm=T), dist1))}
+                          else {index<-as.numeric(match(min(dist1), dist1))}
                           
-                          #Calculate diameter for interpolated point (linear function)
-                          if (is.null(diameter)==FALSE){
-                            prec<-lie[pos, 5]
-                            suiv<-lie[pos, 6]
-                            slope<-(lie[suiv, 12]-lie[prec, 12])/distance3D(x1=lie[prec, 7], y1=lie[prec, 8], z1=lie[prec, 9], x2=lie[suiv, 7], y2=lie[suiv, 8], z2=lie[suiv, 9])
-                            intercept<-lie[prec, 12]
-                            lie[pos, 12]<-intercept+slope*distance3D(x1=lie[prec, 7], y1=lie[prec, 8], z1=lie[prec, 9], x2=lie[pos, 7], y2=lie[pos, 8], z2=lie[pos, 9])}}}}
+                          lie[(lie.lines+1):(lie.lines+length2), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length2), 10]
+                          dbase<-lie[start2+index-1, 10]+distance3D(x1=lie[start2+index-1, 7], x2=xn[index], y1=lie[start2+index-1, 8], y2=yn[index], z1=lie[start2+index-1, 9], z2=zn[index])
+                          
+                          if (connect==TRUE){
+                            
+                            lie[lie.lines+length2+1,1:13]<-c(NA, NA, 0, 0, NA, NA, xn[index], yn[index], zn[index], dbase, lie[start2+index-1, 11], NA, 1)
+                            lie<-lie[order(lie[, 11], lie[, 10]),]
+                            length1<-length1+1
+                            lie.lines<-lie.lines+1
+                            stop2<-stop2+1
+                            pos<-match(NA, lie[1:(lie.lines),1])
+                            lie[1:(lie.lines+length2),5]<-match(lie[1:(lie.lines+length2),5], lie[1:(lie.lines+length2),1])
+                            lie[1:(lie.lines+length2),6]<-match(lie[1:(lie.lines+length2),6], lie[1:(lie.lines+length2),1])
+                            lie[pos, 5]<-pos-1
+                            lie[pos, 6]<-pos+1
+                            lie[pos, 2]<-lie[lie[pos, 6], 2]
+                            lie[pos+1, 5]<-pos
+                            lie[pos-1, 6]<-pos
+                            lie[which(is.na(lie[1:(lie.lines),5])==TRUE), 5]<-0
+                            lie[which(is.na(lie[1:(lie.lines),6])==TRUE), 6]<-0
+                            lie[1:(lie.lines+length2),1]<-match(lie[1:(lie.lines+length2),1], lie[1:(lie.lines+length2),1])
+                            lie[lie.lines+1,5]<-pos
+                            
+                            #Calculate diameter for interpolated point (linear function)
+                            if (is.null(diameter)==FALSE){
+                              prec<-lie[pos, 5]
+                              suiv<-lie[pos, 6]
+                              slope<-(lie[suiv, 12]-lie[prec, 12])/distance3D(x1=lie[prec, 7], y1=lie[prec, 8], z1=lie[prec, 9], x2=lie[suiv, 7], y2=lie[suiv, 8], z2=lie[suiv, 9])
+                              intercept<-lie[prec, 12]
+                              lie[pos, 12]<-intercept+slope*distance3D(x1=lie[prec, 7], y1=lie[prec, 8], z1=lie[prec, 9], x2=lie[pos, 7], y2=lie[pos, 8], z2=lie[pos, 9])}}}}}
                     
                     if (connect==FALSE) {lie[lie.lines+1,5]<-lie.lines+1}
                     
@@ -468,7 +486,9 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                               lie[lie.lines+1,5]<-lie[start3+parentnode[1]-1, 1]
                               dist1<-0}}
                           
-                          else {
+                          else { #If no physical connection between parent and daughter root. Interpolate new point or find closest point.
+                            
+                            alldist<-sqrt((lie[start3:(stop3-1), 7]-lie[lie.lines+1, 7])^2+(lie[start3:(stop3-1), 8]-lie[lie.lines+1, 8])^2+(lie[start3:(stop3-1), 9]-lie[lie.lines+1, 9])^2)
                             
                             scalx<-diff(lie[start3:stop3, 7])*(lie[start3:(stop3-1), 7]-lie[lie.lines+1, 7])
                             scaly<-diff(lie[start3:stop3, 8])*(lie[start3:(stop3-1), 8]-lie[lie.lines+1, 8])
@@ -478,13 +498,12 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                             
                             if (length(which(t>=0 & t<=1))==0){
                               
-                              index<-min(which(t<0))
+                              index<-which(alldist==min(alldist))
                               dbase<-lie[start3+index-1, 10]
                               if (connect==TRUE){
-                                lie[lie.lines+1,5]<-lie[start3+index-1, 1]
-                                dist1<-sqrt((lie[start3+index-1, 7]-lie[lie.lines+1, 7])^2+(lie[start3+index-1, 8]-lie[lie.lines+1, 8])^2+(lie[start3+index-1, 9]-lie[lie.lines+1, 9])^2)
-                                lie[(lie.lines+1):(lie.lines+length4), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length4), 10]}}
-                            
+                                lie[lie.lines+1,5]<-lie[start3+index-1, 1] #Update Prec
+                                dist1<-min(alldist)
+                                lie[(lie.lines+1):(lie.lines+length2), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length2), 10]}}
                             
                             else {
                               
@@ -495,44 +514,52 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                               zn<-diff(lie[start3:stop3, 9])*t+lie[start3:(stop3-1), 9]
                               dist1<-sqrt((xn-lie[lie.lines+1, 7])^2+(yn-lie[lie.lines+1, 8])^2+(zn-lie[lie.lines+1, 9])^2)
                               
-                              if (sum(is.na(dist1)==T)>0) {
-                                index<-as.numeric(match(min(dist1, na.rm=T), dist1))
-                                dist1<-min(dist1, na.rm=T)}
-                              else {
-                                index<-as.numeric(match(min(dist1), dist1))
-                                dist1<-min(dist1)}
+                              if (sum(is.na(dist1)==T)>0) {dist1<-min(dist1, na.rm=T)} else {dist1<-min(dist1)}
                               
-                              lie[(lie.lines+1):(lie.lines+length4), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length4), 10]
+                              if (dist1>min(alldist)){
+                                index<-which(alldist==min(alldist))
+                                dist1<-min(alldist)
+                                dbase<-lie[start3+index-1, 10]
+                                if (connect==TRUE){
+                                  lie[lie.lines+1,5]<-lie[start3+index-1, 1] #Update Prec
+                                  dist1<-min(alldist)
+                                  lie[(lie.lines+1):(lie.lines+length2), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length2), 10]}}
                               
-                              dbase<-lie[start3+index-1, 10]+distance3D(x1=lie[start3+index-1, 7], x2=xn[index], y1=lie[start3+index-1, 8], y2=yn[index], z1=lie[start3+index-1, 9], z2=zn[index])
-                              
-                              if (connect==TRUE){
+                              else{
                                 
-                                lie[lie.lines+length4+1,1:13]<-c(NA, NA, 0, 0, NA, NA, xn[index], yn[index], zn[index], dbase, lie[start3+index-1, 11], NA, 3)
-                                lie<-lie[order(lie[, 11], lie[, 10]),]
-                                length1<-length1+1
-                                lie.lines<-lie.lines+1
-                                stop3<-stop3+1
-                                pos<-match(NA, lie[1:(lie.lines),1])
-                                lie[1:(lie.lines+length4),5]<-match(lie[1:(lie.lines+length4),5], lie[1:(lie.lines+length4),1])
-                                lie[1:(lie.lines+length4),6]<-match(lie[1:(lie.lines+length4),6], lie[1:(lie.lines+length4),1])
-                                lie[pos, 5]<-pos-1
-                                lie[pos, 6]<-pos+1
-                                lie[pos, 2]<-lie[lie[pos, 6], 2]
-                                lie[pos+1, 5]<-pos
-                                lie[pos-1, 6]<-pos
-                                lie[which(is.na(lie[1:(lie.lines),5])==TRUE), 5]<-0
-                                lie[which(is.na(lie[1:(lie.lines),6])==TRUE), 6]<-0
-                                lie[1:(lie.lines+length4),1]<-match(lie[1:(lie.lines+length4),1], lie[1:(lie.lines+length4),1])
-                                lie[lie.lines+1,5]<-pos
+                                if (sum(is.na(dist1)==T)>0) {index<-as.numeric(match(min(dist1, na.rm=T), dist1))}
+                                else {index<-as.numeric(match(min(dist1), dist1))}
                                 
-                                #Calculate diameter for interpolated point (linear function)
-                                if (is.null(diameter)==FALSE){
-                                  prec<-lie[pos, 5]
-                                  suiv<-lie[pos, 6]
-                                  slope<-(lie[suiv, 12]-lie[prec, 12])/distance3D(x1=lie[prec, 7], y1=lie[prec, 8], z1=lie[prec, 9], x2=lie[suiv, 7], y2=lie[suiv, 8], z2=lie[suiv, 9])
-                                  intercept<-lie[prec, 12]
-                                  lie[pos, 12]<-intercept+slope*distance3D(x1=lie[prec, 7], y1=lie[prec, 8], z1=lie[prec, 9], x2=lie[pos, 7], y2=lie[pos, 8], z2=lie[pos, 9])}}}}
+                                lie[(lie.lines+1):(lie.lines+length2), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length2), 10]
+                                dbase<-lie[start3+index-1, 10]+distance3D(x1=lie[start3+index-1, 7], x2=xn[index], y1=lie[start3+index-1, 8], y2=yn[index], z1=lie[start3+index-1, 9], z2=zn[index])
+                                
+                                if (connect==TRUE){
+                                  
+                                  lie[lie.lines+length2+1,1:13]<-c(NA, NA, 0, 0, NA, NA, xn[index], yn[index], zn[index], dbase, lie[start3+index-1, 11], NA, 1)
+                                  lie<-lie[order(lie[, 11], lie[, 10]),]
+                                  length1<-length1+1
+                                  lie.lines<-lie.lines+1
+                                  stop3<-stop3+1
+                                  pos<-match(NA, lie[1:(lie.lines),1])
+                                  lie[1:(lie.lines+length2),5]<-match(lie[1:(lie.lines+length2),5], lie[1:(lie.lines+length2),1])
+                                  lie[1:(lie.lines+length2),6]<-match(lie[1:(lie.lines+length2),6], lie[1:(lie.lines+length2),1])
+                                  lie[pos, 5]<-pos-1
+                                  lie[pos, 6]<-pos+1
+                                  lie[pos, 2]<-lie[lie[pos, 6], 2]
+                                  lie[pos+1, 5]<-pos
+                                  lie[pos-1, 6]<-pos
+                                  lie[which(is.na(lie[1:(lie.lines),5])==TRUE), 5]<-0
+                                  lie[which(is.na(lie[1:(lie.lines),6])==TRUE), 6]<-0
+                                  lie[1:(lie.lines+length2),1]<-match(lie[1:(lie.lines+length2),1], lie[1:(lie.lines+length2),1])
+                                  lie[lie.lines+1,5]<-pos
+                                  
+                                  #Calculate diameter for interpolated point (linear function)
+                                  if (is.null(diameter)==FALSE){
+                                    prec<-lie[pos, 5]
+                                    suiv<-lie[pos, 6]
+                                    slope<-(lie[suiv, 12]-lie[prec, 12])/distance3D(x1=lie[prec, 7], y1=lie[prec, 8], z1=lie[prec, 9], x2=lie[suiv, 7], y2=lie[suiv, 8], z2=lie[suiv, 9])
+                                    intercept<-lie[prec, 12]
+                                    lie[pos, 12]<-intercept+slope*distance3D(x1=lie[prec, 7], y1=lie[prec, 8], z1=lie[prec, 9], x2=lie[pos, 7], y2=lie[pos, 8], z2=lie[pos, 9])}}}}}
                           
                           if (connect==FALSE) {lie[lie.lines+1,5]<-lie.lines+1}
                           
@@ -605,7 +632,9 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                     lie[lie.lines+1,5]<-lie[start4+parentnode[1]-1, 1]
                                     dist1<-0}}
                                 
-                                else {
+                                else { #If no physical connection between parent and daughter root. Interpolate new point or find closest point.
+                                  
+                                  alldist<-sqrt((lie[start4:(stop4-1), 7]-lie[lie.lines+1, 7])^2+(lie[start4:(stop4-1), 8]-lie[lie.lines+1, 8])^2+(lie[start4:(stop4-1), 9]-lie[lie.lines+1, 9])^2)
                                   
                                   scalx<-diff(lie[start4:stop4, 7])*(lie[start4:(stop4-1), 7]-lie[lie.lines+1, 7])
                                   scaly<-diff(lie[start4:stop4, 8])*(lie[start4:(stop4-1), 8]-lie[lie.lines+1, 8])
@@ -615,13 +644,12 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                   
                                   if (length(which(t>=0 & t<=1))==0){
                                     
-                                    index<-min(which(t<0))
+                                    index<-which(alldist==min(alldist))
                                     dbase<-lie[start4+index-1, 10]
                                     if (connect==TRUE){
-                                      lie[lie.lines+1,5]<-lie[start4+index-1, 1]
-                                      dist1<-sqrt((lie[start4+index-1, 7]-lie[lie.lines+1, 7])^2+(lie[start4+index-1, 8]-lie[lie.lines+1, 8])^2+(lie[start4+index-1, 9]-lie[lie.lines+1, 9])^2)
-                                      lie[(lie.lines+1):(lie.lines+length5), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length5), 10]}}
-                                  
+                                      lie[lie.lines+1,5]<-lie[start4+index-1, 1] #Update Prec
+                                      dist1<-min(alldist)
+                                      lie[(lie.lines+1):(lie.lines+length2), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length2), 10]}}
                                   
                                   else {
                                     
@@ -632,44 +660,52 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                     zn<-diff(lie[start4:stop4, 9])*t+lie[start4:(stop4-1), 9]
                                     dist1<-sqrt((xn-lie[lie.lines+1, 7])^2+(yn-lie[lie.lines+1, 8])^2+(zn-lie[lie.lines+1, 9])^2)
                                     
-                                    if (sum(is.na(dist1)==T)>0) {
-                                      index<-as.numeric(match(min(dist1, na.rm=T), dist1))
-                                      dist1<-min(dist1, na.rm=T)}
-                                    else {
-                                      index<-as.numeric(match(min(dist1), dist1))
-                                      dist1<-min(dist1)}
+                                    if (sum(is.na(dist1)==T)>0) {dist1<-min(dist1, na.rm=T)} else {dist1<-min(dist1)}
                                     
-                                    lie[(lie.lines+1):(lie.lines+length5), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length5), 10]
+                                    if (dist1>min(alldist)){
+                                      index<-which(alldist==min(alldist))
+                                      dist1<-min(alldist)
+                                      dbase<-lie[start4+index-1, 10]
+                                      if (connect==TRUE){
+                                        lie[lie.lines+1,5]<-lie[start4+index-1, 1] #Update Prec
+                                        dist1<-min(alldist)
+                                        lie[(lie.lines+1):(lie.lines+length2), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length2), 10]}}
                                     
-                                    dbase<-lie[start4+index-1, 10]+distance3D(x1=lie[start4+index-1, 7], x2=xn[index], y1=lie[start4+index-1, 8], y2=yn[index], z1=lie[start4+index-1, 9], z2=zn[index])
-                                    
-                                    if (connect==TRUE){
+                                    else{
                                       
-                                      lie[lie.lines+length5+1,1:13]<-c(NA, NA, 0, 0, NA, NA, xn[index], yn[index], zn[index], dbase, lie[start4+index-1, 11], NA, 4)
-                                      lie<-lie[order(lie[, 11], lie[, 10]),]
-                                      length1<-length1+1
-                                      lie.lines<-lie.lines+1
-                                      stop4<-stop4+1
-                                      pos<-match(NA, lie[1:(lie.lines),1])
-                                      lie[1:(lie.lines+length5),5]<-match(lie[1:(lie.lines+length5),5], lie[1:(lie.lines+length5),1])
-                                      lie[1:(lie.lines+length5),6]<-match(lie[1:(lie.lines+length5),6], lie[1:(lie.lines+length5),1])
-                                      lie[pos, 5]<-pos-1
-                                      lie[pos, 6]<-pos+1
-                                      lie[pos, 2]<-lie[lie[pos, 6], 2]
-                                      lie[pos+1, 5]<-pos
-                                      lie[pos-1, 6]<-pos
-                                      lie[which(is.na(lie[1:(lie.lines),5])==TRUE), 5]<-0
-                                      lie[which(is.na(lie[1:(lie.lines),6])==TRUE), 6]<-0
-                                      lie[1:(lie.lines+length5),1]<-match(lie[1:(lie.lines+length5),1], lie[1:(lie.lines+length5),1])
-                                      lie[lie.lines+1,5]<-pos
+                                      if (sum(is.na(dist1)==T)>0) {index<-as.numeric(match(min(dist1, na.rm=T), dist1))}
+                                      else {index<-as.numeric(match(min(dist1), dist1))}
                                       
-                                      #Calculate diameter for interpolated point (linear function)
-                                      if (is.null(diameter)==FALSE){
-                                        prec<-lie[pos, 5]
-                                        suiv<-lie[pos, 6]
-                                        slope<-(lie[suiv, 12]-lie[prec, 12])/distance3D(x1=lie[prec, 7], y1=lie[prec, 8], z1=lie[prec, 9], x2=lie[suiv, 7], y2=lie[suiv, 8], z2=lie[suiv, 9])
-                                        intercept<-lie[prec, 12]
-                                        lie[pos, 12]<-intercept+slope*distance3D(x1=lie[prec, 7], y1=lie[prec, 8], z1=lie[prec, 9], x2=lie[pos, 7], y2=lie[pos, 8], z2=lie[pos, 9])}}}}
+                                      lie[(lie.lines+1):(lie.lines+length2), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length2), 10]
+                                      dbase<-lie[start4+index-1, 10]+distance3D(x1=lie[start4+index-1, 7], x2=xn[index], y1=lie[start4+index-1, 8], y2=yn[index], z1=lie[start4+index-1, 9], z2=zn[index])
+                                      
+                                      if (connect==TRUE){
+                                        
+                                        lie[lie.lines+length2+1,1:13]<-c(NA, NA, 0, 0, NA, NA, xn[index], yn[index], zn[index], dbase, lie[start4+index-1, 11], NA, 1)
+                                        lie<-lie[order(lie[, 11], lie[, 10]),]
+                                        length1<-length1+1
+                                        lie.lines<-lie.lines+1
+                                        stop4<-stop4+1
+                                        pos<-match(NA, lie[1:(lie.lines),1])
+                                        lie[1:(lie.lines+length2),5]<-match(lie[1:(lie.lines+length2),5], lie[1:(lie.lines+length2),1])
+                                        lie[1:(lie.lines+length2),6]<-match(lie[1:(lie.lines+length2),6], lie[1:(lie.lines+length2),1])
+                                        lie[pos, 5]<-pos-1
+                                        lie[pos, 6]<-pos+1
+                                        lie[pos, 2]<-lie[lie[pos, 6], 2]
+                                        lie[pos+1, 5]<-pos
+                                        lie[pos-1, 6]<-pos
+                                        lie[which(is.na(lie[1:(lie.lines),5])==TRUE), 5]<-0
+                                        lie[which(is.na(lie[1:(lie.lines),6])==TRUE), 6]<-0
+                                        lie[1:(lie.lines+length2),1]<-match(lie[1:(lie.lines+length2),1], lie[1:(lie.lines+length2),1])
+                                        lie[lie.lines+1,5]<-pos
+                                        
+                                        #Calculate diameter for interpolated point (linear function)
+                                        if (is.null(diameter)==FALSE){
+                                          prec<-lie[pos, 5]
+                                          suiv<-lie[pos, 6]
+                                          slope<-(lie[suiv, 12]-lie[prec, 12])/distance3D(x1=lie[prec, 7], y1=lie[prec, 8], z1=lie[prec, 9], x2=lie[suiv, 7], y2=lie[suiv, 8], z2=lie[suiv, 9])
+                                          intercept<-lie[prec, 12]
+                                          lie[pos, 12]<-intercept+slope*distance3D(x1=lie[prec, 7], y1=lie[prec, 8], z1=lie[prec, 9], x2=lie[pos, 7], y2=lie[pos, 8], z2=lie[pos, 9])}}}}}
                                 
                                 if (connect==FALSE) {lie[lie.lines+1,5]<-lie.lines+1}
                                 
