@@ -195,9 +195,9 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                   dist1<-0}}
               
               else { #If no physical connection between parent and daughter root. Interpolate new point or find closest point.
-                
-              alldist<-sqrt((lie[start1:(stop1-1), 7]-lie[lie.lines+1, 7])^2+(lie[start1:(stop1-1), 8]-lie[lie.lines+1, 8])^2+(lie[start1:(stop1-1), 9]-lie[lie.lines+1, 9])^2)
               
+              alldist<-sqrt((lie[start1:(stop1-1), 7]-lie[lie.lines+1, 7])^2+(lie[start1:(stop1-1), 8]-lie[lie.lines+1, 8])^2+(lie[start1:(stop1-1), 9]-lie[lie.lines+1, 9])^2)
+
               scalx<-diff(lie[start1:stop1, 7])*(lie[start1:(stop1-1), 7]-lie[lie.lines+1, 7])
               scaly<-diff(lie[start1:stop1, 8])*(lie[start1:(stop1-1), 8]-lie[lie.lines+1, 8])
               scalz<-diff(lie[start1:stop1, 9])*(lie[start1:(stop1-1), 9]-lie[lie.lines+1, 9])
@@ -222,7 +222,12 @@ rsmlToDART <- function(rsml.path, final.date, connect){
               zn<-diff(lie[start1:stop1, 9])*t+lie[start1:(stop1-1), 9]
               dist1<-sqrt((xn-lie[lie.lines+1, 7])^2+(yn-lie[lie.lines+1, 8])^2+(zn-lie[lie.lines+1, 9])^2)
               
-              if (sum(is.na(dist1)==T)>0) {dist1<-min(dist1, na.rm=T)} else {dist1<-min(dist1)}
+              if (sum(is.na(dist1)==T)>0) {
+                index<-as.numeric(match(min(dist1, na.rm=T), dist1))
+                dist1<-min(dist1, na.rm=T)} 
+              else {
+                dist1<-min(dist1)
+                index<-as.numeric(match(min(dist1), dist1))}
               
               if (dist1>min(alldist)){
                 index<-which(alldist==min(alldist))
@@ -234,9 +239,6 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                   lie[(lie.lines+1):(lie.lines+length2), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length2), 10]}}
               
               else{
-                
-                if (sum(is.na(dist1)==T)>0) {index<-as.numeric(match(min(dist1, na.rm=T), dist1))}
-                else {index<-as.numeric(match(min(dist1), dist1))}
                 
                 lie[(lie.lines+1):(lie.lines+length2), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length2), 10]
                 dbase<-lie[start1+index-1, 10]+distance3D(x1=lie[start1+index-1, 7], x2=xn[index], y1=lie[start1+index-1, 8], y2=yn[index], z1=lie[start1+index-1, 9], z2=zn[index])
@@ -368,7 +370,12 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                         zn<-diff(lie[start2:stop2, 9])*t+lie[start2:(stop2-1), 9]
                         dist1<-sqrt((xn-lie[lie.lines+1, 7])^2+(yn-lie[lie.lines+1, 8])^2+(zn-lie[lie.lines+1, 9])^2)
                         
-                        if (sum(is.na(dist1)==T)>0) {dist1<-min(dist1, na.rm=T)} else {dist1<-min(dist1)}
+                        if (sum(is.na(dist1)==T)>0) {
+                          index<-as.numeric(match(min(dist1, na.rm=T), dist1))
+                          dist1<-min(dist1, na.rm=T)} 
+                        else {
+                          index<-as.numeric(match(min(dist1), dist1))
+                          dist1<-min(dist1)}
                         
                         if (dist1>min(alldist)){
                           index<-which(alldist==min(alldist))
@@ -380,9 +387,6 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                             lie[(lie.lines+1):(lie.lines+length2), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length2), 10]}}
                         
                         else{
-                          
-                          if (sum(is.na(dist1)==T)>0) {index<-as.numeric(match(min(dist1, na.rm=T), dist1))}
-                          else {index<-as.numeric(match(min(dist1), dist1))}
                           
                           lie[(lie.lines+1):(lie.lines+length2), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length2), 10]
                           dbase<-lie[start2+index-1, 10]+distance3D(x1=lie[start2+index-1, 7], x2=xn[index], y1=lie[start2+index-1, 8], y2=yn[index], z1=lie[start2+index-1, 9], z2=zn[index])
@@ -514,7 +518,12 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                               zn<-diff(lie[start3:stop3, 9])*t+lie[start3:(stop3-1), 9]
                               dist1<-sqrt((xn-lie[lie.lines+1, 7])^2+(yn-lie[lie.lines+1, 8])^2+(zn-lie[lie.lines+1, 9])^2)
                               
-                              if (sum(is.na(dist1)==T)>0) {dist1<-min(dist1, na.rm=T)} else {dist1<-min(dist1)}
+                              if (sum(is.na(dist1)==T)>0) {
+                                index<-as.numeric(match(min(dist1, na.rm=T), dist1))
+                                dist1<-min(dist1, na.rm=T)} 
+                              else {
+                                index<-as.numeric(match(min(dist1), dist1))
+                                dist1<-min(dist1)}
                               
                               if (dist1>min(alldist)){
                                 index<-which(alldist==min(alldist))
@@ -526,9 +535,6 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                   lie[(lie.lines+1):(lie.lines+length2), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length2), 10]}}
                               
                               else{
-                                
-                                if (sum(is.na(dist1)==T)>0) {index<-as.numeric(match(min(dist1, na.rm=T), dist1))}
-                                else {index<-as.numeric(match(min(dist1), dist1))}
                                 
                                 lie[(lie.lines+1):(lie.lines+length2), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length2), 10]
                                 dbase<-lie[start3+index-1, 10]+distance3D(x1=lie[start3+index-1, 7], x2=xn[index], y1=lie[start3+index-1, 8], y2=yn[index], z1=lie[start3+index-1, 9], z2=zn[index])
@@ -660,7 +666,12 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                     zn<-diff(lie[start4:stop4, 9])*t+lie[start4:(stop4-1), 9]
                                     dist1<-sqrt((xn-lie[lie.lines+1, 7])^2+(yn-lie[lie.lines+1, 8])^2+(zn-lie[lie.lines+1, 9])^2)
                                     
-                                    if (sum(is.na(dist1)==T)>0) {dist1<-min(dist1, na.rm=T)} else {dist1<-min(dist1)}
+                                    if (sum(is.na(dist1)==T)>0) {
+                                      index<-as.numeric(match(min(dist1, na.rm=T), dist1))
+                                      dist1<-min(dist1, na.rm=T)} 
+                                    else {
+                                      index<-as.numeric(match(min(dist1), dist1))
+                                      dist1<-min(dist1)}
                                     
                                     if (dist1>min(alldist)){
                                       index<-which(alldist==min(alldist))
@@ -672,9 +683,6 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                         lie[(lie.lines+1):(lie.lines+length2), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length2), 10]}}
                                     
                                     else{
-                                      
-                                      if (sum(is.na(dist1)==T)>0) {index<-as.numeric(match(min(dist1, na.rm=T), dist1))}
-                                      else {index<-as.numeric(match(min(dist1), dist1))}
                                       
                                       lie[(lie.lines+1):(lie.lines+length2), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length2), 10]
                                       dbase<-lie[start4+index-1, 10]+distance3D(x1=lie[start4+index-1, 7], x2=xn[index], y1=lie[start4+index-1, 8], y2=yn[index], z1=lie[start4+index-1, 9], z2=zn[index])
