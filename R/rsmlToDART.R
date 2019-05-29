@@ -244,7 +244,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                 dbase<-lie[start1+index-1, 10]+distance3D(x1=lie[start1+index-1, 7], x2=xn[index], y1=lie[start1+index-1, 8], y2=yn[index], z1=lie[start1+index-1, 9], z2=zn[index])
     
               if (connect==TRUE){
-                
+              
               lie[lie.lines+length2+1,1:13]<-c(NA, NA, 0, 0, NA, NA, xn[index], yn[index], zn[index], dbase, lie[start1+index-1, 11], NA, 1)
               lie<-lie[order(lie[, 11], lie[, 10]),]
               length1<-length1+1
@@ -359,7 +359,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                         if (connect==TRUE){
                           lie[lie.lines+1,5]<-lie[start2+index-1, 1] #Update Prec
                           dist1<-min(alldist)
-                          lie[(lie.lines+1):(lie.lines+length2), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length2), 10]}}
+                          lie[(lie.lines+1):(lie.lines+length3), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length3), 10]}}
                       
                       else {
                         
@@ -384,23 +384,23 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                           if (connect==TRUE){
                             lie[lie.lines+1,5]<-lie[start2+index-1, 1] #Update Prec
                             dist1<-min(alldist)
-                            lie[(lie.lines+1):(lie.lines+length2), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length2), 10]}}
+                            lie[(lie.lines+1):(lie.lines+length3), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length3), 10]}}
                         
                         else{
                           
-                          lie[(lie.lines+1):(lie.lines+length2), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length2), 10]
+                          lie[(lie.lines+1):(lie.lines+length3), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length3), 10]
                           dbase<-lie[start2+index-1, 10]+distance3D(x1=lie[start2+index-1, 7], x2=xn[index], y1=lie[start2+index-1, 8], y2=yn[index], z1=lie[start2+index-1, 9], z2=zn[index])
                           
                           if (connect==TRUE){
                             
-                            lie[lie.lines+length2+1,1:13]<-c(NA, NA, 0, 0, NA, NA, xn[index], yn[index], zn[index], dbase, lie[start2+index-1, 11], NA, 1)
+                            lie[lie.lines+length3+1,1:13]<-c(NA, NA, 0, 0, NA, NA, xn[index], yn[index], zn[index], dbase, lie[start2+index-1, 11], NA, 1)
                             lie<-lie[order(lie[, 11], lie[, 10]),]
                             length1<-length1+1
                             lie.lines<-lie.lines+1
                             stop2<-stop2+1
                             pos<-match(NA, lie[1:(lie.lines),1])
-                            lie[1:(lie.lines+length2),5]<-match(lie[1:(lie.lines+length2),5], lie[1:(lie.lines+length2),1])
-                            lie[1:(lie.lines+length2),6]<-match(lie[1:(lie.lines+length2),6], lie[1:(lie.lines+length2),1])
+                            lie[1:(lie.lines+length3),5]<-match(lie[1:(lie.lines+length3),5], lie[1:(lie.lines+length3),1])
+                            lie[1:(lie.lines+length3),6]<-match(lie[1:(lie.lines+length3),6], lie[1:(lie.lines+length3),1])
                             lie[pos, 5]<-pos-1
                             lie[pos, 6]<-pos+1
                             lie[pos, 2]<-lie[lie[pos, 6], 2]
@@ -408,7 +408,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                             lie[pos-1, 6]<-pos
                             lie[which(is.na(lie[1:(lie.lines),5])==TRUE), 5]<-0
                             lie[which(is.na(lie[1:(lie.lines),6])==TRUE), 6]<-0
-                            lie[1:(lie.lines+length2),1]<-match(lie[1:(lie.lines+length2),1], lie[1:(lie.lines+length2),1])
+                            lie[1:(lie.lines+length3),1]<-match(lie[1:(lie.lines+length3),1], lie[1:(lie.lines+length3),1])
                             lie[lie.lines+1,5]<-pos
                             
                             #Calculate diameter for interpolated point (linear function)
@@ -507,7 +507,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                               if (connect==TRUE){
                                 lie[lie.lines+1,5]<-lie[start3+index-1, 1] #Update Prec
                                 dist1<-min(alldist)
-                                lie[(lie.lines+1):(lie.lines+length2), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length2), 10]}}
+                                lie[(lie.lines+1):(lie.lines+length4), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length4), 10]}}
                             
                             else {
                               
@@ -532,23 +532,23 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                 if (connect==TRUE){
                                   lie[lie.lines+1,5]<-lie[start3+index-1, 1] #Update Prec
                                   dist1<-min(alldist)
-                                  lie[(lie.lines+1):(lie.lines+length2), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length2), 10]}}
+                                  lie[(lie.lines+1):(lie.lines+length4), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length4), 10]}}
                               
                               else{
                                 
-                                lie[(lie.lines+1):(lie.lines+length2), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length2), 10]
+                                lie[(lie.lines+1):(lie.lines+length4), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length4), 10]
                                 dbase<-lie[start3+index-1, 10]+distance3D(x1=lie[start3+index-1, 7], x2=xn[index], y1=lie[start3+index-1, 8], y2=yn[index], z1=lie[start3+index-1, 9], z2=zn[index])
                                 
                                 if (connect==TRUE){
                                   
-                                  lie[lie.lines+length2+1,1:13]<-c(NA, NA, 0, 0, NA, NA, xn[index], yn[index], zn[index], dbase, lie[start3+index-1, 11], NA, 1)
+                                  lie[lie.lines+length4+1,1:13]<-c(NA, NA, 0, 0, NA, NA, xn[index], yn[index], zn[index], dbase, lie[start3+index-1, 11], NA, 1)
                                   lie<-lie[order(lie[, 11], lie[, 10]),]
                                   length1<-length1+1
                                   lie.lines<-lie.lines+1
                                   stop3<-stop3+1
                                   pos<-match(NA, lie[1:(lie.lines),1])
-                                  lie[1:(lie.lines+length2),5]<-match(lie[1:(lie.lines+length2),5], lie[1:(lie.lines+length2),1])
-                                  lie[1:(lie.lines+length2),6]<-match(lie[1:(lie.lines+length2),6], lie[1:(lie.lines+length2),1])
+                                  lie[1:(lie.lines+length4),5]<-match(lie[1:(lie.lines+length4),5], lie[1:(lie.lines+length4),1])
+                                  lie[1:(lie.lines+length4),6]<-match(lie[1:(lie.lines+length4),6], lie[1:(lie.lines+length4),1])
                                   lie[pos, 5]<-pos-1
                                   lie[pos, 6]<-pos+1
                                   lie[pos, 2]<-lie[lie[pos, 6], 2]
@@ -556,7 +556,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                   lie[pos-1, 6]<-pos
                                   lie[which(is.na(lie[1:(lie.lines),5])==TRUE), 5]<-0
                                   lie[which(is.na(lie[1:(lie.lines),6])==TRUE), 6]<-0
-                                  lie[1:(lie.lines+length2),1]<-match(lie[1:(lie.lines+length2),1], lie[1:(lie.lines+length2),1])
+                                  lie[1:(lie.lines+length4),1]<-match(lie[1:(lie.lines+length4),1], lie[1:(lie.lines+length4),1])
                                   lie[lie.lines+1,5]<-pos
                                   
                                   #Calculate diameter for interpolated point (linear function)
@@ -655,7 +655,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                     if (connect==TRUE){
                                       lie[lie.lines+1,5]<-lie[start4+index-1, 1] #Update Prec
                                       dist1<-min(alldist)
-                                      lie[(lie.lines+1):(lie.lines+length2), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length2), 10]}}
+                                      lie[(lie.lines+1):(lie.lines+length5), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length5), 10]}}
                                   
                                   else {
                                     
@@ -680,23 +680,23 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                       if (connect==TRUE){
                                         lie[lie.lines+1,5]<-lie[start4+index-1, 1] #Update Prec
                                         dist1<-min(alldist)
-                                        lie[(lie.lines+1):(lie.lines+length2), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length2), 10]}}
+                                        lie[(lie.lines+1):(lie.lines+length5), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length5), 10]}}
                                     
                                     else{
                                       
-                                      lie[(lie.lines+1):(lie.lines+length2), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length2), 10]
+                                      lie[(lie.lines+1):(lie.lines+length5), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length5), 10]
                                       dbase<-lie[start4+index-1, 10]+distance3D(x1=lie[start4+index-1, 7], x2=xn[index], y1=lie[start4+index-1, 8], y2=yn[index], z1=lie[start4+index-1, 9], z2=zn[index])
                                       
                                       if (connect==TRUE){
                                         
-                                        lie[lie.lines+length2+1,1:13]<-c(NA, NA, 0, 0, NA, NA, xn[index], yn[index], zn[index], dbase, lie[start4+index-1, 11], NA, 1)
+                                        lie[lie.lines+length5+1,1:13]<-c(NA, NA, 0, 0, NA, NA, xn[index], yn[index], zn[index], dbase, lie[start4+index-1, 11], NA, 1)
                                         lie<-lie[order(lie[, 11], lie[, 10]),]
                                         length1<-length1+1
                                         lie.lines<-lie.lines+1
                                         stop4<-stop4+1
                                         pos<-match(NA, lie[1:(lie.lines),1])
-                                        lie[1:(lie.lines+length2),5]<-match(lie[1:(lie.lines+length2),5], lie[1:(lie.lines+length2),1])
-                                        lie[1:(lie.lines+length2),6]<-match(lie[1:(lie.lines+length2),6], lie[1:(lie.lines+length2),1])
+                                        lie[1:(lie.lines+length5),5]<-match(lie[1:(lie.lines+length5),5], lie[1:(lie.lines+length5),1])
+                                        lie[1:(lie.lines+length5),6]<-match(lie[1:(lie.lines+length5),6], lie[1:(lie.lines+length5),1])
                                         lie[pos, 5]<-pos-1
                                         lie[pos, 6]<-pos+1
                                         lie[pos, 2]<-lie[lie[pos, 6], 2]
@@ -704,7 +704,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                         lie[pos-1, 6]<-pos
                                         lie[which(is.na(lie[1:(lie.lines),5])==TRUE), 5]<-0
                                         lie[which(is.na(lie[1:(lie.lines),6])==TRUE), 6]<-0
-                                        lie[1:(lie.lines+length2),1]<-match(lie[1:(lie.lines+length2),1], lie[1:(lie.lines+length2),1])
+                                        lie[1:(lie.lines+length5),1]<-match(lie[1:(lie.lines+length5),1], lie[1:(lie.lines+length5),1])
                                         lie[lie.lines+1,5]<-pos
                                         
                                         #Calculate diameter for interpolated point (linear function)
@@ -760,6 +760,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
     lie$Bran[lie$Bran==1]<-"true"
     lie$Apic[lie$Apic==0]<-"false"
     lie$Apic[lie$Apic==1]<-"true"
+    
     if (sum(lie$Z)==0){lie<-lie[,-9]}
     
     #Round dates to integers
