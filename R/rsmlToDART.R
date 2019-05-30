@@ -393,7 +393,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                           
                           if (connect==TRUE){
                             
-                            lie[lie.lines+length3+1,1:13]<-c(NA, NA, 0, 0, NA, NA, xn[index], yn[index], zn[index], dbase, lie[start2+index-1, 11], NA, 1)
+                            lie[lie.lines+length3+1,1:13]<-c(NA, NA, 0, 0, NA, NA, xn[index], yn[index], zn[index], dbase, lie[start2+index-1, 11], NA, 2)
                             lie<-lie[order(lie[, 11], lie[, 10]),]
                             length1<-length1+1
                             lie.lines<-lie.lines+1
@@ -541,7 +541,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                 
                                 if (connect==TRUE){
                                   
-                                  lie[lie.lines+length4+1,1:13]<-c(NA, NA, 0, 0, NA, NA, xn[index], yn[index], zn[index], dbase, lie[start3+index-1, 11], NA, 1)
+                                  lie[lie.lines+length4+1,1:13]<-c(NA, NA, 0, 0, NA, NA, xn[index], yn[index], zn[index], dbase, lie[start3+index-1, 11], NA, 3)
                                   lie<-lie[order(lie[, 11], lie[, 10]),]
                                   length1<-length1+1
                                   lie.lines<-lie.lines+1
@@ -689,7 +689,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                       
                                       if (connect==TRUE){
                                         
-                                        lie[lie.lines+length5+1,1:13]<-c(NA, NA, 0, 0, NA, NA, xn[index], yn[index], zn[index], dbase, lie[start4+index-1, 11], NA, 1)
+                                        lie[lie.lines+length5+1,1:13]<-c(NA, NA, 0, 0, NA, NA, xn[index], yn[index], zn[index], dbase, lie[start4+index-1, 11], NA, 4)
                                         lie<-lie[order(lie[, 11], lie[, 10]),]
                                         length1<-length1+1
                                         lie.lines<-lie.lines+1
