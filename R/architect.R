@@ -753,7 +753,7 @@ architect<-function(inputrac=NULL, inputtps=NULL, inputrsml=NULL, res=NULL, unit
               
               if (nrow(root.coords)>=4){ #Need at least 4 points to construct initial simplex
                 
-                datarsml$Convexhull3D[k]<-convhulln(as.matrix(root.coords), options="QJ", output.options = "FA")$vol}
+                datarsml$Convexhull3D[k]<-convhulln(as.matrix(root.coords), options=c("QJ", "FA"))$vol}
               
               else {
                 
