@@ -735,6 +735,11 @@ architect<-function(inputrac=NULL, inputtps=NULL, inputrsml=NULL, res=NULL, unit
             
             #Convex hull volume (3D)
             
+            if (is.na(datarsml$ConvexhullXY[k])==TRUE|
+                is.na(datarsml$ConvexhullXZ[k])==TRUE|
+                is.na(datarsml$ConvexhullYZ[k])==TRUE){datarsml$Convexhull3D[k]<-NA}
+            else{
+            
             if (datarsml$ConvexhullXY[k]==0|
                 datarsml$ConvexhullXZ[k]==0|
                 datarsml$ConvexhullYZ[k]==0){datarsml$Convexhull3D[k]<-0} 
@@ -752,7 +757,7 @@ architect<-function(inputrac=NULL, inputtps=NULL, inputrsml=NULL, res=NULL, unit
               
               else {
                 
-                datarsml$Convexhull3D[k]<-0}}
+                datarsml$Convexhull3D[k]<-0}}}
             
             #Fitter topological indices
             
