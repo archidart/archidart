@@ -173,7 +173,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
               if (timeserie==TRUE) {lie[(lie.lines+1):(lie.lines+length2),1:6]<-c((lie.lines+1):(lie.lines+length2), time, rep(0, length2), rep(0, length2), lie.lines:(lie.lines+length2-1), (lie.lines+2):(lie.lines+length2+1))}
               lie[(lie.lines+1):(lie.lines+length2),11]<-r
               if(is.null(diameter)==TRUE) {} else {lie[(lie.lines+1):(lie.lines+length2),12]<-diameter}
-              lie[(lie.lines+1):(lie.lines+length2),13]<-2
+              lie[(lie.lines+1):(lie.lines+length2),13]<-2 #Order 2
               
               #c(X,Y,Z)
               lie[(lie.lines+1):(lie.lines+length2),7]<-sapply(ns, xnodes)

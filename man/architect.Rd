@@ -15,7 +15,6 @@ architect(inputrac=NULL, inputtps=NULL, inputrsml=NULL, res=NULL, unitlength="px
   \item{rsml.date}{Only used if \code{inputrsml} is not a rsmlToTable object. A numeric value specifying the root system age (the unit of time is defined by the user). If \code{rsml.date=NULL}, a default value of 1 is used by the function. If the root system age is stored as a continuous function along the root segments, a character string specifying the name/label of the function can be used (see details).}
   \item{rsml.connect}{Only used if \code{inputrsml} is not a rsmlToTable object. A logical value that must be specified when \code{is.null(inputrsml)=FALSE}. If \code{TRUE}, the lateral roots are connected to their parent root (see details). If \code{FALSE}, no connection is made between daughter and mother roots.}
   \item{vertical3d}{The vertical axis for 3D RSA data (x, y, or z).}
-  \item{chull}{A character vector giving the name of the axes to use for calculating the convex hull (can be c(\dQuote{x}, \dQuote{y}), c(\dQuote{x}, \dQuote{z}), or c(\dQuote{y}, \dQuote{z})).}
   \item{fitter}{A logical value. Should the Fitter topological indices be computed? Yes is TRUE, No is FALSE. See details.}
 }
 \details{
@@ -83,7 +82,13 @@ If \code{inputrac} is a dartTotable object and/or \code{inputrsml} is a rsmlToTa
 
 \bold{Width}: the root system width expressed in \code{unitlength}.
 
-\bold{Convexhull}: the area of the convex hull expressed in \code{unitlength^2}.
+\bold{ConvexhullXY}: the area of the convex hull on the XY plane expressed in \code{unitlength^2}.
+
+\bold{ConvexhullXZ}: the area of the convex hull on the XZ plane expressed in \code{unitlength^2}.
+
+\bold{ConvexhullYZ}: the area of the convex hull on the YZ plane expressed in \code{unitlength^2}.
+
+\bold{Convexhull3D}: the volume of the convex hull expressed in \code{unitlength^3}.
 
 \bold{Magnitude}: the magnitude of the root system. See details for more information. Computed only if \code{fitter=TRUE}.
 
