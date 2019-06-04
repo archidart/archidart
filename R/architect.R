@@ -789,11 +789,16 @@ architect<-function(inputrac=NULL, inputtps=NULL, inputrsml=NULL, res=NULL, unit
                     if (length(testbran)>=2) {
                       xt$pathlength[testbran]<-xt$pathlength[branindex[l]]+1
                       index<-which(xt$bran[testbran]=="false")
-                      suiv<-testbran[index]}
+                      if (length(index)!=0) {suiv<-testbran[index]} else {suiv<-branindex[l]}}
                     else {
                       xt$pathlength[testbran]<-xt$pathlength[branindex[l]]
                       suiv<-testbran}
                     
+                    if (xt$apic[suiv]=="true" & suiv!=branindex[l]){
+                      testbran<-which(xt$x1==xt$x2[suiv] & xt$y1==xt$y2[suiv] & xt$z1==xt$z2[suiv]) #Is it a crossing?
+                      if (length(testbran)>1) {testbran<-testbran[which(xt$parentroot[testbran]==root)]} #Select segments based on parentroot ID
+                      xt$pathlength[testbran]<-xt$pathlength[suiv]+1}
+
                     while(xt$apic[suiv]=="false"){
                       
                       testbran<-which(xt$x1==xt$x2[suiv] & xt$y1==xt$y2[suiv] & xt$z1==xt$z2[suiv]) #Is it a crossing?
@@ -805,7 +810,11 @@ architect<-function(inputrac=NULL, inputtps=NULL, inputrsml=NULL, res=NULL, unit
                         suiv<-testbran[index]}
                       else {
                         xt$pathlength[testbran]<-xt$pathlength[suiv]
-                        suiv<-testbran}}}}
+                        suiv<-testbran}
+                      
+                      testbran<-which(xt$x1==xt$x2[suiv] & xt$y1==xt$y2[suiv] & xt$z1==xt$z2[suiv])
+                      
+                      if (xt$apic[suiv]=="true" & length(testbran)>0){xt$pathlength[testbran]<-xt$pathlength[suiv]+1}}}}
                 
                 datarsml$Altitude[k]<-max(xt$pathlength)
                 datarsml$ExtPathLength[k]<-sum(xt$pathlength[xt$apic=="true"])}

@@ -18,25 +18,26 @@ for (n in 1:length(plants)){#For each plant in RSML
     
     #Magnitude
     
-    x[apicindex[l], 22]<-1
+    x[apicindex[l], 22]<-1 #External link has a magnitude of 1
     
-    root<-x[apicindex[l], 3]
-    parentroot<-x[apicindex[l], 21]
+    root<-x[apicindex[l], 3] #Take root ID
+    parentroot<-x[apicindex[l], 21] #Take parent root ID
     
-    indexprec<-which(x[,11]==x[apicindex[l], 8] & x[,12]==x[apicindex[l], 9] & x[,13]==x[apicindex[l], 10])
-    if (length(indexprec)>1) {indexprec<-indexprec[which(x[indexprec,3]==root | x[indexprec, 3]==parentroot)]}
+    indexprec<-which(x[,11]==x[apicindex[l], 8] & x[,12]==x[apicindex[l], 9] & x[,13]==x[apicindex[l], 10]) #Search prec segment
+    if (length(indexprec)>1) {indexprec<-indexprec[which(x[indexprec,3]==root | x[indexprec, 3]==parentroot)]} #If more than 1 segment found, it should belong to root or parentroot
     
     if (length(indexprec)>0){
     
-      root<-x[indexprec, 3]
-      parentroot<-x[indexprec, 21]
+      root<-x[indexprec, 3] #Take root ID of prec segment
+      parentroot<-x[indexprec, 21] #Take parent root ID of the prec segment
       
       x[indexprec, 22]<-x[indexprec, 22]+1
       
       while(x[indexprec, 4]>=1){
         
         segment1<-which(x[,11]==x[indexprec, 8] & x[,12]==x[indexprec, 9] & x[,13]==x[indexprec, 10])
-        if (length(segment1)>1) {indexprec<-segment1[which(x[segment1,3]==root | x[segment1, 3]==parentroot)]} else {indexprec<-segment1}
+        if (length(segment1)>1) {indexprec<-segment1[which(x[segment1,3]==root | x[segment1, 3]==parentroot)]} 
+        else {indexprec<-segment1}
         if (length(indexprec)==0){break}
         root<-x[indexprec, 3]
         parentroot<-x[indexprec, 21]
