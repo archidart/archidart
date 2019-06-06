@@ -620,6 +620,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                 lie[(lie.lines+1):(lie.lines+length5),13]<-5
                                 
                                 #c(X,Y,Z)
+                                return(sapply(ns, xnodes))
                                 lie[(lie.lines+1):(lie.lines+length5),7]<-sapply(ns, xnodes)
                                 lie[(lie.lines+1):(lie.lines+length5),8]<-sapply(ns, ynodes)
                                 if (length(ns[[1]])==3) {lie[(lie.lines+1):(lie.lines+length5),9]<-sapply(ns, znodes)} else {lie[(lie.lines+1):(lie.lines+length5),9]<-0}
@@ -768,12 +769,12 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                       lie[(lie.lines+1):(lie.lines+length6),13]<-6
                                       
                                       #c(X,Y,Z)
-                                      lie[(lie.lines+1):(lie.lines+length5),7]<-sapply(ns, xnodes)
-                                      lie[(lie.lines+1):(lie.lines+length5),8]<-sapply(ns, ynodes)
-                                      if (length(ns[[1]])==3) {lie[(lie.lines+1):(lie.lines+length5),9]<-sapply(ns, znodes)} else {lie[(lie.lines+1):(lie.lines+length5),9]<-0}
+                                      lie[(lie.lines+1):(lie.lines+length6),7]<-sapply(ns, xnodes)
+                                      lie[(lie.lines+1):(lie.lines+length6),8]<-sapply(ns, ynodes)
+                                      if (length(ns[[1]])==3) {lie[(lie.lines+1):(lie.lines+length6),9]<-sapply(ns, znodes)} else {lie[(lie.lines+1):(lie.lines+length6),9]<-0}
                                       
                                       #c(dist)
-                                      lie[(lie.lines+1):(lie.lines+length5), 10]<-c(0, cumsum(sqrt((diff(lie[(lie.lines+1):(lie.lines+length5), 7]))^2+(diff(lie[(lie.lines+1):(lie.lines+length5), 8]))^2+(diff(lie[(lie.lines+1):(lie.lines+length5), 9]))^2)))
+                                      lie[(lie.lines+1):(lie.lines+length6), 10]<-c(0, cumsum(sqrt((diff(lie[(lie.lines+1):(lie.lines+length6), 7]))^2+(diff(lie[(lie.lines+1):(lie.lines+length6), 8]))^2+(diff(lie[(lie.lines+1):(lie.lines+length6), 9]))^2)))
                                       
                                       # Search the closest point on the mother root (calculate DBase)
                                       
