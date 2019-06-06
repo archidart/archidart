@@ -34,13 +34,13 @@ latdist<-function(inputrac=NULL, inputrsml=NULL, output=c("lrd","dtp"), res=NULL
   # Reading of DART and rsml files
   
   if (is.null(inputrac)==FALSE){
-    filenames.rac<-list.files(path=inputrac, pattern="\\.rac$")
+    filenames.rac<-mixedsort(list.files(path=inputrac, pattern="\\.rac$"))
     path.rac<-rep(inputrac, length.out=length(filenames.rac))
     filenamesrac<-sub(x=filenames.rac, pattern="\\.rac$", replacement="")
     message(paste("Number of DART rac files in inputrac:", length(filenames.rac), sep=" "))}
   
   if (is.null(inputrsml)==FALSE) {
-    filenames.rsml<-list.files(path=inputrsml, pattern="\\.rsml$")
+    filenames.rsml<-mixedsort(list.files(path=inputrsml, pattern="\\.rsml$"))
     path.rsml<-rep(inputrsml, length.out=length(filenames.rsml))
     filenamesrsml<-sub(x=filenames.rsml, pattern="\\.rsml$", replacement="")
     message(paste("Number of rsml files in inputrsml:", length(filenames.rsml), sep=" "))}

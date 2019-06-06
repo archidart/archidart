@@ -69,19 +69,19 @@ archigrow<-function(inputlie=NULL, inputtps=NULL, inputrsml=NULL,  res=NULL, uni
   # Reading of DART and rsml files
   
   if (is.null(inputtps)==FALSE){
-    filenames.tps<-list.files(path=inputtps, pattern="\\.tps$")
+    filenames.tps<-mixedsort(list.files(path=inputtps, pattern="\\.tps$"))
     path.tps<-rep(inputtps, length.out=length(filenames.tps))
     filenamestps<-sub(x=filenames.tps, pattern="\\.tps$", replacement="")
     message(paste("Number of DART tps files in inputtps:", length(filenames.tps), sep=" "))}
   
   if (is.null(inputlie)==FALSE){
-    filenames.lie<-list.files(path=inputlie, pattern="\\.lie$")
+    filenames.lie<-mixedsort(list.files(path=inputlie, pattern="\\.lie$"))
     path.lie<-rep(inputlie, length.out=length(filenames.lie))
     filenameslie<-sub(x=filenames.lie, pattern="\\.lie$", replacement="")
     message(paste("Number of DART lie files in inputlie:", length(filenames.lie), sep=" "))}
   
   if (is.null(inputrsml)==FALSE) {
-    filenames.rsml<-list.files(path=inputrsml, pattern="\\.rsml$")
+    filenames.rsml<-mixedsort(list.files(path=inputrsml, pattern="\\.rsml$"))
     path.rsml<-rep(inputrsml, length.out=length(filenames.rsml))
     filenamesrsml<-sub(x=filenames.rsml, pattern="\\.rsml$", replacement="")
     message(paste("Number of rsml files in inputrsml:", length(filenames.rsml), sep=" "))}

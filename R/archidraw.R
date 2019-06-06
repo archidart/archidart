@@ -47,13 +47,13 @@ archidraw<-function(inputlie=NULL, inputrsml=NULL, res=NULL, unitlength="px", rs
   # Reading of DART and rsml files
     
     if (is.null(inputlie)==FALSE){
-      filenames.lie<-list.files(path=inputlie, pattern="\\.lie$")
+      filenames.lie<-mixedsort(list.files(path=inputlie, pattern="\\.lie$"))
       path.lie<-rep(inputlie, length.out=length(filenames.lie))
       filenameslie<-sub(x=filenames.lie, pattern="\\.lie$", replacement="")
       message(paste("Number of DART lie files in inputlie:", length(filenames.lie), sep=" "))}
     
     if (is.null(inputrsml)==FALSE) {
-      filenames.rsml<-list.files(path=inputrsml, pattern="\\.rsml$")
+      filenames.rsml<-mixedsort(list.files(path=inputrsml, pattern="\\.rsml$"))
       path.rsml<-rep(inputrsml, length.out=length(filenames.rsml))
       filenamesrsml<-sub(x=filenames.rsml, pattern="\\.rsml$", replacement="")
       message(paste("Number of rsml files in inputrsml:", length(filenames.rsml), sep=" "))}

@@ -20,17 +20,17 @@ dartToTable<-function(inputrac, inputlie, inputtps, res=NULL, unitlength="px", u
   
   #Load DART files
   
-  filenames.rac<-list.files(path=inputrac, pattern="\\.rac$")
+  filenames.rac<-mixedsort(list.files(path=inputrac, pattern="\\.rac$"))
   path.rac<-rep(inputrac, length.out=length(filenames.rac))
   filenamesrac<-sub(x=filenames.rac, pattern="\\.rac$", replacement="")
   message(paste("Number of DART rac files in inputrac:", length(filenames.rac), sep=" "))
   
-  filenames.lie<-list.files(path=inputlie, pattern="\\.lie$")
+  filenames.lie<-mixedsort(list.files(path=inputlie, pattern="\\.lie$"))
   path.lie<-rep(inputlie, length.out=length(filenames.lie))
   filenameslie<-sub(x=filenames.lie, pattern="\\.lie$", replacement="")
   message(paste("Number of DART lie files in inputlie:", length(filenames.lie), sep=" "))
   
-  filenames.tps<-list.files(path=inputtps, pattern="\\.tps$")
+  filenames.tps<-mixedsort(list.files(path=inputtps, pattern="\\.tps$"))
   path.tps<-rep(inputtps, length.out=length(filenames.tps))
   filenamestps<-sub(x=filenames.tps, pattern="\\.tps$", replacement="")
   message(paste("Number of DART tps files in inputtps:", length(filenames.tps), sep=" "))

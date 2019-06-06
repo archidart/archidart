@@ -24,7 +24,7 @@ rsmlToTable<-function(inputrsml, unitlength="px", rsml.date=NULL, rsml.connect=T
   
   #Load rsml files
   
-  filenames.rsml<-list.files(path=inputrsml, pattern="\\.rsml$")
+  filenames.rsml<-mixedsort(list.files(path=inputrsml, pattern="\\.rsml$"))
   filenamesrsml<-sub(x=filenames.rsml, pattern="\\.rsml$", replacement="")
   message(paste("Number of rsml files in inputrsml:", length(filenames.rsml), sep=" "))
   
