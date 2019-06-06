@@ -1029,454 +1029,454 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                             
                                             #-------------------------------------------
                                             
-                                            if ("root" %in% names(r7)){
-                                              
-                                              for (r8 in r7){# For each 8-order root
-                                                
-                                                if ("geometry" %in% names(r8)){
-                                                  
-                                                  r<-r+1
-                                                  ns <- r8$geometry$polyline
-                                                  length8<-length(ns)
-                                                  
-                                                  age=NULL
-                                                  diameter=NULL
-                                                  if (is.character(final.date)==TRUE & "functions" %in% names(r8)){
-                                                    age<-r8$functions
-                                                    for (i in 1:length(age)){
-                                                      if (final.date %in% age[[i]]$.attrs) {
-                                                        time<-sapply(age[[i]][1:(length(age[[i]])-1)], xnodes)
-                                                        if (time[1]<time[2]){time[1]<-time[2]}}}}
-                                                  
-                                                  if ("functions" %in% names(r8)){
-                                                    age<-r8$functions
-                                                    for (i in 1:length(age)){if ("diameter" %in% age[[i]]$.attrs) {diameter<-sapply(age[[i]][1:(length(age[[i]])-1)], xnodes)}}}
-                                                  
-                                                  #c(Num, Date, Bran, Apic, Prec, Suiv)
-                                                  if (timeserie==FALSE) {lie[(lie.lines+1):(lie.lines+length8),1:6]<-c((lie.lines+1):(lie.lines+length8), rep(1, length8), rep(0, length8), rep(0, length8), lie.lines:(lie.lines+length8-1), (lie.lines+2):(lie.lines+length8+1))}
-                                                  if (timeserie==TRUE) {lie[(lie.lines+1):(lie.lines+length8),1:6]<-c((lie.lines+1):(lie.lines+length8), time, rep(0, length8), rep(0, length8), lie.lines:(lie.lines+length8-1), (lie.lines+2):(lie.lines+length8+1))}
-                                                  lie[(lie.lines+1):(lie.lines+length8),11]<-r
-                                                  if(is.null(diameter)==TRUE) {} else {lie[(lie.lines+1):(lie.lines+length8),12]<-diameter}
-                                                  lie[(lie.lines+1):(lie.lines+length8),13]<-8 #order
-                                                  
-                                                  #c(X,Y,Z)
-                                                  lie[(lie.lines+1):(lie.lines+length8),7]<-sapply(ns, xnodes)
-                                                  lie[(lie.lines+1):(lie.lines+length8),8]<-sapply(ns, ynodes)
-                                                  if (length(ns[[1]])==3) {lie[(lie.lines+1):(lie.lines+length8),9]<-sapply(ns, znodes)} else {lie[(lie.lines+1):(lie.lines+length8),9]<-0}
-                                                  
-                                                  #c(dist)
-                                                  lie[(lie.lines+1):(lie.lines+length8), 10]<-c(0, cumsum(sqrt((diff(lie[(lie.lines+1):(lie.lines+length8), 7]))^2+(diff(lie[(lie.lines+1):(lie.lines+length8), 8]))^2+(diff(lie[(lie.lines+1):(lie.lines+length8), 9]))^2)))
-                                                  
-                                                  # Search the closest point on the mother root (calculate DBase)
-                                                  
-                                                  parentnode<-which(lie[start7:stop7, 7]==lie[lie.lines+1, 7] & lie[start7:stop7, 8]==lie[lie.lines+1, 8] & lie[start7:stop7, 9]==lie[lie.lines+1, 9])
-                                                  
-                                                  if (length(parentnode)>0){
-                                                    
-                                                    dbase<-lie[start7+parentnode[1]-1, 10]
-                                                    if (connect==TRUE){
-                                                      lie[lie.lines+1,5]<-lie[start7+parentnode[1]-1, 1]
-                                                      dist1<-0}}
-                                                  
-                                                  else { #If no physical connection between parent and daughter root. Interpolate new point or find closest point.
-                                                    
-                                                    alldist<-sqrt((lie[start7:(stop7-1), 7]-lie[lie.lines+1, 7])^2+(lie[start7:(stop7-1), 8]-lie[lie.lines+1, 8])^2+(lie[start7:(stop7-1), 9]-lie[lie.lines+1, 9])^2)
-                                                    
-                                                    scalx<-diff(lie[start7:stop7, 7])*(lie[start7:(stop7-1), 7]-lie[lie.lines+1, 7])
-                                                    scaly<-diff(lie[start7:stop7, 8])*(lie[start7:(stop7-1), 8]-lie[lie.lines+1, 8])
-                                                    scalz<-diff(lie[start7:stop7, 9])*(lie[start7:(stop7-1), 9]-lie[lie.lines+1, 9])
-                                                    d2<-diff(lie[start7:stop7, 7])^2+diff(lie[start7:stop7, 8])^2+diff(lie[start7:stop7, 9])^2
-                                                    t<-(-(scalx+scaly+scalz)/d2)
-                                                    
-                                                    if (length(which(t>=0 & t<=1))==0){
-                                                      
-                                                      index<-which(alldist==min(alldist))
-                                                      dbase<-lie[start7+index-1, 10]
-                                                      if (connect==TRUE){
-                                                        lie[lie.lines+1,5]<-lie[start7+index-1, 1] #Update Prec
-                                                        dist1<-min(alldist)
-                                                        lie[(lie.lines+1):(lie.lines+length8), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length8), 10]}}
-                                                    
-                                                    else {
-                                                      
-                                                      t[t<0]<-NA
-                                                      t[t>1]<-NA
-                                                      xn<-diff(lie[start7:stop7, 7])*t+lie[start7:(stop7-1), 7]
-                                                      yn<-diff(lie[start7:stop7, 8])*t+lie[start7:(stop7-1), 8]
-                                                      zn<-diff(lie[start7:stop7, 9])*t+lie[start7:(stop7-1), 9]
-                                                      dist1<-sqrt((xn-lie[lie.lines+1, 7])^2+(yn-lie[lie.lines+1, 8])^2+(zn-lie[lie.lines+1, 9])^2)
-                                                      
-                                                      if (sum(is.na(dist1)==T)>0) {
-                                                        index<-as.numeric(match(min(dist1, na.rm=T), dist1))
-                                                        dist1<-min(dist1, na.rm=T)} 
-                                                      else {
-                                                        index<-as.numeric(match(min(dist1), dist1))
-                                                        dist1<-min(dist1)}
-                                                      
-                                                      if (dist1>min(alldist)){
-                                                        index<-which(alldist==min(alldist))
-                                                        dist1<-min(alldist)
-                                                        dbase<-lie[start7+index-1, 10]
-                                                        if (connect==TRUE){
-                                                          lie[lie.lines+1,5]<-lie[start7+index-1, 1] #Update Prec
-                                                          dist1<-min(alldist)
-                                                          lie[(lie.lines+1):(lie.lines+length8), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length8), 10]}}
-                                                      
-                                                      else{
-                                                        
-                                                        lie[(lie.lines+1):(lie.lines+length8), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length8), 10]
-                                                        dbase<-lie[start7+index-1, 10]+distance3D(x1=lie[start7+index-1, 7], x2=xn[index], y1=lie[start7+index-1, 8], y2=yn[index], z1=lie[start7+index-1, 9], z2=zn[index])
-                                                        
-                                                        if (connect==TRUE){
-                                                          
-                                                          lie[lie.lines+length8+1,1:13]<-c(NA, NA, 0, 0, NA, NA, xn[index], yn[index], zn[index], dbase, lie[start7+index-1, 11], NA, 7)
-                                                          lie<-lie[order(lie[, 11], lie[, 10]),]
-                                                          length7<-length7+1
-                                                          lie.lines<-lie.lines+1
-                                                          stop7<-stop7+1
-                                                          pos<-match(NA, lie[1:(lie.lines),1])
-                                                          lie[1:(lie.lines+length8),5]<-match(lie[1:(lie.lines+length8),5], lie[1:(lie.lines+length8),1])
-                                                          lie[1:(lie.lines+length8),6]<-match(lie[1:(lie.lines+length8),6], lie[1:(lie.lines+length8),1])
-                                                          lie[pos, 5]<-pos-1
-                                                          lie[pos, 6]<-pos+1
-                                                          lie[pos, 2]<-lie[lie[pos, 6], 2]
-                                                          lie[pos+1, 5]<-pos
-                                                          lie[pos-1, 6]<-pos
-                                                          lie[which(is.na(lie[1:(lie.lines),5])==TRUE), 5]<-0
-                                                          lie[which(is.na(lie[1:(lie.lines),6])==TRUE), 6]<-0
-                                                          lie[1:(lie.lines+length8),1]<-match(lie[1:(lie.lines+length8),1], lie[1:(lie.lines+length8),1])
-                                                          lie[lie.lines+1,5]<-pos
-                                                          
-                                                          #Calculate diameter for interpolated point (linear function)
-                                                          if (is.null(diameter)==FALSE){
-                                                            prec<-lie[pos, 5]
-                                                            suiv<-lie[pos, 6]
-                                                            slope<-(lie[suiv, 12]-lie[prec, 12])/distance3D(x1=lie[prec, 7], y1=lie[prec, 8], z1=lie[prec, 9], x2=lie[suiv, 7], y2=lie[suiv, 8], z2=lie[suiv, 9])
-                                                            intercept<-lie[prec, 12]
-                                                            lie[pos, 12]<-intercept+slope*distance3D(x1=lie[prec, 7], y1=lie[prec, 8], z1=lie[prec, 9], x2=lie[pos, 7], y2=lie[pos, 8], z2=lie[pos, 9])}}}}}
-                                                  
-                                                  if (connect==FALSE) {lie[lie.lines+1,5]<-lie.lines+1}
-                                                  
-                                                  lie[lie.lines+1,3]<-1
-                                                  start8<-as.numeric(lie[lie.lines+1, 1])
-                                                  
-                                                  # Change Suiv and Apic values for the last point of a lateral root
-                                                  lie[lie.lines+length8,c(4,6)]<-c(1, 0)
-                                                  stop8<-as.numeric(lie[lie.lines+length8, 1])
-                                                  
-                                                  # Fill RAC file for the 8-order root
-                                                  
-                                                  if (connect==TRUE){cumulDist<-dist1 + sum(sqrt((diff(lie[(lie.lines+1):(lie.lines+length8), 7]))^2+(diff(lie[(lie.lines+1):(lie.lines+length8), 8]))^2+(diff(lie[(lie.lines+1):(lie.lines+length8), 9]))^2))}
-                                                  else {cumulDist<-sum(sqrt((diff(lie[(lie.lines+1):(lie.lines+length8), 7]))^2+(diff(lie[(lie.lines+1):(lie.lines+length8), 8]))^2+(diff(lie[(lie.lines+1):(lie.lines+length8), 9]))^2))}
-                                                  
-                                                  rac[r, 1:6]<-c(max(rac[,1], na.rm=TRUE)+1, currentMother5, 8, dbase, 1, cumulDist)
-                                                  
-                                                  lie.lines<-lie.lines+length8
-                                                  
-                                                  #---------------------------------------------
-                                                  
-                                                  if ("root" %in% names(r8)){
-                                                    
-                                                    for (r9 in r8){# For each 9-order root
-                                                      
-                                                      if ("geometry" %in% names(r9)){
-                                                        
-                                                        r<-r+1
-                                                        ns <- r9$geometry$polyline
-                                                        length9<-length(ns)
-                                                        
-                                                        age=NULL
-                                                        diameter=NULL
-                                                        if (is.character(final.date)==TRUE & "functions" %in% names(r9)){
-                                                          age<-r9$functions
-                                                          for (i in 1:length(age)){
-                                                            if (final.date %in% age[[i]]$.attrs) {
-                                                              time<-sapply(age[[i]][1:(length(age[[i]])-1)], xnodes)
-                                                              if (time[1]<time[2]){time[1]<-time[2]}}}}
-                                                        
-                                                        if ("functions" %in% names(r9)){
-                                                          age<-r9$functions
-                                                          for (i in 1:length(age)){if ("diameter" %in% age[[i]]$.attrs) {diameter<-sapply(age[[i]][1:(length(age[[i]])-1)], xnodes)}}}
-                                                        
-                                                        #c(Num, Date, Bran, Apic, Prec, Suiv)
-                                                        if (timeserie==FALSE) {lie[(lie.lines+1):(lie.lines+length9),1:6]<-c((lie.lines+1):(lie.lines+length9), rep(1, length9), rep(0, length9), rep(0, length9), lie.lines:(lie.lines+length9-1), (lie.lines+2):(lie.lines+length9+1))}
-                                                        if (timeserie==TRUE) {lie[(lie.lines+1):(lie.lines+length9),1:6]<-c((lie.lines+1):(lie.lines+length9), time, rep(0, length9), rep(0, length9), lie.lines:(lie.lines+length9-1), (lie.lines+2):(lie.lines+length9+1))}
-                                                        lie[(lie.lines+1):(lie.lines+length9),11]<-r
-                                                        if(is.null(diameter)==TRUE) {} else {lie[(lie.lines+1):(lie.lines+length9),12]<-diameter}
-                                                        lie[(lie.lines+1):(lie.lines+length9),13]<-9 #order
-                                                        
-                                                        #c(X,Y,Z)
-                                                        lie[(lie.lines+1):(lie.lines+length9),7]<-sapply(ns, xnodes)
-                                                        lie[(lie.lines+1):(lie.lines+length9),8]<-sapply(ns, ynodes)
-                                                        if (length(ns[[1]])==3) {lie[(lie.lines+1):(lie.lines+length9),9]<-sapply(ns, znodes)} else {lie[(lie.lines+1):(lie.lines+length9),9]<-0}
-                                                        
-                                                        #c(dist)
-                                                        lie[(lie.lines+1):(lie.lines+length9), 10]<-c(0, cumsum(sqrt((diff(lie[(lie.lines+1):(lie.lines+length9), 7]))^2+(diff(lie[(lie.lines+1):(lie.lines+length9), 8]))^2+(diff(lie[(lie.lines+1):(lie.lines+length9), 9]))^2)))
-                                                        
-                                                        # Search the closest point on the mother root (calculate DBase)
-                                                        
-                                                        parentnode<-which(lie[start8:stop8, 7]==lie[lie.lines+1, 7] & lie[start8:stop8, 8]==lie[lie.lines+1, 8] & lie[start8:stop8, 9]==lie[lie.lines+1, 9])
-                                                        
-                                                        if (length(parentnode)>0){
-                                                          
-                                                          dbase<-lie[start8+parentnode[1]-1, 10]
-                                                          if (connect==TRUE){
-                                                            lie[lie.lines+1,5]<-lie[start8+parentnode[1]-1, 1]
-                                                            dist1<-0}}
-                                                        
-                                                        else { #If no physical connection between parent and daughter root. Interpolate new point or find closest point.
-                                                          
-                                                          alldist<-sqrt((lie[start8:(stop8-1), 7]-lie[lie.lines+1, 7])^2+(lie[start8:(stop8-1), 8]-lie[lie.lines+1, 8])^2+(lie[start8:(stop8-1), 9]-lie[lie.lines+1, 9])^2)
-                                                          
-                                                          scalx<-diff(lie[start8:stop8, 7])*(lie[start8:(stop8-1), 7]-lie[lie.lines+1, 7])
-                                                          scaly<-diff(lie[start8:stop8, 8])*(lie[start8:(stop8-1), 8]-lie[lie.lines+1, 8])
-                                                          scalz<-diff(lie[start8:stop8, 9])*(lie[start8:(stop8-1), 9]-lie[lie.lines+1, 9])
-                                                          d2<-diff(lie[start8:stop8, 7])^2+diff(lie[start8:stop8, 8])^2+diff(lie[start8:stop8, 9])^2
-                                                          t<-(-(scalx+scaly+scalz)/d2)
-                                                          
-                                                          if (length(which(t>=0 & t<=1))==0){
-                                                            
-                                                            index<-which(alldist==min(alldist))
-                                                            dbase<-lie[start8+index-1, 10]
-                                                            if (connect==TRUE){
-                                                              lie[lie.lines+1,5]<-lie[start8+index-1, 1] #Update Prec
-                                                              dist1<-min(alldist)
-                                                              lie[(lie.lines+1):(lie.lines+length9), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length9), 10]}}
-                                                          
-                                                          else {
-                                                            
-                                                            t[t<0]<-NA
-                                                            t[t>1]<-NA
-                                                            xn<-diff(lie[start8:stop8, 7])*t+lie[start8:(stop8-1), 7]
-                                                            yn<-diff(lie[start8:stop8, 8])*t+lie[start8:(stop8-1), 8]
-                                                            zn<-diff(lie[start8:stop8, 9])*t+lie[start8:(stop8-1), 9]
-                                                            dist1<-sqrt((xn-lie[lie.lines+1, 7])^2+(yn-lie[lie.lines+1, 8])^2+(zn-lie[lie.lines+1, 9])^2)
-                                                            
-                                                            if (sum(is.na(dist1)==T)>0) {
-                                                              index<-as.numeric(match(min(dist1, na.rm=T), dist1))
-                                                              dist1<-min(dist1, na.rm=T)} 
-                                                            else {
-                                                              index<-as.numeric(match(min(dist1), dist1))
-                                                              dist1<-min(dist1)}
-                                                            
-                                                            if (dist1>min(alldist)){
-                                                              index<-which(alldist==min(alldist))
-                                                              dist1<-min(alldist)
-                                                              dbase<-lie[start8+index-1, 10]
-                                                              if (connect==TRUE){
-                                                                lie[lie.lines+1,5]<-lie[start8+index-1, 1] #Update Prec
-                                                                dist1<-min(alldist)
-                                                                lie[(lie.lines+1):(lie.lines+length9), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length9), 10]}}
-                                                            
-                                                            else{
-                                                              
-                                                              lie[(lie.lines+1):(lie.lines+length9), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length9), 10]
-                                                              dbase<-lie[start8+index-1, 10]+distance3D(x1=lie[start8+index-1, 7], x2=xn[index], y1=lie[start8+index-1, 8], y2=yn[index], z1=lie[start8+index-1, 9], z2=zn[index])
-                                                              
-                                                              if (connect==TRUE){
-                                                                
-                                                                lie[lie.lines+length9+1,1:13]<-c(NA, NA, 0, 0, NA, NA, xn[index], yn[index], zn[index], dbase, lie[start8+index-1, 11], NA, 8)
-                                                                lie<-lie[order(lie[, 11], lie[, 10]),]
-                                                                length8<-length8+1
-                                                                lie.lines<-lie.lines+1
-                                                                stop8<-stop8+1
-                                                                pos<-match(NA, lie[1:(lie.lines),1])
-                                                                lie[1:(lie.lines+length9),5]<-match(lie[1:(lie.lines+length9),5], lie[1:(lie.lines+length9),1])
-                                                                lie[1:(lie.lines+length9),6]<-match(lie[1:(lie.lines+length9),6], lie[1:(lie.lines+length9),1])
-                                                                lie[pos, 5]<-pos-1
-                                                                lie[pos, 6]<-pos+1
-                                                                lie[pos, 2]<-lie[lie[pos, 6], 2]
-                                                                lie[pos+1, 5]<-pos
-                                                                lie[pos-1, 6]<-pos
-                                                                lie[which(is.na(lie[1:(lie.lines),5])==TRUE), 5]<-0
-                                                                lie[which(is.na(lie[1:(lie.lines),6])==TRUE), 6]<-0
-                                                                lie[1:(lie.lines+length9),1]<-match(lie[1:(lie.lines+length9),1], lie[1:(lie.lines+length9),1])
-                                                                lie[lie.lines+1,5]<-pos
-                                                                
-                                                                #Calculate diameter for interpolated point (linear function)
-                                                                if (is.null(diameter)==FALSE){
-                                                                  prec<-lie[pos, 5]
-                                                                  suiv<-lie[pos, 6]
-                                                                  slope<-(lie[suiv, 12]-lie[prec, 12])/distance3D(x1=lie[prec, 7], y1=lie[prec, 8], z1=lie[prec, 9], x2=lie[suiv, 7], y2=lie[suiv, 8], z2=lie[suiv, 9])
-                                                                  intercept<-lie[prec, 12]
-                                                                  lie[pos, 12]<-intercept+slope*distance3D(x1=lie[prec, 7], y1=lie[prec, 8], z1=lie[prec, 9], x2=lie[pos, 7], y2=lie[pos, 8], z2=lie[pos, 9])}}}}}
-                                                        
-                                                        if (connect==FALSE) {lie[lie.lines+1,5]<-lie.lines+1}
-                                                        
-                                                        lie[lie.lines+1,3]<-1
-                                                        start9<-as.numeric(lie[lie.lines+1, 1])
-                                                        
-                                                        # Change Suiv and Apic values for the last point of a lateral root
-                                                        lie[lie.lines+length9,c(4,6)]<-c(1, 0)
-                                                        stop9<-as.numeric(lie[lie.lines+length9, 1])
-                                                        
-                                                        # Fill RAC file for the 9-order root
-                                                        
-                                                        if (connect==TRUE){cumulDist<-dist1 + sum(sqrt((diff(lie[(lie.lines+1):(lie.lines+length9), 7]))^2+(diff(lie[(lie.lines+1):(lie.lines+length9), 8]))^2+(diff(lie[(lie.lines+1):(lie.lines+length9), 9]))^2))}
-                                                        else {cumulDist<-sum(sqrt((diff(lie[(lie.lines+1):(lie.lines+length9), 7]))^2+(diff(lie[(lie.lines+1):(lie.lines+length9), 8]))^2+(diff(lie[(lie.lines+1):(lie.lines+length9), 9]))^2))}
-                                                        
-                                                        rac[r, 1:6]<-c(max(rac[,1], na.rm=TRUE)+1, currentMother5, 9, dbase, 1, cumulDist)
-                                                        
-                                                        lie.lines<-lie.lines+length9
-                                                        
-                                                        #---------------------------------------------
-                                                        
-                                                        if ("root" %in% names(r9)){
-                                                          
-                                                          for (r10 in r9){# For each 10-order root
-                                                            
-                                                            if ("geometry" %in% names(r10)){
-                                                              
-                                                              r<-r+1
-                                                              ns <- r10$geometry$polyline
-                                                              length10<-length(ns)
-                                                              
-                                                              age=NULL
-                                                              diameter=NULL
-                                                              if (is.character(final.date)==TRUE & "functions" %in% names(r10)){
-                                                                age<-r10$functions
-                                                                for (i in 1:length(age)){
-                                                                  if (final.date %in% age[[i]]$.attrs) {
-                                                                    time<-sapply(age[[i]][1:(length(age[[i]])-1)], xnodes)
-                                                                    if (time[1]<time[2]){time[1]<-time[2]}}}}
-                                                              
-                                                              if ("functions" %in% names(r10)){
-                                                                age<-r10$functions
-                                                                for (i in 1:length(age)){if ("diameter" %in% age[[i]]$.attrs) {diameter<-sapply(age[[i]][1:(length(age[[i]])-1)], xnodes)}}}
-                                                              
-                                                              #c(Num, Date, Bran, Apic, Prec, Suiv)
-                                                              if (timeserie==FALSE) {lie[(lie.lines+1):(lie.lines+length10),1:6]<-c((lie.lines+1):(lie.lines+length10), rep(1, length10), rep(0, length10), rep(0, length10), lie.lines:(lie.lines+length10-1), (lie.lines+2):(lie.lines+length10+1))}
-                                                              if (timeserie==TRUE) {lie[(lie.lines+1):(lie.lines+length10),1:6]<-c((lie.lines+1):(lie.lines+length10), time, rep(0, length10), rep(0, length10), lie.lines:(lie.lines+length10-1), (lie.lines+2):(lie.lines+length10+1))}
-                                                              lie[(lie.lines+1):(lie.lines+length10),11]<-r
-                                                              if(is.null(diameter)==TRUE) {} else {lie[(lie.lines+1):(lie.lines+length10),12]<-diameter}
-                                                              lie[(lie.lines+1):(lie.lines+length10),13]<-10 #order
-                                                              
-                                                              #c(X,Y,Z)
-                                                              lie[(lie.lines+1):(lie.lines+length10),7]<-sapply(ns, xnodes)
-                                                              lie[(lie.lines+1):(lie.lines+length10),8]<-sapply(ns, ynodes)
-                                                              if (length(ns[[1]])==3) {lie[(lie.lines+1):(lie.lines+length10),9]<-sapply(ns, znodes)} else {lie[(lie.lines+1):(lie.lines+length10),9]<-0}
-                                                              
-                                                              #c(dist)
-                                                              lie[(lie.lines+1):(lie.lines+length10), 10]<-c(0, cumsum(sqrt((diff(lie[(lie.lines+1):(lie.lines+length10), 7]))^2+(diff(lie[(lie.lines+1):(lie.lines+length10), 8]))^2+(diff(lie[(lie.lines+1):(lie.lines+length10), 9]))^2)))
-                                                              
-                                                              # Search the closest point on the mother root (calculate DBase)
-                                                              
-                                                              parentnode<-which(lie[start9:stop9, 7]==lie[lie.lines+1, 7] & lie[start9:stop9, 8]==lie[lie.lines+1, 8] & lie[start9:stop9, 9]==lie[lie.lines+1, 9])
-                                                              
-                                                              if (length(parentnode)>0){
-                                                                
-                                                                dbase<-lie[start9+parentnode[1]-1, 10]
-                                                                if (connect==TRUE){
-                                                                  lie[lie.lines+1,5]<-lie[start9+parentnode[1]-1, 1]
-                                                                  dist1<-0}}
-                                                              
-                                                              else { #If no physical connection between parent and daughter root. Interpolate new point or find closest point.
-                                                                
-                                                                alldist<-sqrt((lie[start9:(stop9-1), 7]-lie[lie.lines+1, 7])^2+(lie[start9:(stop9-1), 8]-lie[lie.lines+1, 8])^2+(lie[start9:(stop9-1), 9]-lie[lie.lines+1, 9])^2)
-                                                                
-                                                                scalx<-diff(lie[start9:stop9, 7])*(lie[start9:(stop9-1), 7]-lie[lie.lines+1, 7])
-                                                                scaly<-diff(lie[start9:stop9, 8])*(lie[start9:(stop9-1), 8]-lie[lie.lines+1, 8])
-                                                                scalz<-diff(lie[start9:stop9, 9])*(lie[start9:(stop9-1), 9]-lie[lie.lines+1, 9])
-                                                                d2<-diff(lie[start9:stop9, 7])^2+diff(lie[start9:stop9, 8])^2+diff(lie[start9:stop9, 9])^2
-                                                                t<-(-(scalx+scaly+scalz)/d2)
-                                                                
-                                                                if (length(which(t>=0 & t<=1))==0){
-                                                                  
-                                                                  index<-which(alldist==min(alldist))
-                                                                  dbase<-lie[start9+index-1, 10]
-                                                                  if (connect==TRUE){
-                                                                    lie[lie.lines+1,5]<-lie[start9+index-1, 1] #Update Prec
-                                                                    dist1<-min(alldist)
-                                                                    lie[(lie.lines+1):(lie.lines+length10), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length10), 10]}}
-                                                                
-                                                                else {
-                                                                  
-                                                                  t[t<0]<-NA
-                                                                  t[t>1]<-NA
-                                                                  xn<-diff(lie[start9:stop9, 7])*t+lie[start9:(stop9-1), 7]
-                                                                  yn<-diff(lie[start9:stop9, 8])*t+lie[start9:(stop9-1), 8]
-                                                                  zn<-diff(lie[start9:stop9, 9])*t+lie[start9:(stop9-1), 9]
-                                                                  dist1<-sqrt((xn-lie[lie.lines+1, 7])^2+(yn-lie[lie.lines+1, 8])^2+(zn-lie[lie.lines+1, 9])^2)
-                                                                  
-                                                                  if (sum(is.na(dist1)==T)>0) {
-                                                                    index<-as.numeric(match(min(dist1, na.rm=T), dist1))
-                                                                    dist1<-min(dist1, na.rm=T)} 
-                                                                  else {
-                                                                    index<-as.numeric(match(min(dist1), dist1))
-                                                                    dist1<-min(dist1)}
-                                                                  
-                                                                  if (dist1>min(alldist)){
-                                                                    index<-which(alldist==min(alldist))
-                                                                    dist1<-min(alldist)
-                                                                    dbase<-lie[start9+index-1, 10]
-                                                                    if (connect==TRUE){
-                                                                      lie[lie.lines+1,5]<-lie[start9+index-1, 1] #Update Prec
-                                                                      dist1<-min(alldist)
-                                                                      lie[(lie.lines+1):(lie.lines+length10), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length10), 10]}}
-                                                                  
-                                                                  else{
-                                                                    
-                                                                    lie[(lie.lines+1):(lie.lines+length10), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length10), 10]
-                                                                    dbase<-lie[start9+index-1, 10]+distance3D(x1=lie[start9+index-1, 7], x2=xn[index], y1=lie[start9+index-1, 8], y2=yn[index], z1=lie[start9+index-1, 9], z2=zn[index])
-                                                                    
-                                                                    if (connect==TRUE){
-                                                                      
-                                                                      lie[lie.lines+length10+1,1:13]<-c(NA, NA, 0, 0, NA, NA, xn[index], yn[index], zn[index], dbase, lie[start9+index-1, 11], NA, 9)
-                                                                      lie<-lie[order(lie[, 11], lie[, 10]),]
-                                                                      length9<-length9+1
-                                                                      lie.lines<-lie.lines+1
-                                                                      stop9<-stop9+1
-                                                                      pos<-match(NA, lie[1:(lie.lines),1])
-                                                                      lie[1:(lie.lines+length10),5]<-match(lie[1:(lie.lines+length10),5], lie[1:(lie.lines+length10),1])
-                                                                      lie[1:(lie.lines+length10),6]<-match(lie[1:(lie.lines+length10),6], lie[1:(lie.lines+length10),1])
-                                                                      lie[pos, 5]<-pos-1
-                                                                      lie[pos, 6]<-pos+1
-                                                                      lie[pos, 2]<-lie[lie[pos, 6], 2]
-                                                                      lie[pos+1, 5]<-pos
-                                                                      lie[pos-1, 6]<-pos
-                                                                      lie[which(is.na(lie[1:(lie.lines),5])==TRUE), 5]<-0
-                                                                      lie[which(is.na(lie[1:(lie.lines),6])==TRUE), 6]<-0
-                                                                      lie[1:(lie.lines+length10),1]<-match(lie[1:(lie.lines+length10),1], lie[1:(lie.lines+length10),1])
-                                                                      lie[lie.lines+1,5]<-pos
-                                                                      
-                                                                      #Calculate diameter for interpolated point (linear function)
-                                                                      if (is.null(diameter)==FALSE){
-                                                                        prec<-lie[pos, 5]
-                                                                        suiv<-lie[pos, 6]
-                                                                        slope<-(lie[suiv, 12]-lie[prec, 12])/distance3D(x1=lie[prec, 7], y1=lie[prec, 8], z1=lie[prec, 9], x2=lie[suiv, 7], y2=lie[suiv, 8], z2=lie[suiv, 9])
-                                                                        intercept<-lie[prec, 12]
-                                                                        lie[pos, 12]<-intercept+slope*distance3D(x1=lie[prec, 7], y1=lie[prec, 8], z1=lie[prec, 9], x2=lie[pos, 7], y2=lie[pos, 8], z2=lie[pos, 9])}}}}}
-                                                              
-                                                              if (connect==FALSE) {lie[lie.lines+1,5]<-lie.lines+1}
-                                                              
-                                                              lie[lie.lines+1,3]<-1
-                                                              start10<-as.numeric(lie[lie.lines+1, 1])
-                                                              
-                                                              # Change Suiv and Apic values for the last point of a lateral root
-                                                              lie[lie.lines+length10,c(4,6)]<-c(1, 0)
-                                                              stop10<-as.numeric(lie[lie.lines+length10, 1])
-                                                              
-                                                              # Fill RAC file for the 9-order root
-                                                              
-                                                              if (connect==TRUE){cumulDist<-dist1 + sum(sqrt((diff(lie[(lie.lines+1):(lie.lines+length10), 7]))^2+(diff(lie[(lie.lines+1):(lie.lines+length10), 8]))^2+(diff(lie[(lie.lines+1):(lie.lines+length10), 9]))^2))}
-                                                              else {cumulDist<-sum(sqrt((diff(lie[(lie.lines+1):(lie.lines+length10), 7]))^2+(diff(lie[(lie.lines+1):(lie.lines+length10), 8]))^2+(diff(lie[(lie.lines+1):(lie.lines+length10), 9]))^2))}
-                                                              
-                                                              rac[r, 1:6]<-c(max(rac[,1], na.rm=TRUE)+1, currentMother5, 10, dbase, 1, cumulDist)
-                                                              
-                                                              lie.lines<-lie.lines+length10
-                                                              
-
-                                                            }
-                                                          }
-                                                        }
-                                                        
-                                                      }
-                                                    }
-                                                  }
-                                                  
-                                                }
-                                              }
-                                            }
+                                            # if ("root" %in% names(r7)){
+                                            #   
+                                            #   for (r8 in r7){# For each 8-order root
+                                            #     
+                                            #     if ("geometry" %in% names(r8)){
+                                            #       
+                                            #       r<-r+1
+                                            #       ns <- r8$geometry$polyline
+                                            #       length8<-length(ns)
+                                            #       
+                                            #       age=NULL
+                                            #       diameter=NULL
+                                            #       if (is.character(final.date)==TRUE & "functions" %in% names(r8)){
+                                            #         age<-r8$functions
+                                            #         for (i in 1:length(age)){
+                                            #           if (final.date %in% age[[i]]$.attrs) {
+                                            #             time<-sapply(age[[i]][1:(length(age[[i]])-1)], xnodes)
+                                            #             if (time[1]<time[2]){time[1]<-time[2]}}}}
+                                            #       
+                                            #       if ("functions" %in% names(r8)){
+                                            #         age<-r8$functions
+                                            #         for (i in 1:length(age)){if ("diameter" %in% age[[i]]$.attrs) {diameter<-sapply(age[[i]][1:(length(age[[i]])-1)], xnodes)}}}
+                                            #       
+                                            #       #c(Num, Date, Bran, Apic, Prec, Suiv)
+                                            #       if (timeserie==FALSE) {lie[(lie.lines+1):(lie.lines+length8),1:6]<-c((lie.lines+1):(lie.lines+length8), rep(1, length8), rep(0, length8), rep(0, length8), lie.lines:(lie.lines+length8-1), (lie.lines+2):(lie.lines+length8+1))}
+                                            #       if (timeserie==TRUE) {lie[(lie.lines+1):(lie.lines+length8),1:6]<-c((lie.lines+1):(lie.lines+length8), time, rep(0, length8), rep(0, length8), lie.lines:(lie.lines+length8-1), (lie.lines+2):(lie.lines+length8+1))}
+                                            #       lie[(lie.lines+1):(lie.lines+length8),11]<-r
+                                            #       if(is.null(diameter)==TRUE) {} else {lie[(lie.lines+1):(lie.lines+length8),12]<-diameter}
+                                            #       lie[(lie.lines+1):(lie.lines+length8),13]<-8 #order
+                                            #       
+                                            #       #c(X,Y,Z)
+                                            #       lie[(lie.lines+1):(lie.lines+length8),7]<-sapply(ns, xnodes)
+                                            #       lie[(lie.lines+1):(lie.lines+length8),8]<-sapply(ns, ynodes)
+                                            #       if (length(ns[[1]])==3) {lie[(lie.lines+1):(lie.lines+length8),9]<-sapply(ns, znodes)} else {lie[(lie.lines+1):(lie.lines+length8),9]<-0}
+                                            #       
+                                            #       #c(dist)
+                                            #       lie[(lie.lines+1):(lie.lines+length8), 10]<-c(0, cumsum(sqrt((diff(lie[(lie.lines+1):(lie.lines+length8), 7]))^2+(diff(lie[(lie.lines+1):(lie.lines+length8), 8]))^2+(diff(lie[(lie.lines+1):(lie.lines+length8), 9]))^2)))
+                                            #       
+                                            #       # Search the closest point on the mother root (calculate DBase)
+                                            #       
+                                            #       parentnode<-which(lie[start7:stop7, 7]==lie[lie.lines+1, 7] & lie[start7:stop7, 8]==lie[lie.lines+1, 8] & lie[start7:stop7, 9]==lie[lie.lines+1, 9])
+                                            #       
+                                            #       if (length(parentnode)>0){
+                                            #         
+                                            #         dbase<-lie[start7+parentnode[1]-1, 10]
+                                            #         if (connect==TRUE){
+                                            #           lie[lie.lines+1,5]<-lie[start7+parentnode[1]-1, 1]
+                                            #           dist1<-0}}
+                                            #       
+                                            #       else { #If no physical connection between parent and daughter root. Interpolate new point or find closest point.
+                                            #         
+                                            #         alldist<-sqrt((lie[start7:(stop7-1), 7]-lie[lie.lines+1, 7])^2+(lie[start7:(stop7-1), 8]-lie[lie.lines+1, 8])^2+(lie[start7:(stop7-1), 9]-lie[lie.lines+1, 9])^2)
+                                            #         
+                                            #         scalx<-diff(lie[start7:stop7, 7])*(lie[start7:(stop7-1), 7]-lie[lie.lines+1, 7])
+                                            #         scaly<-diff(lie[start7:stop7, 8])*(lie[start7:(stop7-1), 8]-lie[lie.lines+1, 8])
+                                            #         scalz<-diff(lie[start7:stop7, 9])*(lie[start7:(stop7-1), 9]-lie[lie.lines+1, 9])
+                                            #         d2<-diff(lie[start7:stop7, 7])^2+diff(lie[start7:stop7, 8])^2+diff(lie[start7:stop7, 9])^2
+                                            #         t<-(-(scalx+scaly+scalz)/d2)
+                                            #         
+                                            #         if (length(which(t>=0 & t<=1))==0){
+                                            #           
+                                            #           index<-which(alldist==min(alldist))
+                                            #           dbase<-lie[start7+index-1, 10]
+                                            #           if (connect==TRUE){
+                                            #             lie[lie.lines+1,5]<-lie[start7+index-1, 1] #Update Prec
+                                            #             dist1<-min(alldist)
+                                            #             lie[(lie.lines+1):(lie.lines+length8), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length8), 10]}}
+                                            #         
+                                            #         else {
+                                            #           
+                                            #           t[t<0]<-NA
+                                            #           t[t>1]<-NA
+                                            #           xn<-diff(lie[start7:stop7, 7])*t+lie[start7:(stop7-1), 7]
+                                            #           yn<-diff(lie[start7:stop7, 8])*t+lie[start7:(stop7-1), 8]
+                                            #           zn<-diff(lie[start7:stop7, 9])*t+lie[start7:(stop7-1), 9]
+                                            #           dist1<-sqrt((xn-lie[lie.lines+1, 7])^2+(yn-lie[lie.lines+1, 8])^2+(zn-lie[lie.lines+1, 9])^2)
+                                            #           
+                                            #           if (sum(is.na(dist1)==T)>0) {
+                                            #             index<-as.numeric(match(min(dist1, na.rm=T), dist1))
+                                            #             dist1<-min(dist1, na.rm=T)} 
+                                            #           else {
+                                            #             index<-as.numeric(match(min(dist1), dist1))
+                                            #             dist1<-min(dist1)}
+                                            #           
+                                            #           if (dist1>min(alldist)){
+                                            #             index<-which(alldist==min(alldist))
+                                            #             dist1<-min(alldist)
+                                            #             dbase<-lie[start7+index-1, 10]
+                                            #             if (connect==TRUE){
+                                            #               lie[lie.lines+1,5]<-lie[start7+index-1, 1] #Update Prec
+                                            #               dist1<-min(alldist)
+                                            #               lie[(lie.lines+1):(lie.lines+length8), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length8), 10]}}
+                                            #           
+                                            #           else{
+                                            #             
+                                            #             lie[(lie.lines+1):(lie.lines+length8), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length8), 10]
+                                            #             dbase<-lie[start7+index-1, 10]+distance3D(x1=lie[start7+index-1, 7], x2=xn[index], y1=lie[start7+index-1, 8], y2=yn[index], z1=lie[start7+index-1, 9], z2=zn[index])
+                                            #             
+                                            #             if (connect==TRUE){
+                                            #               
+                                            #               lie[lie.lines+length8+1,1:13]<-c(NA, NA, 0, 0, NA, NA, xn[index], yn[index], zn[index], dbase, lie[start7+index-1, 11], NA, 7)
+                                            #               lie<-lie[order(lie[, 11], lie[, 10]),]
+                                            #               length7<-length7+1
+                                            #               lie.lines<-lie.lines+1
+                                            #               stop7<-stop7+1
+                                            #               pos<-match(NA, lie[1:(lie.lines),1])
+                                            #               lie[1:(lie.lines+length8),5]<-match(lie[1:(lie.lines+length8),5], lie[1:(lie.lines+length8),1])
+                                            #               lie[1:(lie.lines+length8),6]<-match(lie[1:(lie.lines+length8),6], lie[1:(lie.lines+length8),1])
+                                            #               lie[pos, 5]<-pos-1
+                                            #               lie[pos, 6]<-pos+1
+                                            #               lie[pos, 2]<-lie[lie[pos, 6], 2]
+                                            #               lie[pos+1, 5]<-pos
+                                            #               lie[pos-1, 6]<-pos
+                                            #               lie[which(is.na(lie[1:(lie.lines),5])==TRUE), 5]<-0
+                                            #               lie[which(is.na(lie[1:(lie.lines),6])==TRUE), 6]<-0
+                                            #               lie[1:(lie.lines+length8),1]<-match(lie[1:(lie.lines+length8),1], lie[1:(lie.lines+length8),1])
+                                            #               lie[lie.lines+1,5]<-pos
+                                            #               
+                                            #               #Calculate diameter for interpolated point (linear function)
+                                            #               if (is.null(diameter)==FALSE){
+                                            #                 prec<-lie[pos, 5]
+                                            #                 suiv<-lie[pos, 6]
+                                            #                 slope<-(lie[suiv, 12]-lie[prec, 12])/distance3D(x1=lie[prec, 7], y1=lie[prec, 8], z1=lie[prec, 9], x2=lie[suiv, 7], y2=lie[suiv, 8], z2=lie[suiv, 9])
+                                            #                 intercept<-lie[prec, 12]
+                                            #                 lie[pos, 12]<-intercept+slope*distance3D(x1=lie[prec, 7], y1=lie[prec, 8], z1=lie[prec, 9], x2=lie[pos, 7], y2=lie[pos, 8], z2=lie[pos, 9])}}}}}
+                                            #       
+                                            #       if (connect==FALSE) {lie[lie.lines+1,5]<-lie.lines+1}
+                                            #       
+                                            #       lie[lie.lines+1,3]<-1
+                                            #       start8<-as.numeric(lie[lie.lines+1, 1])
+                                            #       
+                                            #       # Change Suiv and Apic values for the last point of a lateral root
+                                            #       lie[lie.lines+length8,c(4,6)]<-c(1, 0)
+                                            #       stop8<-as.numeric(lie[lie.lines+length8, 1])
+                                            #       
+                                            #       # Fill RAC file for the 8-order root
+                                            #       
+                                            #       if (connect==TRUE){cumulDist<-dist1 + sum(sqrt((diff(lie[(lie.lines+1):(lie.lines+length8), 7]))^2+(diff(lie[(lie.lines+1):(lie.lines+length8), 8]))^2+(diff(lie[(lie.lines+1):(lie.lines+length8), 9]))^2))}
+                                            #       else {cumulDist<-sum(sqrt((diff(lie[(lie.lines+1):(lie.lines+length8), 7]))^2+(diff(lie[(lie.lines+1):(lie.lines+length8), 8]))^2+(diff(lie[(lie.lines+1):(lie.lines+length8), 9]))^2))}
+                                            #       
+                                            #       rac[r, 1:6]<-c(max(rac[,1], na.rm=TRUE)+1, currentMother5, 8, dbase, 1, cumulDist)
+                                            #       
+                                            #       lie.lines<-lie.lines+length8
+                                            #       
+                                            #       #---------------------------------------------
+                                            #       
+                                            #       # if ("root" %in% names(r8)){
+                                            #       #   
+                                            #       #   for (r9 in r8){# For each 9-order root
+                                            #       #     
+                                            #       #     if ("geometry" %in% names(r9)){
+                                            #       #       
+                                            #       #       r<-r+1
+                                            #       #       ns <- r9$geometry$polyline
+                                            #       #       length9<-length(ns)
+                                            #       #       
+                                            #       #       age=NULL
+                                            #       #       diameter=NULL
+                                            #       #       if (is.character(final.date)==TRUE & "functions" %in% names(r9)){
+                                            #       #         age<-r9$functions
+                                            #       #         for (i in 1:length(age)){
+                                            #       #           if (final.date %in% age[[i]]$.attrs) {
+                                            #       #             time<-sapply(age[[i]][1:(length(age[[i]])-1)], xnodes)
+                                            #       #             if (time[1]<time[2]){time[1]<-time[2]}}}}
+                                            #       #       
+                                            #       #       if ("functions" %in% names(r9)){
+                                            #       #         age<-r9$functions
+                                            #       #         for (i in 1:length(age)){if ("diameter" %in% age[[i]]$.attrs) {diameter<-sapply(age[[i]][1:(length(age[[i]])-1)], xnodes)}}}
+                                            #       #       
+                                            #       #       #c(Num, Date, Bran, Apic, Prec, Suiv)
+                                            #       #       if (timeserie==FALSE) {lie[(lie.lines+1):(lie.lines+length9),1:6]<-c((lie.lines+1):(lie.lines+length9), rep(1, length9), rep(0, length9), rep(0, length9), lie.lines:(lie.lines+length9-1), (lie.lines+2):(lie.lines+length9+1))}
+                                            #       #       if (timeserie==TRUE) {lie[(lie.lines+1):(lie.lines+length9),1:6]<-c((lie.lines+1):(lie.lines+length9), time, rep(0, length9), rep(0, length9), lie.lines:(lie.lines+length9-1), (lie.lines+2):(lie.lines+length9+1))}
+                                            #       #       lie[(lie.lines+1):(lie.lines+length9),11]<-r
+                                            #       #       if(is.null(diameter)==TRUE) {} else {lie[(lie.lines+1):(lie.lines+length9),12]<-diameter}
+                                            #       #       lie[(lie.lines+1):(lie.lines+length9),13]<-9 #order
+                                            #       #       
+                                            #       #       #c(X,Y,Z)
+                                            #       #       lie[(lie.lines+1):(lie.lines+length9),7]<-sapply(ns, xnodes)
+                                            #       #       lie[(lie.lines+1):(lie.lines+length9),8]<-sapply(ns, ynodes)
+                                            #       #       if (length(ns[[1]])==3) {lie[(lie.lines+1):(lie.lines+length9),9]<-sapply(ns, znodes)} else {lie[(lie.lines+1):(lie.lines+length9),9]<-0}
+                                            #       #       
+                                            #       #       #c(dist)
+                                            #       #       lie[(lie.lines+1):(lie.lines+length9), 10]<-c(0, cumsum(sqrt((diff(lie[(lie.lines+1):(lie.lines+length9), 7]))^2+(diff(lie[(lie.lines+1):(lie.lines+length9), 8]))^2+(diff(lie[(lie.lines+1):(lie.lines+length9), 9]))^2)))
+                                            #       #       
+                                            #       #       # Search the closest point on the mother root (calculate DBase)
+                                            #       #       
+                                            #       #       parentnode<-which(lie[start8:stop8, 7]==lie[lie.lines+1, 7] & lie[start8:stop8, 8]==lie[lie.lines+1, 8] & lie[start8:stop8, 9]==lie[lie.lines+1, 9])
+                                            #       #       
+                                            #       #       if (length(parentnode)>0){
+                                            #       #         
+                                            #       #         dbase<-lie[start8+parentnode[1]-1, 10]
+                                            #       #         if (connect==TRUE){
+                                            #       #           lie[lie.lines+1,5]<-lie[start8+parentnode[1]-1, 1]
+                                            #       #           dist1<-0}}
+                                            #       #       
+                                            #       #       else { #If no physical connection between parent and daughter root. Interpolate new point or find closest point.
+                                            #       #         
+                                            #       #         alldist<-sqrt((lie[start8:(stop8-1), 7]-lie[lie.lines+1, 7])^2+(lie[start8:(stop8-1), 8]-lie[lie.lines+1, 8])^2+(lie[start8:(stop8-1), 9]-lie[lie.lines+1, 9])^2)
+                                            #       #         
+                                            #       #         scalx<-diff(lie[start8:stop8, 7])*(lie[start8:(stop8-1), 7]-lie[lie.lines+1, 7])
+                                            #       #         scaly<-diff(lie[start8:stop8, 8])*(lie[start8:(stop8-1), 8]-lie[lie.lines+1, 8])
+                                            #       #         scalz<-diff(lie[start8:stop8, 9])*(lie[start8:(stop8-1), 9]-lie[lie.lines+1, 9])
+                                            #       #         d2<-diff(lie[start8:stop8, 7])^2+diff(lie[start8:stop8, 8])^2+diff(lie[start8:stop8, 9])^2
+                                            #       #         t<-(-(scalx+scaly+scalz)/d2)
+                                            #       #         
+                                            #       #         if (length(which(t>=0 & t<=1))==0){
+                                            #       #           
+                                            #       #           index<-which(alldist==min(alldist))
+                                            #       #           dbase<-lie[start8+index-1, 10]
+                                            #       #           if (connect==TRUE){
+                                            #       #             lie[lie.lines+1,5]<-lie[start8+index-1, 1] #Update Prec
+                                            #       #             dist1<-min(alldist)
+                                            #       #             lie[(lie.lines+1):(lie.lines+length9), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length9), 10]}}
+                                            #       #         
+                                            #       #         else {
+                                            #       #           
+                                            #       #           t[t<0]<-NA
+                                            #       #           t[t>1]<-NA
+                                            #       #           xn<-diff(lie[start8:stop8, 7])*t+lie[start8:(stop8-1), 7]
+                                            #       #           yn<-diff(lie[start8:stop8, 8])*t+lie[start8:(stop8-1), 8]
+                                            #       #           zn<-diff(lie[start8:stop8, 9])*t+lie[start8:(stop8-1), 9]
+                                            #       #           dist1<-sqrt((xn-lie[lie.lines+1, 7])^2+(yn-lie[lie.lines+1, 8])^2+(zn-lie[lie.lines+1, 9])^2)
+                                            #       #           
+                                            #       #           if (sum(is.na(dist1)==T)>0) {
+                                            #       #             index<-as.numeric(match(min(dist1, na.rm=T), dist1))
+                                            #       #             dist1<-min(dist1, na.rm=T)} 
+                                            #       #           else {
+                                            #       #             index<-as.numeric(match(min(dist1), dist1))
+                                            #       #             dist1<-min(dist1)}
+                                            #       #           
+                                            #       #           if (dist1>min(alldist)){
+                                            #       #             index<-which(alldist==min(alldist))
+                                            #       #             dist1<-min(alldist)
+                                            #       #             dbase<-lie[start8+index-1, 10]
+                                            #       #             if (connect==TRUE){
+                                            #       #               lie[lie.lines+1,5]<-lie[start8+index-1, 1] #Update Prec
+                                            #       #               dist1<-min(alldist)
+                                            #       #               lie[(lie.lines+1):(lie.lines+length9), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length9), 10]}}
+                                            #       #           
+                                            #       #           else{
+                                            #       #             
+                                            #       #             lie[(lie.lines+1):(lie.lines+length9), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length9), 10]
+                                            #       #             dbase<-lie[start8+index-1, 10]+distance3D(x1=lie[start8+index-1, 7], x2=xn[index], y1=lie[start8+index-1, 8], y2=yn[index], z1=lie[start8+index-1, 9], z2=zn[index])
+                                            #       #             
+                                            #       #             if (connect==TRUE){
+                                            #       #               
+                                            #       #               lie[lie.lines+length9+1,1:13]<-c(NA, NA, 0, 0, NA, NA, xn[index], yn[index], zn[index], dbase, lie[start8+index-1, 11], NA, 8)
+                                            #       #               lie<-lie[order(lie[, 11], lie[, 10]),]
+                                            #       #               length8<-length8+1
+                                            #       #               lie.lines<-lie.lines+1
+                                            #       #               stop8<-stop8+1
+                                            #       #               pos<-match(NA, lie[1:(lie.lines),1])
+                                            #       #               lie[1:(lie.lines+length9),5]<-match(lie[1:(lie.lines+length9),5], lie[1:(lie.lines+length9),1])
+                                            #       #               lie[1:(lie.lines+length9),6]<-match(lie[1:(lie.lines+length9),6], lie[1:(lie.lines+length9),1])
+                                            #       #               lie[pos, 5]<-pos-1
+                                            #       #               lie[pos, 6]<-pos+1
+                                            #       #               lie[pos, 2]<-lie[lie[pos, 6], 2]
+                                            #       #               lie[pos+1, 5]<-pos
+                                            #       #               lie[pos-1, 6]<-pos
+                                            #       #               lie[which(is.na(lie[1:(lie.lines),5])==TRUE), 5]<-0
+                                            #       #               lie[which(is.na(lie[1:(lie.lines),6])==TRUE), 6]<-0
+                                            #       #               lie[1:(lie.lines+length9),1]<-match(lie[1:(lie.lines+length9),1], lie[1:(lie.lines+length9),1])
+                                            #       #               lie[lie.lines+1,5]<-pos
+                                            #       #               
+                                            #       #               #Calculate diameter for interpolated point (linear function)
+                                            #       #               if (is.null(diameter)==FALSE){
+                                            #       #                 prec<-lie[pos, 5]
+                                            #       #                 suiv<-lie[pos, 6]
+                                            #       #                 slope<-(lie[suiv, 12]-lie[prec, 12])/distance3D(x1=lie[prec, 7], y1=lie[prec, 8], z1=lie[prec, 9], x2=lie[suiv, 7], y2=lie[suiv, 8], z2=lie[suiv, 9])
+                                            #       #                 intercept<-lie[prec, 12]
+                                            #       #                 lie[pos, 12]<-intercept+slope*distance3D(x1=lie[prec, 7], y1=lie[prec, 8], z1=lie[prec, 9], x2=lie[pos, 7], y2=lie[pos, 8], z2=lie[pos, 9])}}}}}
+                                            #       #       
+                                            #       #       if (connect==FALSE) {lie[lie.lines+1,5]<-lie.lines+1}
+                                            #       #       
+                                            #       #       lie[lie.lines+1,3]<-1
+                                            #       #       start9<-as.numeric(lie[lie.lines+1, 1])
+                                            #       #       
+                                            #       #       # Change Suiv and Apic values for the last point of a lateral root
+                                            #       #       lie[lie.lines+length9,c(4,6)]<-c(1, 0)
+                                            #       #       stop9<-as.numeric(lie[lie.lines+length9, 1])
+                                            #       #       
+                                            #       #       # Fill RAC file for the 9-order root
+                                            #       #       
+                                            #       #       if (connect==TRUE){cumulDist<-dist1 + sum(sqrt((diff(lie[(lie.lines+1):(lie.lines+length9), 7]))^2+(diff(lie[(lie.lines+1):(lie.lines+length9), 8]))^2+(diff(lie[(lie.lines+1):(lie.lines+length9), 9]))^2))}
+                                            #       #       else {cumulDist<-sum(sqrt((diff(lie[(lie.lines+1):(lie.lines+length9), 7]))^2+(diff(lie[(lie.lines+1):(lie.lines+length9), 8]))^2+(diff(lie[(lie.lines+1):(lie.lines+length9), 9]))^2))}
+                                            #       #       
+                                            #       #       rac[r, 1:6]<-c(max(rac[,1], na.rm=TRUE)+1, currentMother5, 9, dbase, 1, cumulDist)
+                                            #       #       
+                                            #       #       lie.lines<-lie.lines+length9
+                                            #       #       
+                                            #       #       #---------------------------------------------
+                                            #       #       
+                                            #       #       if ("root" %in% names(r9)){
+                                            #       #         
+                                            #       #         for (r10 in r9){# For each 10-order root
+                                            #       #           
+                                            #       #           if ("geometry" %in% names(r10)){
+                                            #       #             
+                                            #       #             r<-r+1
+                                            #       #             ns <- r10$geometry$polyline
+                                            #       #             length10<-length(ns)
+                                            #       #             
+                                            #       #             age=NULL
+                                            #       #             diameter=NULL
+                                            #       #             if (is.character(final.date)==TRUE & "functions" %in% names(r10)){
+                                            #       #               age<-r10$functions
+                                            #       #               for (i in 1:length(age)){
+                                            #       #                 if (final.date %in% age[[i]]$.attrs) {
+                                            #       #                   time<-sapply(age[[i]][1:(length(age[[i]])-1)], xnodes)
+                                            #       #                   if (time[1]<time[2]){time[1]<-time[2]}}}}
+                                            #       #             
+                                            #       #             if ("functions" %in% names(r10)){
+                                            #       #               age<-r10$functions
+                                            #       #               for (i in 1:length(age)){if ("diameter" %in% age[[i]]$.attrs) {diameter<-sapply(age[[i]][1:(length(age[[i]])-1)], xnodes)}}}
+                                            #       #             
+                                            #       #             #c(Num, Date, Bran, Apic, Prec, Suiv)
+                                            #       #             if (timeserie==FALSE) {lie[(lie.lines+1):(lie.lines+length10),1:6]<-c((lie.lines+1):(lie.lines+length10), rep(1, length10), rep(0, length10), rep(0, length10), lie.lines:(lie.lines+length10-1), (lie.lines+2):(lie.lines+length10+1))}
+                                            #       #             if (timeserie==TRUE) {lie[(lie.lines+1):(lie.lines+length10),1:6]<-c((lie.lines+1):(lie.lines+length10), time, rep(0, length10), rep(0, length10), lie.lines:(lie.lines+length10-1), (lie.lines+2):(lie.lines+length10+1))}
+                                            #       #             lie[(lie.lines+1):(lie.lines+length10),11]<-r
+                                            #       #             if(is.null(diameter)==TRUE) {} else {lie[(lie.lines+1):(lie.lines+length10),12]<-diameter}
+                                            #       #             lie[(lie.lines+1):(lie.lines+length10),13]<-10 #order
+                                            #       #             
+                                            #       #             #c(X,Y,Z)
+                                            #       #             lie[(lie.lines+1):(lie.lines+length10),7]<-sapply(ns, xnodes)
+                                            #       #             lie[(lie.lines+1):(lie.lines+length10),8]<-sapply(ns, ynodes)
+                                            #       #             if (length(ns[[1]])==3) {lie[(lie.lines+1):(lie.lines+length10),9]<-sapply(ns, znodes)} else {lie[(lie.lines+1):(lie.lines+length10),9]<-0}
+                                            #       #             
+                                            #       #             #c(dist)
+                                            #       #             lie[(lie.lines+1):(lie.lines+length10), 10]<-c(0, cumsum(sqrt((diff(lie[(lie.lines+1):(lie.lines+length10), 7]))^2+(diff(lie[(lie.lines+1):(lie.lines+length10), 8]))^2+(diff(lie[(lie.lines+1):(lie.lines+length10), 9]))^2)))
+                                            #       #             
+                                            #       #             # Search the closest point on the mother root (calculate DBase)
+                                            #       #             
+                                            #       #             parentnode<-which(lie[start9:stop9, 7]==lie[lie.lines+1, 7] & lie[start9:stop9, 8]==lie[lie.lines+1, 8] & lie[start9:stop9, 9]==lie[lie.lines+1, 9])
+                                            #       #             
+                                            #       #             if (length(parentnode)>0){
+                                            #       #               
+                                            #       #               dbase<-lie[start9+parentnode[1]-1, 10]
+                                            #       #               if (connect==TRUE){
+                                            #       #                 lie[lie.lines+1,5]<-lie[start9+parentnode[1]-1, 1]
+                                            #       #                 dist1<-0}}
+                                            #       #             
+                                            #       #             else { #If no physical connection between parent and daughter root. Interpolate new point or find closest point.
+                                            #       #               
+                                            #       #               alldist<-sqrt((lie[start9:(stop9-1), 7]-lie[lie.lines+1, 7])^2+(lie[start9:(stop9-1), 8]-lie[lie.lines+1, 8])^2+(lie[start9:(stop9-1), 9]-lie[lie.lines+1, 9])^2)
+                                            #       #               
+                                            #       #               scalx<-diff(lie[start9:stop9, 7])*(lie[start9:(stop9-1), 7]-lie[lie.lines+1, 7])
+                                            #       #               scaly<-diff(lie[start9:stop9, 8])*(lie[start9:(stop9-1), 8]-lie[lie.lines+1, 8])
+                                            #       #               scalz<-diff(lie[start9:stop9, 9])*(lie[start9:(stop9-1), 9]-lie[lie.lines+1, 9])
+                                            #       #               d2<-diff(lie[start9:stop9, 7])^2+diff(lie[start9:stop9, 8])^2+diff(lie[start9:stop9, 9])^2
+                                            #       #               t<-(-(scalx+scaly+scalz)/d2)
+                                            #       #               
+                                            #       #               if (length(which(t>=0 & t<=1))==0){
+                                            #       #                 
+                                            #       #                 index<-which(alldist==min(alldist))
+                                            #       #                 dbase<-lie[start9+index-1, 10]
+                                            #       #                 if (connect==TRUE){
+                                            #       #                   lie[lie.lines+1,5]<-lie[start9+index-1, 1] #Update Prec
+                                            #       #                   dist1<-min(alldist)
+                                            #       #                   lie[(lie.lines+1):(lie.lines+length10), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length10), 10]}}
+                                            #       #               
+                                            #       #               else {
+                                            #       #                 
+                                            #       #                 t[t<0]<-NA
+                                            #       #                 t[t>1]<-NA
+                                            #       #                 xn<-diff(lie[start9:stop9, 7])*t+lie[start9:(stop9-1), 7]
+                                            #       #                 yn<-diff(lie[start9:stop9, 8])*t+lie[start9:(stop9-1), 8]
+                                            #       #                 zn<-diff(lie[start9:stop9, 9])*t+lie[start9:(stop9-1), 9]
+                                            #       #                 dist1<-sqrt((xn-lie[lie.lines+1, 7])^2+(yn-lie[lie.lines+1, 8])^2+(zn-lie[lie.lines+1, 9])^2)
+                                            #       #                 
+                                            #       #                 if (sum(is.na(dist1)==T)>0) {
+                                            #       #                   index<-as.numeric(match(min(dist1, na.rm=T), dist1))
+                                            #       #                   dist1<-min(dist1, na.rm=T)} 
+                                            #       #                 else {
+                                            #       #                   index<-as.numeric(match(min(dist1), dist1))
+                                            #       #                   dist1<-min(dist1)}
+                                            #       #                 
+                                            #       #                 if (dist1>min(alldist)){
+                                            #       #                   index<-which(alldist==min(alldist))
+                                            #       #                   dist1<-min(alldist)
+                                            #       #                   dbase<-lie[start9+index-1, 10]
+                                            #       #                   if (connect==TRUE){
+                                            #       #                     lie[lie.lines+1,5]<-lie[start9+index-1, 1] #Update Prec
+                                            #       #                     dist1<-min(alldist)
+                                            #       #                     lie[(lie.lines+1):(lie.lines+length10), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length10), 10]}}
+                                            #       #                 
+                                            #       #                 else{
+                                            #       #                   
+                                            #       #                   lie[(lie.lines+1):(lie.lines+length10), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length10), 10]
+                                            #       #                   dbase<-lie[start9+index-1, 10]+distance3D(x1=lie[start9+index-1, 7], x2=xn[index], y1=lie[start9+index-1, 8], y2=yn[index], z1=lie[start9+index-1, 9], z2=zn[index])
+                                            #       #                   
+                                            #       #                   if (connect==TRUE){
+                                            #       #                     
+                                            #       #                     lie[lie.lines+length10+1,1:13]<-c(NA, NA, 0, 0, NA, NA, xn[index], yn[index], zn[index], dbase, lie[start9+index-1, 11], NA, 9)
+                                            #       #                     lie<-lie[order(lie[, 11], lie[, 10]),]
+                                            #       #                     length9<-length9+1
+                                            #       #                     lie.lines<-lie.lines+1
+                                            #       #                     stop9<-stop9+1
+                                            #       #                     pos<-match(NA, lie[1:(lie.lines),1])
+                                            #       #                     lie[1:(lie.lines+length10),5]<-match(lie[1:(lie.lines+length10),5], lie[1:(lie.lines+length10),1])
+                                            #       #                     lie[1:(lie.lines+length10),6]<-match(lie[1:(lie.lines+length10),6], lie[1:(lie.lines+length10),1])
+                                            #       #                     lie[pos, 5]<-pos-1
+                                            #       #                     lie[pos, 6]<-pos+1
+                                            #       #                     lie[pos, 2]<-lie[lie[pos, 6], 2]
+                                            #       #                     lie[pos+1, 5]<-pos
+                                            #       #                     lie[pos-1, 6]<-pos
+                                            #       #                     lie[which(is.na(lie[1:(lie.lines),5])==TRUE), 5]<-0
+                                            #       #                     lie[which(is.na(lie[1:(lie.lines),6])==TRUE), 6]<-0
+                                            #       #                     lie[1:(lie.lines+length10),1]<-match(lie[1:(lie.lines+length10),1], lie[1:(lie.lines+length10),1])
+                                            #       #                     lie[lie.lines+1,5]<-pos
+                                            #       #                     
+                                            #       #                     #Calculate diameter for interpolated point (linear function)
+                                            #       #                     if (is.null(diameter)==FALSE){
+                                            #       #                       prec<-lie[pos, 5]
+                                            #       #                       suiv<-lie[pos, 6]
+                                            #       #                       slope<-(lie[suiv, 12]-lie[prec, 12])/distance3D(x1=lie[prec, 7], y1=lie[prec, 8], z1=lie[prec, 9], x2=lie[suiv, 7], y2=lie[suiv, 8], z2=lie[suiv, 9])
+                                            #       #                       intercept<-lie[prec, 12]
+                                            #       #                       lie[pos, 12]<-intercept+slope*distance3D(x1=lie[prec, 7], y1=lie[prec, 8], z1=lie[prec, 9], x2=lie[pos, 7], y2=lie[pos, 8], z2=lie[pos, 9])}}}}}
+                                            #       #             
+                                            #       #             if (connect==FALSE) {lie[lie.lines+1,5]<-lie.lines+1}
+                                            #       #             
+                                            #       #             lie[lie.lines+1,3]<-1
+                                            #       #             start10<-as.numeric(lie[lie.lines+1, 1])
+                                            #       #             
+                                            #       #             # Change Suiv and Apic values for the last point of a lateral root
+                                            #       #             lie[lie.lines+length10,c(4,6)]<-c(1, 0)
+                                            #       #             stop10<-as.numeric(lie[lie.lines+length10, 1])
+                                            #       #             
+                                            #       #             # Fill RAC file for the 9-order root
+                                            #       #             
+                                            #       #             if (connect==TRUE){cumulDist<-dist1 + sum(sqrt((diff(lie[(lie.lines+1):(lie.lines+length10), 7]))^2+(diff(lie[(lie.lines+1):(lie.lines+length10), 8]))^2+(diff(lie[(lie.lines+1):(lie.lines+length10), 9]))^2))}
+                                            #       #             else {cumulDist<-sum(sqrt((diff(lie[(lie.lines+1):(lie.lines+length10), 7]))^2+(diff(lie[(lie.lines+1):(lie.lines+length10), 8]))^2+(diff(lie[(lie.lines+1):(lie.lines+length10), 9]))^2))}
+                                            #       #             
+                                            #       #             rac[r, 1:6]<-c(max(rac[,1], na.rm=TRUE)+1, currentMother5, 10, dbase, 1, cumulDist)
+                                            #       #             
+                                            #       #             lie.lines<-lie.lines+length10
+                                            #       #             
+                                            #       # 
+                                            #       #           }
+                                            #       #         }
+                                            #       #       }
+                                            #       #       
+                                            #       #     }
+                                            #       #   }
+                                            #       # }
+                                            #       
+                                            #     }
+                                            #   }
+                                            # }
                                             
                                           }
                                         }
@@ -1500,9 +1500,15 @@ rsmlToDART <- function(rsml.path, final.date, connect){
       }
     }
     
-    #Remove lines with NA values
+    #Remove lines with NA values in lie
     index<-which(is.na(lie[,1])==TRUE)
     if (length(index)>0) {lie<-lie[-index,]}
+    
+    #Remove lines with NA values in rac
+    index<-which(is.na(rac[,1])==TRUE)
+    if (length(index)>0) {
+      rac<-rac[-index,]
+      message(paste("Roots with a branching order greater than 7 have been skipped in ", sub(basename(rsml.path), pattern=".rsml", replacement=""), sep=""))}
     
     #Convert matrices to data frames
     lie<-as.data.frame(lie)
