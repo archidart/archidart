@@ -866,9 +866,11 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                       if (connect==FALSE) {lie[lie.lines+1,5]<-lie.lines+1}
                                       
                                       lie[lie.lines+1,3]<-1
+                                      start6<-as.numeric(lie[lie.lines+1, 1])
                                       
                                       # Change Suiv and Apic values for the last point of a lateral root
                                       lie[lie.lines+length6,c(4,6)]<-c(1, 0)
+                                      stop6<-as.numeric(lie[lie.lines+length6, 1])
                                       
                                       # Fill RAC file for the 6-order root
                                       
@@ -878,6 +880,154 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                       rac[r, 1:6]<-c(max(rac[,1], na.rm=TRUE)+1, currentMother5, 6, dbase, 1, cumulDist)
 
                                       lie.lines<-lie.lines+length6
+                                      
+                                      #----------------------------------------------
+                                      
+                                      if ("root" %in% names(r6)){
+                                        
+                                        for (r7 in r6){# For each 7-order root
+                                          
+                                          if ("geometry" %in% names(r7)){
+                                            
+                                            r<-r+1
+                                            ns <- r7$geometry$polyline
+                                            length7<-length(ns)
+                                            
+                                            age=NULL
+                                            diameter=NULL
+                                            if (is.character(final.date)==TRUE & "functions" %in% names(r7)){
+                                              age<-r7$functions
+                                              for (i in 1:length(age)){
+                                                if (final.date %in% age[[i]]$.attrs) {
+                                                  time<-sapply(age[[i]][1:(length(age[[i]])-1)], xnodes)
+                                                  if (time[1]<time[2]){time[1]<-time[2]}}}}
+                                            
+                                            if ("functions" %in% names(r7)){
+                                              age<-r7$functions
+                                              for (i in 1:length(age)){if ("diameter" %in% age[[i]]$.attrs) {diameter<-sapply(age[[i]][1:(length(age[[i]])-1)], xnodes)}}}
+                                            
+                                            #c(Num, Date, Bran, Apic, Prec, Suiv)
+                                            if (timeserie==FALSE) {lie[(lie.lines+1):(lie.lines+length7),1:6]<-c((lie.lines+1):(lie.lines+length7), rep(1, length7), rep(0, length7), rep(0, length7), lie.lines:(lie.lines+length7-1), (lie.lines+2):(lie.lines+length7+1))}
+                                            if (timeserie==TRUE) {lie[(lie.lines+1):(lie.lines+length7),1:6]<-c((lie.lines+1):(lie.lines+length7), time, rep(0, length7), rep(0, length7), lie.lines:(lie.lines+length7-1), (lie.lines+2):(lie.lines+length7+1))}
+                                            lie[(lie.lines+1):(lie.lines+length7),11]<-r
+                                            if(is.null(diameter)==TRUE) {} else {lie[(lie.lines+1):(lie.lines+length7),12]<-diameter}
+                                            lie[(lie.lines+1):(lie.lines+length7),13]<-7 #order
+                                            
+                                            #c(X,Y,Z)
+                                            lie[(lie.lines+1):(lie.lines+length7),7]<-sapply(ns, xnodes)
+                                            lie[(lie.lines+1):(lie.lines+length7),8]<-sapply(ns, ynodes)
+                                            if (length(ns[[1]])==3) {lie[(lie.lines+1):(lie.lines+length7),9]<-sapply(ns, znodes)} else {lie[(lie.lines+1):(lie.lines+length7),9]<-0}
+                                            
+                                            #c(dist)
+                                            lie[(lie.lines+1):(lie.lines+length7), 10]<-c(0, cumsum(sqrt((diff(lie[(lie.lines+1):(lie.lines+length7), 7]))^2+(diff(lie[(lie.lines+1):(lie.lines+length7), 8]))^2+(diff(lie[(lie.lines+1):(lie.lines+length7), 9]))^2)))
+                                            
+                                            # Search the closest point on the mother root (calculate DBase)
+                                            
+                                            parentnode<-which(lie[start6:stop6, 7]==lie[lie.lines+1, 7] & lie[start6:stop6, 8]==lie[lie.lines+1, 8] & lie[start6:stop6, 9]==lie[lie.lines+1, 9])
+                                            
+                                            if (length(parentnode)>0){
+                                              
+                                              dbase<-lie[start6+parentnode[1]-1, 10]
+                                              if (connect==TRUE){
+                                                lie[lie.lines+1,5]<-lie[start6+parentnode[1]-1, 1]
+                                                dist1<-0}}
+                                            
+                                            else { #If no physical connection between parent and daughter root. Interpolate new point or find closest point.
+                                              
+                                              alldist<-sqrt((lie[start6:(stop6-1), 7]-lie[lie.lines+1, 7])^2+(lie[start6:(stop6-1), 8]-lie[lie.lines+1, 8])^2+(lie[start6:(stop6-1), 9]-lie[lie.lines+1, 9])^2)
+                                              
+                                              scalx<-diff(lie[start6:stop6, 7])*(lie[start6:(stop6-1), 7]-lie[lie.lines+1, 7])
+                                              scaly<-diff(lie[start6:stop6, 8])*(lie[start6:(stop6-1), 8]-lie[lie.lines+1, 8])
+                                              scalz<-diff(lie[start6:stop6, 9])*(lie[start6:(stop6-1), 9]-lie[lie.lines+1, 9])
+                                              d2<-diff(lie[start6:stop6, 7])^2+diff(lie[start6:stop6, 8])^2+diff(lie[start6:stop6, 9])^2
+                                              t<-(-(scalx+scaly+scalz)/d2)
+                                              
+                                              if (length(which(t>=0 & t<=1))==0){
+                                                
+                                                index<-which(alldist==min(alldist))
+                                                dbase<-lie[start6+index-1, 10]
+                                                if (connect==TRUE){
+                                                  lie[lie.lines+1,5]<-lie[start6+index-1, 1] #Update Prec
+                                                  dist1<-min(alldist)
+                                                  lie[(lie.lines+1):(lie.lines+length7), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length7), 10]}}
+                                              
+                                              else {
+                                                
+                                                t[t<0]<-NA
+                                                t[t>1]<-NA
+                                                xn<-diff(lie[start6:stop6, 7])*t+lie[start6:(stop6-1), 7]
+                                                yn<-diff(lie[start6:stop6, 8])*t+lie[start6:(stop6-1), 8]
+                                                zn<-diff(lie[start6:stop6, 9])*t+lie[start6:(stop6-1), 9]
+                                                dist1<-sqrt((xn-lie[lie.lines+1, 7])^2+(yn-lie[lie.lines+1, 8])^2+(zn-lie[lie.lines+1, 9])^2)
+                                                
+                                                if (sum(is.na(dist1)==T)>0) {
+                                                  index<-as.numeric(match(min(dist1, na.rm=T), dist1))
+                                                  dist1<-min(dist1, na.rm=T)} 
+                                                else {
+                                                  index<-as.numeric(match(min(dist1), dist1))
+                                                  dist1<-min(dist1)}
+                                                
+                                                if (dist1>min(alldist)){
+                                                  index<-which(alldist==min(alldist))
+                                                  dist1<-min(alldist)
+                                                  dbase<-lie[start6+index-1, 10]
+                                                  if (connect==TRUE){
+                                                    lie[lie.lines+1,5]<-lie[start6+index-1, 1] #Update Prec
+                                                    dist1<-min(alldist)
+                                                    lie[(lie.lines+1):(lie.lines+length7), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length7), 10]}}
+                                                
+                                                else{
+                                                  
+                                                  lie[(lie.lines+1):(lie.lines+length7), 10]<-dist1+lie[(lie.lines+1):(lie.lines+length7), 10]
+                                                  dbase<-lie[start6+index-1, 10]+distance3D(x1=lie[start6+index-1, 7], x2=xn[index], y1=lie[start6+index-1, 8], y2=yn[index], z1=lie[start6+index-1, 9], z2=zn[index])
+                                                  
+                                                  if (connect==TRUE){
+                                                    
+                                                    lie[lie.lines+length7+1,1:13]<-c(NA, NA, 0, 0, NA, NA, xn[index], yn[index], zn[index], dbase, lie[start6+index-1, 11], NA, 6)
+                                                    lie<-lie[order(lie[, 11], lie[, 10]),]
+                                                    length6<-length6+1
+                                                    lie.lines<-lie.lines+1
+                                                    stop6<-stop6+1
+                                                    pos<-match(NA, lie[1:(lie.lines),1])
+                                                    lie[1:(lie.lines+length7),5]<-match(lie[1:(lie.lines+length7),5], lie[1:(lie.lines+length7),1])
+                                                    lie[1:(lie.lines+length7),6]<-match(lie[1:(lie.lines+length7),6], lie[1:(lie.lines+length7),1])
+                                                    lie[pos, 5]<-pos-1
+                                                    lie[pos, 6]<-pos+1
+                                                    lie[pos, 2]<-lie[lie[pos, 6], 2]
+                                                    lie[pos+1, 5]<-pos
+                                                    lie[pos-1, 6]<-pos
+                                                    lie[which(is.na(lie[1:(lie.lines),5])==TRUE), 5]<-0
+                                                    lie[which(is.na(lie[1:(lie.lines),6])==TRUE), 6]<-0
+                                                    lie[1:(lie.lines+length7),1]<-match(lie[1:(lie.lines+length7),1], lie[1:(lie.lines+length7),1])
+                                                    lie[lie.lines+1,5]<-pos
+                                                    
+                                                    #Calculate diameter for interpolated point (linear function)
+                                                    if (is.null(diameter)==FALSE){
+                                                      prec<-lie[pos, 5]
+                                                      suiv<-lie[pos, 6]
+                                                      slope<-(lie[suiv, 12]-lie[prec, 12])/distance3D(x1=lie[prec, 7], y1=lie[prec, 8], z1=lie[prec, 9], x2=lie[suiv, 7], y2=lie[suiv, 8], z2=lie[suiv, 9])
+                                                      intercept<-lie[prec, 12]
+                                                      lie[pos, 12]<-intercept+slope*distance3D(x1=lie[prec, 7], y1=lie[prec, 8], z1=lie[prec, 9], x2=lie[pos, 7], y2=lie[pos, 8], z2=lie[pos, 9])}}}}}
+                                            
+                                            if (connect==FALSE) {lie[lie.lines+1,5]<-lie.lines+1}
+                                            
+                                            lie[lie.lines+1,3]<-1
+                                            
+                                            # Change Suiv and Apic values for the last point of a lateral root
+                                            lie[lie.lines+length7,c(4,6)]<-c(1, 0)
+                                            
+                                            # Fill RAC file for the 6-order root
+                                            
+                                            if (connect==TRUE){cumulDist<-dist1 + sum(sqrt((diff(lie[(lie.lines+1):(lie.lines+length7), 7]))^2+(diff(lie[(lie.lines+1):(lie.lines+length7), 8]))^2+(diff(lie[(lie.lines+1):(lie.lines+length7), 9]))^2))}
+                                            else {cumulDist<-sum(sqrt((diff(lie[(lie.lines+1):(lie.lines+length7), 7]))^2+(diff(lie[(lie.lines+1):(lie.lines+length7), 8]))^2+(diff(lie[(lie.lines+1):(lie.lines+length7), 9]))^2))}
+                                            
+                                            rac[r, 1:6]<-c(max(rac[,1], na.rm=TRUE)+1, currentMother5, 7, dbase, 1, cumulDist)
+                                            
+                                            lie.lines<-lie.lines+length7
+                                            
+                                          }
+                                        }
+                                      }
                                       
                                     }
                                   }
