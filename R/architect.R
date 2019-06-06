@@ -482,7 +482,7 @@ architect<-function(inputrac=NULL, inputtps=NULL, inputrsml=NULL, res=NULL, unit
           root.coords<-cbind(x,y)
           boxhull<-chull(x=x, y=y)
           
-          if (length(boxhull)<3){datadart$Convexhull[k]<-0}
+          if (length(boxhull)<3){datadart$ConvexhullXY[k]<-0}
           else {
             boxhull<-c(boxhull, boxhull[1])
             boxhull.coords<-root.coords[boxhull,]
@@ -698,7 +698,7 @@ architect<-function(inputrac=NULL, inputtps=NULL, inputrsml=NULL, res=NULL, unit
             root.coords<-cbind(x,y)
             boxhull<-chull(x=x, y=y)
             
-            if (length(boxhull)<3) {datarsml$Convexhull[k]<-0}
+            if (length(boxhull)<3) {datarsml$ConvexhullXY[k]<-0}
             else {
               boxhull<-c(boxhull, boxhull[1])
               boxhull.coords<-root.coords[boxhull,]
@@ -712,7 +712,7 @@ architect<-function(inputrac=NULL, inputtps=NULL, inputrsml=NULL, res=NULL, unit
             root.coords<-cbind(y,z)
             boxhull<-chull(x=y, y=z)
             
-            if (length(boxhull)<3) {datarsml$Convexhull[k]<-0}
+            if (length(boxhull)<3) {datarsml$ConvexhullYZ[k]<-0}
             else{
               boxhull<-c(boxhull, boxhull[1])
               boxhull.coords<-root.coords[boxhull,]
@@ -726,7 +726,7 @@ architect<-function(inputrac=NULL, inputtps=NULL, inputrsml=NULL, res=NULL, unit
             root.coords<-cbind(x,z)
             boxhull<-chull(x=x, y=z)
             
-            if (length(boxhull)<3) {datarsml$Convexhull[k]<-0}
+            if (length(boxhull)<3) {datarsml$ConvexhullXZ[k]<-0}
             else{
               boxhull<-c(boxhull, boxhull[1])
               boxhull.coords<-root.coords[boxhull,]
