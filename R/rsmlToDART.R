@@ -620,7 +620,6 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                 lie[(lie.lines+1):(lie.lines+length5),13]<-5
                                 
                                 #c(X,Y,Z)
-                                return(sapply(ns, xnodes))
                                 lie[(lie.lines+1):(lie.lines+length5),7]<-sapply(ns, xnodes)
                                 lie[(lie.lines+1):(lie.lines+length5),8]<-sapply(ns, ynodes)
                                 if (length(ns[[1]])==3) {lie[(lie.lines+1):(lie.lines+length5),9]<-sapply(ns, znodes)} else {lie[(lie.lines+1):(lie.lines+length5),9]<-0}
