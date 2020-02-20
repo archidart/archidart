@@ -241,8 +241,10 @@ archidraw<-function(inputlie=NULL, inputrsml=NULL, res=NULL, unitlength="px", rs
         for (l in 1:length(coldate1)){LIE[[i]]$col<-replace(LIE[[i]]$col, LIE[[i]]$col==l, coldate1[l])}
         root<-sum(LIE[[i]]$Suiv==0)
         end<-which(LIE[[i]]$Suiv==0)
-        open3d()
-        plot3d(x=LIE[[i]]$X[1], y=LIE[[i]]$Y[1], z=LIE[[i]]$Z[1], type="n", xlim=xlim1, ylim=ylim1, zlim=zlim1, main=main1, ylab=ylab1, xlab=xlab1, zlab=zlab1,...)
+        if (!requireNamespace("rgl", quietly = TRUE)) {
+          stop("3D plotting with archidraw() requires package `rgl`. Please install it and try again.")}
+        rgl::open3d()
+        rgl::plot3d(x=LIE[[i]]$X[1], y=LIE[[i]]$Y[1], z=LIE[[i]]$Z[1], type="n", xlim=xlim1, ylim=ylim1, zlim=zlim1, main=main1, ylab=ylab1, xlab=xlab1, zlab=zlab1,...)
         
         for (k in 1:root){
           if (k==1) {
@@ -254,7 +256,7 @@ archidraw<-function(inputlie=NULL, inputrsml=NULL, res=NULL, unitlength="px", rs
             else{
               dataroot<-as.matrix(LIE[[i]][(end[k-1]+1):end[k],c(7:9,14)])}}
   
-          lines3d(dataroot[,1:3], col=dataroot[,4], smooth=FALSE, ...)}}
+          rgl::lines3d(dataroot[,1:3], col=dataroot[,4], smooth=FALSE, ...)}}
         
         else {
           
@@ -329,8 +331,10 @@ archidraw<-function(inputlie=NULL, inputrsml=NULL, res=NULL, unitlength="px", rs
               end<-end[-1]
               end[length(end)+1]<-nrow(dataroot1)}
             else {end<-nrow(dataroot1)}
-            open3d()
-            plot3d(x=LIE[[i]]$X[1], y=LIE[[i]]$Y[1], z=LIE[[i]]$Z[1], type="n", xlim=xlim1, ylim=ylim1, zlim=zlim1, main=main1, ylab=ylab1, xlab=xlab1, zlab=zlab1,...)
+            if (!requireNamespace("rgl", quietly = TRUE)) {
+              stop("3D plotting with archidraw() requires package `rgl`. Please install it and try again.")}
+            rgl::open3d()
+            rgl::plot3d(x=LIE[[i]]$X[1], y=LIE[[i]]$Y[1], z=LIE[[i]]$Z[1], type="n", xlim=xlim1, ylim=ylim1, zlim=zlim1, main=main1, ylab=ylab1, xlab=xlab1, zlab=zlab1,...)
             for (k in 1:root){
                 if (k==1) {
                   dataroot<-as.matrix(dataroot1[k:end[k],c(7:9,14)])} 
@@ -341,7 +345,7 @@ archidraw<-function(inputlie=NULL, inputrsml=NULL, res=NULL, unitlength="px", rs
                   else{
                     dataroot<-as.matrix(dataroot1[(end[k-1]+1):end[k],c(7:9,14)])}}
                 
-              lines3d(dataroot[,1:3], col=dataroot[,4], smooth=FALSE, ...)}}
+              rgl::lines3d(dataroot[,1:3], col=dataroot[,4], smooth=FALSE, ...)}}
             
             else {
               
@@ -424,8 +428,10 @@ archidraw<-function(inputlie=NULL, inputrsml=NULL, res=NULL, unitlength="px", rs
               end<-end[-1]
               end[length(end)+1]<-nrow(dataroot1)}
             else {end<-nrow(dataroot1)}
-            open3d()
-            plot3d(x=LIE[[i]]$X[1], y=LIE[[i]]$Y[1], z=LIE[[i]]$Z[1], type="n", xlim=xlim1, ylim=ylim1, zlim=zlim1, main=main1, ylab=ylab1, xlab=xlab1, zlab=zlab1,...)
+            if (!requireNamespace("rgl", quietly = TRUE)) {
+              stop("3D plotting with archidraw() requires package `rgl`. Please install it and try again.")}
+            rgl::open3d()
+            rgl::plot3d(x=LIE[[i]]$X[1], y=LIE[[i]]$Y[1], z=LIE[[i]]$Z[1], type="n", xlim=xlim1, ylim=ylim1, zlim=zlim1, main=main1, ylab=ylab1, xlab=xlab1, zlab=zlab1,...)
             
             for (k in 1:root){
               if (k==1) {
@@ -437,7 +443,7 @@ archidraw<-function(inputlie=NULL, inputrsml=NULL, res=NULL, unitlength="px", rs
                 else{
                   dataroot<-as.matrix(dataroot1[(end[k-1]+1):end[k],c(7:9,14)])}}
               
-              lines3d(dataroot[,1:3], col=dataroot[,4], smooth=FALSE, ...)}}
+              rgl::lines3d(dataroot[,1:3], col=dataroot[,4], smooth=FALSE, ...)}}
             
             else {
               

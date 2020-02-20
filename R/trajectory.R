@@ -958,8 +958,10 @@ trajectory<-function(inputrac=NULL, inputlie=NULL, inputtps=NULL, inputrsml=NULL
     
     root<-sum(LIE[[i]]$Suiv==0)
     end<-which(LIE[[i]]$Suiv==0)
-    open3d()
-    plot3d(x=LIE[[i]]$X[1], y=LIE[[i]]$Y[1], z=LIE[[i]]$Z[1], type="n", xlim=xlim1, ylim=ylim1, zlim=zlim1, main=main1, ylab=ylab1, xlab=xlab1, zlab=zlab1,...)
+    if (!requireNamespace("rgl", quietly = TRUE)) {
+      stop("3D plotting with trajectory() requires package `rgl`. Please install it and try again.")}
+    rgl::open3d()
+    rgl::plot3d(x=LIE[[i]]$X[1], y=LIE[[i]]$Y[1], z=LIE[[i]]$Z[1], type="n", xlim=xlim1, ylim=ylim1, zlim=zlim1, main=main1, ylab=ylab1, xlab=xlab1, zlab=zlab1,...)
     for (k in 1:root){
       if (k==1) {
         dataroot<-as.matrix(LIE[[i]][k:end[k],7:9])} 
@@ -970,7 +972,7 @@ trajectory<-function(inputrac=NULL, inputlie=NULL, inputtps=NULL, inputrsml=NULL
         else{
           dataroot<-as.matrix(LIE[[i]][(end[k-1]+1):end[k],7:9])}}
   
-      lines3d(dataroot, col=colors[k], smooth=FALSE, ...)}}
+      rgl::lines3d(dataroot, col=colors[k], smooth=FALSE, ...)}}
     
     else {
       
