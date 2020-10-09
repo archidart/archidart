@@ -4,11 +4,15 @@ rsmlToDART <- function(rsml.path, final.date, connect){
   rsml <- xmlToList(xmlParse(rsml.path))
   plants <- rsml$scene
   resolution<-rsml$metadata$resolution
+  if (is.null(resolution)==TRUE){resolution<-1}
   unitlength1<-rsml$metadata$unit
   
-  # Find unittime in 'property-definition'
+  # Find unittime and unitdiameter in 'property-definition'
   
   unittime1<-NULL
+  unitdiameter1<-NULL
+  
+  #Check unittime
   
   if (is.character(final.date)==TRUE) {
     property<-rsml$metadata$'property-definition'
@@ -17,6 +21,13 @@ rsmlToDART <- function(rsml.path, final.date, connect){
       for (i in 1:length(property)){if (property[[i]]$label==final.date){unittime1<-as.character(property[[i]]$unit)}}}
     
     if (is.null(unittime1)==TRUE){message(paste("No time unit found in ", sub(basename(rsml.path), pattern=".rsml", replacement=""), " metadata (property-definition)", sep=""))}}
+  
+  #Check unitdiameter
+
+    if (is.null(property)==FALSE){
+      for (i in 1:length(property)){if (property[[i]]$label=="diameter"){unitdiameter1<-as.character(property[[i]]$unit)}}}
+    
+    if (is.null(unitdiameter1)==TRUE){message(paste("No diameter unit found in ", sub(basename(rsml.path), pattern=".rsml", replacement=""), " metadata (property-definition)", sep=""))}
   
   # Create LIE and RAC files for each root system 
   
@@ -1573,6 +1584,6 @@ rsmlToDART <- function(rsml.path, final.date, connect){
     tps.all[[n]]<-tps
     
   }
-  result<-list(resolution=resolution, length=unitlength1, time=unittime1, lie=lie.all, rac=rac.all, tps=tps.all)
+  result<-list(resolution=resolution, length=unitlength1, diameter=unitdiameter1, time=unittime1, lie=lie.all, rac=rac.all, tps=tps.all)
   return(result)
 }

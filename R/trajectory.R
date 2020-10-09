@@ -815,14 +815,14 @@ trajectory<-function(inputrac=NULL, inputlie=NULL, inputtps=NULL, inputrsml=NULL
     
     for (j in 1:length(XYangle)){
       
-      if (class(XYdir[[j]])=="matrix"){
+      if ("matrix" %in% class(XYdir[[j]])){
         
         VECTangle<-XYdir[[j]][2,]-XYdir[[j]][1,]
         normVECTangle<-sqrt(VECTangle[1]^2+VECTangle[2]^2)
         if (length(VECTangle)==2) {gr.dir[j]<-acos((VECTangle%*%c(0,1))/(normVECTangle*1))*cunitangle}
         if (length(VECTangle)==3) {gr.dir[j]<-acos((VECTangle%*%dirvert)/(normVECTangle*1))*cunitangle}}
       
-      if (class(XYangle[[j]])=="matrix"){
+      if ("matrix" %in% class(XYangle[[j]])){
         
         if (!("Z" %in% colnames(LIE[[i]]))){
           VECTangle<-matrix(nrow=2, ncol=2)
@@ -839,7 +839,7 @@ trajectory<-function(inputrac=NULL, inputlie=NULL, inputtps=NULL, inputrsml=NULL
       
       else {br.angle[j]<-NA}
       
-      if (class(XYcurv[[j]])=="matrix") {
+      if ("matrix" %in% class(XYcurv[[j]])) {
         
         if (nrow(XYcurv[[j]])>2){
           

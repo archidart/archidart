@@ -43,10 +43,12 @@ rsmlToTable<-function(inputrsml, unitlength="px", rsml.date=NULL, rsml.connect=T
     res1<-rep(as.numeric(RSML$resolution), length(RSML$lie))
     filenamesrac<-rep(filenamesrsml[f], length(RSML$lie))
     unitlength1<-rep(as.character(RSML$length), length(RSML$lie))
+    unitdiameter1<-rep(as.character(RSML$diameter), length(RSML$lie))
     for (j in 1:length(RSML$lie)) {nodes<-nodes+nrow(RSML$lie[[j]])}
   
-  #Unit conversion RSML
-  cunit1<-vector(length=length(res1))
+  #Unit conversion RSML (length and diameter values)
+  cunit1<-vector(length=length(res1)) #Store conversion factors for length
+  cunit2<-vector(length=length(res1)) #Store conversion factors for diameter
   
   for (i in 1:length(res1)){
     
@@ -60,7 +62,15 @@ rsmlToTable<-function(inputrsml, unitlength="px", rsml.date=NULL, rsml.connect=T
       if (unitlength1[i]=="mm") {cunit1[i]<-1/res1[i]/10}
       if (unitlength1[i]=="um") {cunit1[i]<-1/res1[i]/10000}
       if (unitlength1[i]=="nm") {cunit1[i]<-1/res1[i]/10000000}
-      if (unitlength1[i]=="inch") {cunit1[i]<-1/res1[i]*cm(1)}}
+      if (unitlength1[i]=="inch") {cunit1[i]<-1/res1[i]*cm(1)}
+      
+      if (is.null(unitdiameter1)==FALSE){
+        if (unitdiameter1[i]=="cm"){cunit2[i]<-1}
+        if (unitdiameter1[i]=="mm"){cunit2[i]<-1/10}
+        if (unitdiameter1[i]=="inch"){cunit2[i]<-cm(1)}
+        if (unitdiameter1[i]!="cm" & unitdiameter1[i]!="mm" & unitdiameter1[i]!="inch"){cunit2[i]<-1}}
+      else {cunit2[i]<-1}
+      }
     
     if (unitlength=="mm"){
       if (unitlength1[i]=="pixel") {
@@ -71,7 +81,15 @@ rsmlToTable<-function(inputrsml, unitlength="px", rsml.date=NULL, rsml.connect=T
       if (unitlength1[i]=="mm") {cunit1[i]<-1/res1[i]}
       if (unitlength1[i]=="um") {cunit1[i]<-1/res1[i]/1000}
       if (unitlength1[i]=="nm") {cunit1[i]<-1/res1[i]/1000000}
-      if (unitlength1[i]=="inch") {cunit1[i]<-1/res1[i]*cm(1)*10}}
+      if (unitlength1[i]=="inch") {cunit1[i]<-1/res1[i]*cm(1)*10}
+      
+      if (is.null(unitdiameter1)==FALSE){
+        if (unitdiameter1[i]=="cm"){cunit2[i]<-10}
+        if (unitdiameter1[i]=="mm"){cunit2[i]<-1}
+        if (unitdiameter1[i]=="inch"){cunit2[i]<-cm(1)*10}
+        if (unitdiameter1[i]!="cm" & unitdiameter1[i]!="mm" & unitdiameter1[i]!="inch"){cunit2[i]<-1}}
+      else {cunit2[i]<-1}
+      }
     
     if (unitlength=="px"){cunit1[i]<-1}}
   
@@ -148,8 +166,8 @@ rsmlToTable<-function(inputrsml, unitlength="px", rsml.date=NULL, rsml.connect=T
           table[rowsintable+s, 14]<-lie$Y[l]*cunit1[n] #y2
           if ("Z" %in% colnames(lie)) {table[rowsintable+s, 15]<-lie$Z[l]*cunit1[n]} else {table[rowsintable+s, 15]<-0} #z2
           
-          if (lie$Bran[l]=="true") {table[rowsintable+s, 16]<-lie$diameter[l]*cunit1[n]} else {table[rowsintable+s, 16]<-lie$diameter[prec]*cunit1[n]} #diameter1
-          table[rowsintable+s, 17]<-lie$diameter[l]*cunit1[n] #diameter2
+          if (lie$Bran[l]=="true") {table[rowsintable+s, 16]<-lie$diameter[l]*cunit2[n]} else {table[rowsintable+s, 16]<-lie$diameter[prec]*cunit2[n]} #diameter1
+          table[rowsintable+s, 17]<-lie$diameter[l]*cunit2[n] #diameter2
           if ("Z" %in% colnames(lie)) {table[rowsintable+s, 18]<-distance3D(x1=lie$X[prec], y1=lie$Y[prec], z1=lie$Z[prec], x2=lie$X[l], y2=lie$Y[l], z2=lie$Z[l])*cunit1[n]} else {table[rowsintable+s, 18]<-distance2D(x1=lie$X[prec], y1=lie$Y[prec], x2=lie$X[l], y2=lie$Y[l])*cunit1[n]} #length
           table[rowsintable+s, 19]<-lie$dist[l]*cunit1[n] #blength
           if ("Z" %in% colnames(lie)) {dirsegment<-c(lie$X[l]-lie$X[prec], lie$Y[l]-lie$Y[prec], lie$Z[l]-lie$Z[prec])*cunit1[n]} else {dirsegment<-c(lie$X[l]-lie$X[prec], lie$Y[l]-lie$Y[prec])*cunit1[n]}
