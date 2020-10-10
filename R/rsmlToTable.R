@@ -64,7 +64,7 @@ rsmlToTable<-function(inputrsml, unitlength="px", rsml.date=NULL, rsml.connect=T
       if (unitlength1[i]=="nm") {cunit1[i]<-1/res1[i]/10000000}
       if (unitlength1[i]=="inch") {cunit1[i]<-1/res1[i]*cm(1)}
       
-      if (is.null(unitdiameter1)==FALSE){
+      if (length(unitdiameter1)!=0){
         if (unitdiameter1[i]=="cm"){cunit2[i]<-1}
         if (unitdiameter1[i]=="mm"){cunit2[i]<-1/10}
         if (unitdiameter1[i]=="inch"){cunit2[i]<-cm(1)}
@@ -83,7 +83,7 @@ rsmlToTable<-function(inputrsml, unitlength="px", rsml.date=NULL, rsml.connect=T
       if (unitlength1[i]=="nm") {cunit1[i]<-1/res1[i]/1000000}
       if (unitlength1[i]=="inch") {cunit1[i]<-1/res1[i]*cm(1)*10}
       
-      if (is.null(unitdiameter1)==FALSE){
+      if (length(unitdiameter1)!=0){
         if (unitdiameter1[i]=="cm"){cunit2[i]<-10}
         if (unitdiameter1[i]=="mm"){cunit2[i]<-1}
         if (unitdiameter1[i]=="inch"){cunit2[i]<-cm(1)*10}
@@ -93,7 +93,7 @@ rsmlToTable<-function(inputrsml, unitlength="px", rsml.date=NULL, rsml.connect=T
     
     if (unitlength=="px"){cunit1[i]<-1}}
   
-  #Convertion unit angles
+  #Conversion unit angles
   
   if (unitangle=="r") {cunitangle<-1}
   if (unitangle=="d") {cunitangle<-180/pi}
