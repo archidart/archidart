@@ -400,7 +400,7 @@ architect<-function(inputrac=NULL, inputtps=NULL, inputrsml=NULL, res=NULL, unit
     
     if (is.null(inputrac)==FALSE){
       
-      n<-length(unique(paste(inputrac$file, inputrac$time, sep="")))
+      n<-length(unique(paste(inputrac$file, inputrac$time, sep="_")))
       
       if (fitter==TRUE){datadart<-data.frame(FileName=rep(NA, n), Time=rep(NA, n), TRL=rep(NA, n), GRTR=rep(NA, n), L1R=rep(NA, n), GR1R=rep(NA, n), TN1R=rep(NA, n), TNLR=rep(NA, n), TLRL=rep(NA, n), D2LR=rep(NA, n), Height=rep(NA, n), Width=rep(NA, n), ConvexhullXY=rep(NA, n), Magnitude=rep(NA, n), Altitude=rep(NA, n), ExtPathLength=rep(NA, n))}
       
@@ -577,7 +577,7 @@ architect<-function(inputrac=NULL, inputtps=NULL, inputrsml=NULL, res=NULL, unit
       inputrsml$diameter3<-inputrsml$diameter1
       inputrsml$diameter3[inputrsml$apic=="true"]<-inputrsml$diameter1[inputrsml$apic=="true"]+inputrsml$diameter2[inputrsml$apic=="true"]
       
-      n<-length(unique(paste(inputrsml$file, inputrsml$plant, inputrsml$time, sep="")))
+      n<-length(unique(paste(inputrsml$file, inputrsml$plant, inputrsml$time, sep="_")))
       
       if (fitter==TRUE){datarsml<-data.frame(FileName=rep(NA, n), Time=rep(NA, n), TRL=rep(NA, n), GRTR=rep(NA, n), L1R=rep(NA, n), GR1R=rep(NA, n), TN1R=rep(NA, n), TNLR=rep(NA, n), TLRL=rep(NA, n), D2LR=rep(NA, n), Height=rep(NA, n), Width=rep(NA, n), ConvexhullXY=rep(NA, n), ConvexhullXZ=rep(NA, n), ConvexhullYZ=rep(NA, n), Convexhull3D=rep(NA, n), Magnitude=rep(NA, n), Altitude=rep(NA, n), ExtPathLength=rep(NA, n))}
       
