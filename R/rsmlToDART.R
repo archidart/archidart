@@ -1096,7 +1096,8 @@ rsmlToDART <- function(rsml.path, final.date, connect){
     
     if (timeserie==FALSE) {
       if (is.null(final.date)==TRUE) {tps<-data.frame(Num=1, Date=1)}
-      if (is.null(final.date)==FALSE) {tps<-data.frame(Num=1, Date=final.date)}}
+      if (is.null(final.date)==FALSE & is.numeric(final.date)==TRUE) {tps<-data.frame(Num=1, Date=final.date)}
+      if (is.null(final.date)==FALSE & is.character(final.date)==TRUE) {tps<-data.frame(Num=1, Date=1)}}
     
     if (timeserie==TRUE) {tps<-data.frame(Num=c(1:length(dates)), Date=dates)}
     
