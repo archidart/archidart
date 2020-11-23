@@ -2,7 +2,7 @@ Package: archiDART
 Type: Package
 Title: Plant Root System Architecture Analysis Using DART and RSML Files
 Version: 3.4
-Date: 2020-10-24
+Date: 2020-11-23
 Author: Benjamin M Delory, Caroline Baudson, Yves Brostaux, Guillaume Lobet, Patrick du Jardin, Loic Pages, Pierre Delaplace 
 Maintainer: Benjamin M Delory <Benjamin.Delory@leuphana.de>
 Description: Analysis of complex plant root system architectures (RSA) using the output files created by Data Analysis of Root Tracings (DART), an open-access software dedicated to the study of plant root architecture and development across time series (Le Bot et al (2010) "DART: a software to analyse root system architecture and development from captured images", Plant and Soil, <DOI:10.1007/s11104-009-0005-2>), and RSA data encoded with the Root System Markup Language (RSML) (Lobet et al (2015) "Root System Markup Language: toward a unified root architecture description language", Plant Physiology, <DOI:10.1104/pp.114.253625>). More information can be found in Delory et al (2016) "archiDART: an R package for the automated computation of plant root architectural traits", Plant and Soil, <DOI:10.1007/s11104-015-2673-4>.

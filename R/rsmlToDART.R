@@ -322,7 +322,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                       for (i in 1:length(age)){
                         if (TRUE %in% (final.date %in% age[[i]]$.attrs)) {
                           time<-sapply(age[[i]][1:(length(age[[i]])-1)], xnodes)
-                          if (time[1]<time[2]){time[1]<-time[2]}}}}
+                          if (length(time)>1 & time[1]<time[2]){time[1]<-time[2]}}}}
                     
                     if ("functions" %in% names(r3)){
                       age<-r3$functions
@@ -470,7 +470,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                             for (i in 1:length(age)){
                               if (TRUE %in% (final.date %in% age[[i]]$.attrs)) {
                                 time<-sapply(age[[i]][1:(length(age[[i]])-1)], xnodes)
-                                if (time[1]<time[2]){time[1]<-time[2]}}}}
+                                if (length(time)>1 & time[1]<time[2]){time[1]<-time[2]}}}}
                           
                           if ("functions" %in% names(r4)){
                             age<-r4$functions
@@ -618,7 +618,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                   for (i in 1:length(age)){
                                     if (TRUE %in% (final.date %in% age[[i]]$.attrs)) {
                                       time<-sapply(age[[i]][1:(length(age[[i]])-1)], xnodes)
-                                      if (time[1]<time[2]){time[1]<-time[2]}}}}
+                                      if (length(time)>1 & time[1]<time[2]){time[1]<-time[2]}}}}
                                 
                                 if ("functions" %in% names(r5)){
                                   age<-r5$functions
@@ -766,7 +766,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                         for (i in 1:length(age)){
                                           if (TRUE %in% (final.date %in% age[[i]]$.attrs)) {
                                             time<-sapply(age[[i]][1:(length(age[[i]])-1)], xnodes)
-                                            if (time[1]<time[2]){time[1]<-time[2]}}}}
+                                            if (length(time)>1 & time[1]<time[2]){time[1]<-time[2]}}}}
                                       
                                       if ("functions" %in% names(r6)){
                                         age<-r6$functions
@@ -912,7 +912,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                               for (i in 1:length(age)){
                                                 if (TRUE %in% (final.date %in% age[[i]]$.attrs)) {
                                                   time<-sapply(age[[i]][1:(length(age[[i]])-1)], xnodes)
-                                                  if (time[1]<time[2]){time[1]<-time[2]}}}}
+                                                  if (length(time)>1 & time[1]<time[2]){time[1]<-time[2]}}}}
                                             
                                             if ("functions" %in% names(r7)){
                                               age<-r7$functions
