@@ -218,7 +218,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
 
               if (length(which(t>=0 & t<=1))==0){
                 
-                index<-which(alldist==min(alldist))
+                index<-which(alldist==min(alldist))[1]
                 dbase<-lie[start1+index-1, 10]
                 if (connect==TRUE){
                   lie[lie.lines+1,5]<-lie[start1+index-1, 1] #Update Prec
@@ -235,14 +235,14 @@ rsmlToDART <- function(rsml.path, final.date, connect){
               dist1<-sqrt((xn-lie[lie.lines+1, 7])^2+(yn-lie[lie.lines+1, 8])^2+(zn-lie[lie.lines+1, 9])^2)
               
               if (sum(is.na(dist1)==T)>0) {
-                index<-as.numeric(match(min(dist1, na.rm=T), dist1))
+                index<-as.numeric(match(min(dist1, na.rm=T), dist1)[1])
                 dist1<-min(dist1, na.rm=T)} 
               else {
                 dist1<-min(dist1)
-                index<-as.numeric(match(min(dist1), dist1))}
+                index<-as.numeric(match(min(dist1), dist1)[1])}
               
               if (dist1>min(alldist)){
-                index<-which(alldist==min(alldist))
+                index<-which(alldist==min(alldist))[1]
                 dist1<-min(alldist)
                 dbase<-lie[start1+index-1, 10]
                 if (connect==TRUE){
@@ -366,7 +366,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                       
                       if (length(which(t>=0 & t<=1))==0){
                         
-                        index<-which(alldist==min(alldist))
+                        index<-which(alldist==min(alldist))[1]
                         dbase<-lie[start2+index-1, 10]
                         if (connect==TRUE){
                           lie[lie.lines+1,5]<-lie[start2+index-1, 1] #Update Prec
@@ -383,14 +383,14 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                         dist1<-sqrt((xn-lie[lie.lines+1, 7])^2+(yn-lie[lie.lines+1, 8])^2+(zn-lie[lie.lines+1, 9])^2)
                         
                         if (sum(is.na(dist1)==T)>0) {
-                          index<-as.numeric(match(min(dist1, na.rm=T), dist1))
+                          index<-as.numeric(match(min(dist1, na.rm=T), dist1)[1])
                           dist1<-min(dist1, na.rm=T)} 
                         else {
-                          index<-as.numeric(match(min(dist1), dist1))
+                          index<-as.numeric(match(min(dist1), dist1)[1])
                           dist1<-min(dist1)}
                         
                         if (dist1>min(alldist)){
-                          index<-which(alldist==min(alldist))
+                          index<-which(alldist==min(alldist))[1]
                           dist1<-min(alldist)
                           dbase<-lie[start2+index-1, 10]
                           if (connect==TRUE){
@@ -514,7 +514,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                             
                             if (length(which(t>=0 & t<=1))==0){
                               
-                              index<-which(alldist==min(alldist))
+                              index<-which(alldist==min(alldist))[1]
                               dbase<-lie[start3+index-1, 10]
                               if (connect==TRUE){
                                 lie[lie.lines+1,5]<-lie[start3+index-1, 1] #Update Prec
@@ -531,14 +531,14 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                               dist1<-sqrt((xn-lie[lie.lines+1, 7])^2+(yn-lie[lie.lines+1, 8])^2+(zn-lie[lie.lines+1, 9])^2)
                               
                               if (sum(is.na(dist1)==T)>0) {
-                                index<-as.numeric(match(min(dist1, na.rm=T), dist1))
+                                index<-as.numeric(match(min(dist1, na.rm=T), dist1)[1])
                                 dist1<-min(dist1, na.rm=T)} 
                               else {
-                                index<-as.numeric(match(min(dist1), dist1))
+                                index<-as.numeric(match(min(dist1), dist1)[1])
                                 dist1<-min(dist1)}
                               
                               if (dist1>min(alldist)){
-                                index<-which(alldist==min(alldist))
+                                index<-which(alldist==min(alldist))[1]
                                 dist1<-min(alldist)
                                 dbase<-lie[start3+index-1, 10]
                                 if (connect==TRUE){
@@ -662,7 +662,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                   
                                   if (length(which(t>=0 & t<=1))==0){
                                     
-                                    index<-which(alldist==min(alldist))
+                                    index<-which(alldist==min(alldist))[1]
                                     dbase<-lie[start4+index-1, 10]
                                     if (connect==TRUE){
                                       lie[lie.lines+1,5]<-lie[start4+index-1, 1] #Update Prec
@@ -679,14 +679,14 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                     dist1<-sqrt((xn-lie[lie.lines+1, 7])^2+(yn-lie[lie.lines+1, 8])^2+(zn-lie[lie.lines+1, 9])^2)
                                     
                                     if (sum(is.na(dist1)==T)>0) {
-                                      index<-as.numeric(match(min(dist1, na.rm=T), dist1))
+                                      index<-as.numeric(match(min(dist1, na.rm=T), dist1)[1])
                                       dist1<-min(dist1, na.rm=T)} 
                                     else {
-                                      index<-as.numeric(match(min(dist1), dist1))
+                                      index<-as.numeric(match(min(dist1), dist1)[1])
                                       dist1<-min(dist1)}
                                     
                                     if (dist1>min(alldist)){
-                                      index<-which(alldist==min(alldist))
+                                      index<-which(alldist==min(alldist))[1]
                                       dist1<-min(alldist)
                                       dbase<-lie[start4+index-1, 10]
                                       if (connect==TRUE){
@@ -810,7 +810,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                         
                                         if (length(which(t>=0 & t<=1))==0){
                                           
-                                          index<-which(alldist==min(alldist))
+                                          index<-which(alldist==min(alldist))[1]
                                           dbase<-lie[start5+index-1, 10]
                                           if (connect==TRUE){
                                             lie[lie.lines+1,5]<-lie[start5+index-1, 1] #Update Prec
@@ -827,14 +827,14 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                           dist1<-sqrt((xn-lie[lie.lines+1, 7])^2+(yn-lie[lie.lines+1, 8])^2+(zn-lie[lie.lines+1, 9])^2)
                                           
                                           if (sum(is.na(dist1)==T)>0) {
-                                            index<-as.numeric(match(min(dist1, na.rm=T), dist1))
+                                            index<-as.numeric(match(min(dist1, na.rm=T), dist1)[1])
                                             dist1<-min(dist1, na.rm=T)} 
                                           else {
-                                            index<-as.numeric(match(min(dist1), dist1))
+                                            index<-as.numeric(match(min(dist1), dist1)[1])
                                             dist1<-min(dist1)}
                                           
                                           if (dist1>min(alldist)){
-                                            index<-which(alldist==min(alldist))
+                                            index<-which(alldist==min(alldist))[1]
                                             dist1<-min(alldist)
                                             dbase<-lie[start5+index-1, 10]
                                             if (connect==TRUE){
@@ -956,7 +956,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                               
                                               if (length(which(t>=0 & t<=1))==0){
                                                 
-                                                index<-which(alldist==min(alldist))
+                                                index<-which(alldist==min(alldist))[1]
                                                 dbase<-lie[start6+index-1, 10]
                                                 if (connect==TRUE){
                                                   lie[lie.lines+1,5]<-lie[start6+index-1, 1] #Update Prec
@@ -973,14 +973,14 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                                 dist1<-sqrt((xn-lie[lie.lines+1, 7])^2+(yn-lie[lie.lines+1, 8])^2+(zn-lie[lie.lines+1, 9])^2)
                                                 
                                                 if (sum(is.na(dist1)==T)>0) {
-                                                  index<-as.numeric(match(min(dist1, na.rm=T), dist1))
+                                                  index<-as.numeric(match(min(dist1, na.rm=T), dist1)[1])
                                                   dist1<-min(dist1, na.rm=T)} 
                                                 else {
-                                                  index<-as.numeric(match(min(dist1), dist1))
+                                                  index<-as.numeric(match(min(dist1), dist1)[1])
                                                   dist1<-min(dist1)}
                                                 
                                                 if (dist1>min(alldist)){
-                                                  index<-which(alldist==min(alldist))
+                                                  index<-which(alldist==min(alldist))[1]
                                                   dist1<-min(alldist)
                                                   dbase<-lie[start6+index-1, 10]
                                                   if (connect==TRUE){
