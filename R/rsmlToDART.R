@@ -26,7 +26,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
   #Check unitdiameter
 
     if (is.null(property)==FALSE){
-      for (i in 1:length(property)){if (property[[i]]$label=="diameter"){unitdiameter1<-as.character(property[[i]]$unit)}}}
+      for (i in 1:length(property)){if (property[[i]]$label=="diameter"|property[[i]]$label=="rootDiameter"){unitdiameter1<-as.character(property[[i]]$unit)}}}
     
     if (is.null(unitdiameter1)==TRUE){message(paste("No diameter unit found in ", sub(basename(rsml.path), pattern=".rsml", replacement=""), " metadata (property-definition)", sep=""))}
   
@@ -80,7 +80,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
         
         if ("functions" %in% names(r1)){
           age<-r1$functions
-          for (i in 1:length(age)){if ("diameter" %in% age[[i]]$.attrs) {diameter<-sapply(age[[i]][1:(length(age[[i]])-1)], xnodes)}}}
+          for (i in 1:length(age)){if ("diameter" %in% age[[i]]$.attrs|"rootDiameter" %in% age[[i]]$.attrs) {diameter<-sapply(age[[i]][1:(length(age[[i]])-1)], xnodes)}}}
         
         length1<-length(ns)
         r<-r+1 #Add one unit for each root
@@ -178,7 +178,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
               
               if ("functions" %in% names(r2)){
                 age<-r2$functions
-                for (i in 1:length(age)){if ("diameter" %in% age[[i]]$.attrs) {diameter<-sapply(age[[i]][1:(length(age[[i]])-1)], xnodes)}}}
+                for (i in 1:length(age)){if ("diameter" %in% age[[i]]$.attrs|"rootDiameter" %in% age[[i]]$.attrs) {diameter<-sapply(age[[i]][1:(length(age[[i]])-1)], xnodes)}}}
               
               #c(Num, Date, Bran, Apic, Prec, Suiv)
               if (timeserie==FALSE) {lie[(lie.lines+1):(lie.lines+length2),1:6]<-c((lie.lines+1):(lie.lines+length2), rep(1, length2), rep(0, length2), rep(0, length2), lie.lines:(lie.lines+length2-1), (lie.lines+2):(lie.lines+length2+1))}
@@ -326,7 +326,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                     
                     if ("functions" %in% names(r3)){
                       age<-r3$functions
-                      for (i in 1:length(age)){if ("diameter" %in% age[[i]]$.attrs) {diameter<-sapply(age[[i]][1:(length(age[[i]])-1)], xnodes)}}}
+                      for (i in 1:length(age)){if ("diameter" %in% age[[i]]$.attrs|"rootDiameter" %in% age[[i]]$.attrs) {diameter<-sapply(age[[i]][1:(length(age[[i]])-1)], xnodes)}}}
                     
                     #c(Num, Date, Bran, Apic, Prec, Suiv)
                     if (timeserie==FALSE) {lie[(lie.lines+1):(lie.lines+length3),1:6]<-c((lie.lines+1):(lie.lines+length3), rep(1, length3), rep(0, length3), rep(0, length3), lie.lines:(lie.lines+length3-1), (lie.lines+2):(lie.lines+length3+1))}
@@ -474,7 +474,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                           
                           if ("functions" %in% names(r4)){
                             age<-r4$functions
-                            for (i in 1:length(age)){if ("diameter" %in% age[[i]]$.attrs) {diameter<-sapply(age[[i]][1:(length(age[[i]])-1)], xnodes)}}}
+                            for (i in 1:length(age)){if ("diameter" %in% age[[i]]$.attrs|"rootDiameter" %in% age[[i]]$.attrs) {diameter<-sapply(age[[i]][1:(length(age[[i]])-1)], xnodes)}}}
                           
                           #c(Num, Date, Bran, Apic, Prec, Suiv)
                           if (timeserie==FALSE) {lie[(lie.lines+1):(lie.lines+length4),1:6]<-c((lie.lines+1):(lie.lines+length4), rep(1, length4), rep(0, length4), rep(0, length4), lie.lines:(lie.lines+length4-1), (lie.lines+2):(lie.lines+length4+1))}
@@ -622,7 +622,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                 
                                 if ("functions" %in% names(r5)){
                                   age<-r5$functions
-                                  for (i in 1:length(age)){if ("diameter" %in% age[[i]]$.attrs) {diameter<-sapply(age[[i]][1:(length(age[[i]])-1)], xnodes)}}}
+                                  for (i in 1:length(age)){if ("diameter" %in% age[[i]]$.attrs|"rootDiameter" %in% age[[i]]$.attrs) {diameter<-sapply(age[[i]][1:(length(age[[i]])-1)], xnodes)}}}
                                 
                                 #c(Num, Date, Bran, Apic, Prec, Suiv)
                                 if (timeserie==FALSE) {lie[(lie.lines+1):(lie.lines+length5),1:6]<-c((lie.lines+1):(lie.lines+length5), rep(1, length5), rep(0, length5), rep(0, length5), lie.lines:(lie.lines+length5-1), (lie.lines+2):(lie.lines+length5+1))}
@@ -770,7 +770,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                       
                                       if ("functions" %in% names(r6)){
                                         age<-r6$functions
-                                        for (i in 1:length(age)){if ("diameter" %in% age[[i]]$.attrs) {diameter<-sapply(age[[i]][1:(length(age[[i]])-1)], xnodes)}}}
+                                        for (i in 1:length(age)){if ("diameter" %in% age[[i]]$.attrs|"rootDiameter" %in% age[[i]]$.attrs) {diameter<-sapply(age[[i]][1:(length(age[[i]])-1)], xnodes)}}}
                                       
                                       #c(Num, Date, Bran, Apic, Prec, Suiv)
                                       if (timeserie==FALSE) {lie[(lie.lines+1):(lie.lines+length6),1:6]<-c((lie.lines+1):(lie.lines+length6), rep(1, length6), rep(0, length6), rep(0, length6), lie.lines:(lie.lines+length6-1), (lie.lines+2):(lie.lines+length6+1))}
@@ -916,7 +916,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                             
                                             if ("functions" %in% names(r7)){
                                               age<-r7$functions
-                                              for (i in 1:length(age)){if ("diameter" %in% age[[i]]$.attrs) {diameter<-sapply(age[[i]][1:(length(age[[i]])-1)], xnodes)}}}
+                                              for (i in 1:length(age)){if ("diameter" %in% age[[i]]$.attrs|"rootDiameter" %in% age[[i]]$.attrs) {diameter<-sapply(age[[i]][1:(length(age[[i]])-1)], xnodes)}}}
                                             
                                             #c(Num, Date, Bran, Apic, Prec, Suiv)
                                             if (timeserie==FALSE) {lie[(lie.lines+1):(lie.lines+length7),1:6]<-c((lie.lines+1):(lie.lines+length7), rep(1, length7), rep(0, length7), rep(0, length7), lie.lines:(lie.lines+length7-1), (lie.lines+2):(lie.lines+length7+1))}
