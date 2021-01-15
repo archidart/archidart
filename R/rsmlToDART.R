@@ -258,7 +258,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
               if (connect==TRUE){
               
               lie[lie.lines+length2+1,1:13]<-c(NA, NA, 0, 0, NA, NA, xn[index], yn[index], zn[index], dbase, lie[start1+index-1, 11], NA, 1)
-              lie<-lie[order(lie[, 11], lie[, 10]),]
+              lie[1:(lie.lines+length2+1),]<-lie[order(lie[1:(lie.lines+length2+1), 11], lie[1:(lie.lines+length2+1), 10]),]
               length1<-length1+1
               lie.lines<-lie.lines+1
               stop1<-stop1+1
@@ -406,7 +406,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                           if (connect==TRUE){
                             
                             lie[lie.lines+length3+1,1:13]<-c(NA, NA, 0, 0, NA, NA, xn[index], yn[index], zn[index], dbase, lie[start2+index-1, 11], NA, 2)
-                            lie<-lie[order(lie[, 11], lie[, 10]),]
+                            lie[1:(lie.lines+length3+1),]<-lie[order(lie[1:(lie.lines+length3+1), 11], lie[1:(lie.lines+length3+1), 10]),]
                             length2<-length2+1
                             lie.lines<-lie.lines+1
                             stop2<-stop2+1
@@ -554,7 +554,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                 if (connect==TRUE){
                                   
                                   lie[lie.lines+length4+1,1:13]<-c(NA, NA, 0, 0, NA, NA, xn[index], yn[index], zn[index], dbase, lie[start3+index-1, 11], NA, 3)
-                                  lie<-lie[order(lie[, 11], lie[, 10]),]
+                                  lie[1:(lie.lines+length4+1),]<-lie[order(lie[1:(lie.lines+length4+1), 11], lie[1:(lie.lines+length4+1), 10]),]
                                   length3<-length3+1
                                   lie.lines<-lie.lines+1
                                   stop3<-stop3+1
@@ -702,7 +702,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                       if (connect==TRUE){
                                         
                                         lie[lie.lines+length5+1,1:13]<-c(NA, NA, 0, 0, NA, NA, xn[index], yn[index], zn[index], dbase, lie[start4+index-1, 11], NA, 4)
-                                        lie<-lie[order(lie[, 11], lie[, 10]),]
+                                        lie[1:(lie.lines+length5+1),]<-lie[order(lie[1:(lie.lines+length5+1), 11], lie[1:(lie.lines+length5+1), 10]),]
                                         length4<-length4+1
                                         lie.lines<-lie.lines+1
                                         stop4<-stop4+1
@@ -850,7 +850,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                             if (connect==TRUE){
                                               
                                               lie[lie.lines+length6+1,1:13]<-c(NA, NA, 0, 0, NA, NA, xn[index], yn[index], zn[index], dbase, lie[start5+index-1, 11], NA, 5)
-                                              lie<-lie[order(lie[, 11], lie[, 10]),]
+                                              lie[1:(lie.lines+length6+1),]<-lie[order(lie[1:(lie.lines+length6+1), 11], lie[1:(lie.lines+length6+1), 10]),]
                                               length5<-length5+1
                                               lie.lines<-lie.lines+1
                                               stop5<-stop5+1
@@ -996,7 +996,7 @@ rsmlToDART <- function(rsml.path, final.date, connect){
                                                   if (connect==TRUE){
                                                     
                                                     lie[lie.lines+length7+1,1:13]<-c(NA, NA, 0, 0, NA, NA, xn[index], yn[index], zn[index], dbase, lie[start6+index-1, 11], NA, 6)
-                                                    lie<-lie[order(lie[, 11], lie[, 10]),]
+                                                    lie[1:(lie.lines+length7+1),]<-lie[order(lie[1:(lie.lines+length7+1), 11], lie[1:(lie.lines+length7+1), 10]),]
                                                     length6<-length6+1
                                                     lie.lines<-lie.lines+1
                                                     stop6<-stop6+1
