@@ -38,27 +38,62 @@ perhomology<-function(x, show.progress=FALSE){
       table$hzero[apicindex[l]]<-l
       
       results[[i]][l,2]<-table$geodesic[apicindex[l]]
+      
       results[[i]][l,3]<-table$geodesic[apicindex[l]]-table$length[apicindex[l]]
       
       indexprec<-which(table$x2==table$x1[apicindex[l]] & table$y2==table$y1[apicindex[l]] & table$z2==table$z1[apicindex[l]])
-      if (length(indexprec)>1) {indexprec<-indexprec[which(table$root[indexprec]==root | table$root[indexprec]==parentroot)]}
-
+      
+      if (length(indexprec)>1) {
+        
+        indexprec<-indexprec[which(table$root[indexprec]==root | table$root[indexprec]==parentroot)]
+        
+        if (length(indexprec)>1){
+          indexprec<-indexprec[which(is.na(table[indexprec, "hzero"])==TRUE)]
+          
+          if (length(indexprec)>1){
+            max.geodesic<-max(table[indexprec, "geodesic"])
+            indexprec<-indexprec[which(table[indexprec, "geodesic"]==max.geodesic)]}}}
+      
       if (length(indexprec)>0){
         
         root<-table$root[indexprec]
         parentroot<-table$parentroot[indexprec]
-      
-          while(is.na(table$hzero[indexprec])==TRUE){
+        
+        while(is.na(table$hzero[indexprec])==TRUE){
+          
+          table$hzero[indexprec]<-l
+          
+          results[[i]][l,3]<-table$geodesic[indexprec]-table$length[indexprec]
+          
+          segment1<-which(table$x2==table$x1[indexprec] & table$y2==table$y1[indexprec] & table$z2==table$z1[indexprec])
+          
+          #print(paste("root: ", root, ", parentroot: ", parentroot, ", segment1-pre: ", segment1, sep=""))
+          
+          #if (length(segment1)>1){print(table[segment1,])}
+          
+          if (length(segment1)>1) {
+            indexprec<-segment1[which(table$root[segment1]==root | table$root[segment1]==parentroot)]
             
-            table$hzero[indexprec]<-l
-            
-            results[[i]][l,3]<-table$geodesic[indexprec]-table$length[indexprec]
-            
-            segment1<-which(table$x2==table$x1[indexprec] & table$y2==table$y1[indexprec] & table$z2==table$z1[indexprec])
-            if (length(segment1)>1) {indexprec<-segment1[which(table$root[segment1]==root | table$root[segment1]==parentroot)]} else {indexprec<-segment1}
-            if (length(indexprec)==0){break}
-            root<-table$root[indexprec]
-            parentroot<-table$parentroot[indexprec]}}}
+            if (length(indexprec)>1){ 
+              segment1<-segment1[which(is.na(table[segment1, "hzero"])==TRUE)]
+              
+              if (length(segment1)>1){ #Choose segment based on geodesic distance
+                max.geodesic<-max(table[segment1, "geodesic"])
+                segment1<-segment1[which(table[segment1, "geodesic"]==max.geodesic)]}
+              
+              if (length(segment1)>1){ #Then, choose the last segment of the list
+                segment1<-segment1[length(segment1)]}
+              
+              indexprec<-segment1}
+          } 
+          
+          else {indexprec<-segment1}
+          
+          #print(paste("indexprec: ", indexprec, sep=""))
+          
+          if (length(indexprec)==0){break}
+          root<-table$root[indexprec]
+          parentroot<-table$parentroot[indexprec]}}}
     
     results[[i]]<-results[[i]][order(results[[i]][,3], decreasing=FALSE),]
     class(results[[i]])<-c("matrix", "barcode")}
