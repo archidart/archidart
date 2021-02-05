@@ -44,6 +44,8 @@ The \code{rsml.connect} argument can be used to connect the lateral roots to the
 Due to technical limitations, it is sometimes easier to take a picture of a root system if it is rotated before image acquisition.  In this case, the vectorized root system depicts a rotation compared with the natural plant root system.  In order to make a correction, one can use \code{rotation} to specify an angle value expressed in \code{unitangle} to rotate the vectorized root system clockwise before plotting.  
 
 Additional graphical parameters can be used to personalize the graphical outputs (see \code{\link{par}}).  
+
+Making 3D plots with \code{twod = NULL} requires the \code{rgl} package, which is otherwise optional. If it is not installed (which can be annoying to do on some OSes), \code{archidraw()} will complain when you attempt a 3d plot but will still work normally for 2D.
 }
 \value{Returns a plot for each vectorized root system located in \code{inputlie}/\code{inputrsml}.
 }
